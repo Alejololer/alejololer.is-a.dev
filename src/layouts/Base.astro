@@ -83,9 +83,19 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': grap
   <script>
     import '../scripts/eggs';
     const canvas = document.getElementById('scene') as HTMLCanvasElement;
-    // the 3D scene is decoration: load it after the page is interactive so it never blocks the first paint
-    const go = () => import('../scripts/scene').then(m => m.start(canvas));
-    if ('requestIdleCallback' in window) requestIdleCallback(go, { timeout: 1500 }); else setTimeout(go, 300);
+    // the 3D scene is decoration: load it after the page is interactive so it never blocks the first paint.
+    // ponytail: on phones, parsing three.js costs ~400ms of main thread, so wait for the first touch/scroll (8s fallback)
+    let started = false;
+    const go = () => {
+      if (started) return;
+      started = true;
+      import('../scripts/scene').then(m => { m.start(canvas); canvas.classList.add('on'); });
+    };
+    if (matchMedia('(pointer: coarse)').matches) {
+      for (const ev of ['scroll', 'touchstart', 'pointerdown']) addEventListener(ev, go, { once: true, passive: true });
+      setTimeout(go, 8000);
+    } else if ('requestIdleCallback' in window) requestIdleCallback(go, { timeout: 1500 });
+    else setTimeout(go, 300);
   </script>
 </body>
 </html>

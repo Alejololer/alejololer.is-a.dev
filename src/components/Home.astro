@@ -10,7 +10,7 @@ const ext = { target: '_blank', rel: 'noopener' };
 ---
 <nav class="top" aria-label={lang === 'es' ? 'Principal' : 'Main'}>
   <a href={lang === 'es' ? '/es/' : '/'}>alejololer@quito:~$</a>
-  <a href={c.nav.otherHref} hreflang={c.nav.other.toLowerCase()} lang={c.nav.other.toLowerCase()} aria-label={c.nav.otherLabel}>{c.nav.other}</a>
+  <a href={c.nav.otherHref} hreflang={c.nav.other.toLowerCase()} lang={c.nav.other.toLowerCase()}>{c.nav.other}<span class="sr-only"> · {c.nav.otherLabel}</span></a>
 </nav>
 
 <main>
