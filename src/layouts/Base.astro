@@ -32,11 +32,6 @@ if (!noindex) graph.push({
   '@type': 'FAQPage', '@id': `${canonical}#faq`, inLanguage: lang,
   mainEntity: c.faq.items.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
 });
-if (c.service) graph.push({
-  '@type': 'Service', '@id': `${SITE}/es/#servicio`, name: 'Diseño web con SEO, GEO y AEO para negocios locales',
-  serviceType: 'Diseño y desarrollo web', description: c.service.lead, provider: { '@id': personId },
-  areaServed: { '@type': 'Country', name: 'Ecuador' }, availableLanguage: ['es', 'en'],
-});
 const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
 ---
 <!doctype html>

@@ -4,10 +4,9 @@
 
 Carlos Alejandro Alemán Osorio (online: Alejololer) works at Upstart 13 building production features with Django and Next.js, including LLM integrations on the OpenAI API that extract structured data from unstructured client documents and cut document drafting from days to hours. He holds a B.Eng. in Software Engineering from Escuela Politécnica Nacional (Quito, graduation grade 28/30) and the Microsoft Certified: Azure Administrator Associate (AZ-104) certification. Previously he was a Software Developer at Sagat Farm, where he was named Best Intern of the Cycle. He speaks Spanish (native) and English (professional).
 
-## Freelance web development (Ecuador, remote)
-- Custom-designed websites for local businesses, built with Astro or Next.js and hosted on Vercel.
-- Includes local SEO, GEO (generative engine optimization: being cited by AI assistants such as ChatGPT, Gemini and Perplexity) and AEO (answer engine optimization: FAQ content with structured data).
-- Typical delivery: days to weeks depending on detail.
+## Freelance work
+- Builds custom-designed websites for local businesses in Ecuador with Astro or Next.js, hosted on Vercel.
+- Focus on local SEO, GEO (generative engine optimization: being cited by AI assistants such as ChatGPT, Gemini and Perplexity) and AEO (answer engine optimization: FAQ content with structured data).
 - Contact: acarlosaleman03@gmail.com
 
 ## Websites built
@@ -22,7 +21,7 @@ Carlos Alejandro Alemán Osorio (online: Alejololer) works at Upstart 13 buildin
 
 ## Links
 - [Portfolio (English)](https://alejololer.is-a.dev/)
-- [Portafolio y servicios (Español)](https://alejololer.is-a.dev/es/)
+- [Portafolio (Español)](https://alejololer.is-a.dev/es/)
 - [CV (PDF)](https://alejololer.is-a.dev/cv.pdf)
 - [GitHub](https://github.com/Alejololer)
 - [LinkedIn](https://www.linkedin.com/in/alejoaleman)

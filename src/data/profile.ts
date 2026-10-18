@@ -117,8 +117,8 @@ export const t = {
 
   es: {
     meta: {
-      title: 'Alejololer · Páginas web para negocios en Ecuador con SEO, GEO y AEO',
-      description: 'Ingeniero de software en Quito, Ecuador. Construyo productos web en producción con Django, Next.js, Astro y LLMs, y sitios para negocios locales que aparecen en Google y en ChatGPT.',
+      title: 'Alejololer · Carlos Alejandro Alemán, ingeniero de software',
+      description: 'Ingeniero de software en Quito, Ecuador. Construyo productos web en producción con Django, Next.js, Astro y LLMs, y sitios para negocios locales con SEO, GEO y AEO.',
     },
     nav: { other: 'EN', otherHref: '/', otherLabel: 'Read in English' },
     hero: { cmd: 'whoami', lines: ['Hecho para durar.', 'Diseñado para', 'que te vean.'], scroll: 'scroll ↓ (vale la pena)' },
@@ -162,21 +162,20 @@ export const t = {
         { k: 'Azure Administrator Associate (AZ-104)', v: 'Microsoft Certified · Oct 2026' },
       ],
     },
+    // ponytail: portfolio tone on purpose — is-a.dev only accepts non-commercial sites, so this describes the work, it doesn't sell it
     service: {
-      cmd: './servicios --negocios-locales',
-      title: 'Tu negocio, visible en Google y en ChatGPT.',
-      lead: 'Hoy tus clientes no solo buscan en Google: también le preguntan a ChatGPT, Gemini y Perplexity. Te hago un sitio rápido, bonito y preparado para que te encuentren en los dos lados.',
+      cmd: 'cat freelance.md',
+      title: 'Sitios para negocios locales.',
+      lead: 'Además de mi trabajo en Upstart 13, diseño y construyo sitios para negocios en Ecuador. Me enfoco en que carguen rápido y en que se encuentren: en Google y también en asistentes de IA como ChatGPT, Gemini o Perplexity.',
       includes: [
-        ['Diseño a medida', 'Nada de plantillas genéricas.'],
-        ['SEO local', 'Google Business, páginas por ciudad, velocidad 95+.'],
-        ['GEO', 'Tu negocio citado por asistentes de IA: datos estructurados y llms.txt.'],
-        ['AEO', 'Respuestas directas a lo que la gente pregunta, con FAQ y schema.'],
-        ['Hosting y dominio', 'Publicado en Vercel: rápido, seguro y con HTTPS.'],
+        ['Diseño a medida', 'Cada sitio parte de cero, sin plantillas genéricas.'],
+        ['SEO local', 'Páginas por ciudad, Google Business y velocidad 95+.'],
+        ['GEO', 'Datos estructurados y llms.txt para que los asistentes de IA citen el negocio.'],
+        ['AEO', 'Preguntas frecuentes con schema y respuestas directas.'],
+        ['Hosting', 'Publicados en Vercel: rápidos y con HTTPS.'],
       ],
-      steps: ['Conversamos sobre tu negocio', 'Diseño y construcción', 'Lanzamiento + visibilidad'],
-      proof: 'Prueba: Virtus aparece en el top 3 de Google para “abogados Salcedo”.',
-      cta: 'Escríbeme',
-      mailSubject: 'Quiero mi sitio web',
+      steps: ['Entender el negocio', 'Diseño y construcción', 'Lanzamiento + visibilidad'],
+      proof: 'Resultado: Virtus aparece en el top 3 de Google para “abogados Salcedo”.',
     },
     shipped: {
       cmd: 'ls ./proyectos',
@@ -203,7 +202,7 @@ export const t = {
       cmd: 'man alejololer',
       title: 'Preguntas frecuentes',
       items: [
-        { q: '¿Haces páginas web para negocios?', a: 'Sí. Sitios completos con SEO, GEO y AEO incluidos, para que te encuentren en Google y en asistentes de IA.' },
+        { q: '¿Haces páginas web para negocios?', a: 'Sí, como freelance. Los construyo con SEO, GEO y AEO para que se encuentren en Google y en asistentes de IA.' },
         { q: '¿Cuánto tarda un sitio?', a: 'De días a semanas, según el nivel de detalle.' },
         { q: '¿Qué es GEO y AEO?', a: 'GEO es optimizar para que los asistentes de IA (ChatGPT, Gemini) mencionen tu negocio. AEO es estructurar tu contenido para dar respuestas directas a lo que pregunta la gente.' },
         { q: '¿Trabajas fuera de Quito?', a: 'Sí. Trabajo de forma remota con negocios de todo Ecuador.' },

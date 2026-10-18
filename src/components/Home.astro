@@ -60,7 +60,7 @@ const ext = { target: '_blank', rel: 'noopener' };
   </section>
 
   {c.service && (
-    <section id="servicios" aria-labelledby="svc-h">
+    <section id="freelance" aria-labelledby="svc-h">
       <p class="mono cmd reveal">{c.service.cmd}</p>
       <h2 id="svc-h" class="reveal">{c.service.title}</h2>
       <p class="lead">{c.service.lead}</p>
@@ -69,7 +69,6 @@ const ext = { target: '_blank', rel: 'noopener' };
       </div>
       <ol class="steps">{c.service.steps.map(s => <li>{s}</li>)}</ol>
       <p class="sub">{c.service.proof}</p>
-      <a class="btn" href={mail(c.service.mailSubject)} data-cursor="[ enviar ]">{c.service.cta} →</a>
     </section>
   )}
 
