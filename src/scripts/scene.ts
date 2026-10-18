@@ -42,19 +42,31 @@ export function start(canvas: HTMLCanvasElement) {
       transformed += normal * n * 1.2 * uV;
     `);
   };
-  scene.add(tk);
+  // the knot lives in its own layer, drawn after a depth clear: it floats above the terrain instead of sinking into it
+  const fg = new THREE.Scene();
+  fg.add(tk);
+  for (const layer of [scene, fg]) {
+    layer.add(new THREE.AmbientLight(0xffffff, .25));
+    const sun = new THREE.DirectionalLight(0xffffff, 2.2); sun.position.set(-10, 8, -20);
+    const key = new THREE.DirectionalLight(0xffffff, 1); key.position.set(6, 10, 15);
+    layer.add(sun, key);
+  }
+  r.autoClear = false;
 
-  scene.add(new THREE.AmbientLight(0xffffff, .25));
-  const sun = new THREE.DirectionalLight(0xffffff, 2.2); sun.position.set(-10, 8, -20); scene.add(sun);
-  const key = new THREE.DirectionalLight(0xffffff, 1); key.position.set(6, 10, 15); scene.add(key);
+  // the knot roams the free space as you scroll: a slow Lissajous path in screen space (NDC),
+  // right of the copy on wide screens, across the top on narrow ones; placed at a fixed distance along that view ray
+  let narrow = false;
+  const aim = new THREE.Vector3();
+  function knotTarget(p: number, t: number) {
+    const nx = narrow ? .45 * Math.sin(p * Math.PI * 3) : .62 + .16 * Math.sin(p * Math.PI * 3 + .6);
+    const ny = (narrow ? .55 + .12 * Math.cos(p * Math.PI * 4) : .3 * Math.cos(p * Math.PI * 2.4)) + .03 * Math.sin(t * .3);
+    return aim.set(nx, ny, .5).unproject(cam).sub(cam.position).normalize().multiplyScalar(30).add(cam.position);
+  }
 
-  // knot sits in the empty space right of the copy on wide screens (x scales with aspect), above it (smaller) on narrow ones
-  const home = new THREE.Vector3(12, 6, -14);
   function size() {
     r.setSize(innerWidth, innerHeight, false);
     cam.aspect = innerWidth / innerHeight; cam.updateProjectionMatrix();
-    const narrow = cam.aspect < 1;
-    home.set(narrow ? 0 : 9.5 * cam.aspect, narrow ? 8.5 : 6, -14);
+    narrow = cam.aspect < 1;
     tk.scale.setScalar(narrow ? .7 : 1);
     tk.material.color.set(narrow ? 0x555555 : 0xdddddd);   // on phones copy runs over the knot: dim it so white text keeps contrast
     if (still) render();
@@ -62,7 +74,8 @@ export function start(canvas: HTMLCanvasElement) {
 
   // all motion is time-based (dt), so it looks the same at 30, 60 or 144 fps;
   // scroll speed is measured in px, so page length doesn't change how much the knot wobbles
-  let sy = scrollY, t = 0, z = 0, vel = 0, last = performance.now();
+  const progress = () => scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight);
+  let sy = scrollY, pk = progress(), t = 0, z = 0, vel = 0, last = performance.now(), placed = false;
   const ease = (rate: number, k: number) => 1 - Math.pow(1 - rate, k);   // per-60fps-frame lerp rate → this frame
 
   // pointer: caret snaps to a character grid, ghost blocks chase it (CRT afterglow), camera turns like your head
@@ -89,14 +102,17 @@ export function start(canvas: HTMLCanvasElement) {
     });
   }
 
-  function render() {
+  function render(glide = 1) {
     land.position.z = z % D; land2.position.z = land.position.z - D;
     cam.position.set(Math.sin(t * .05) * .8, 4, 18);
     cam.rotation.set(-.15 + s.y * .04, -s.x * .08, -s.x * .015);
+    cam.updateMatrixWorld();
     ku.uV.value = vel; ku.uT.value = t;
     tk.rotation.set(t * .05 - s.y * .3, t * .07 + s.x * .3, 0);
-    tk.position.set(home.x + s.x * .8, home.y + s.y * .4, home.z);
-    r.render(scene, cam);
+    knotTarget(pk, t);
+    tk.position.lerp(aim, placed ? glide : 1); placed = true;
+    r.clear(); r.render(scene, cam);
+    r.clearDepth(); r.render(fg, cam);
   }
 
   // calibration: the approved prototype stepped per frame on a ~300Hz monitor, so k = "300Hz frames elapsed"
@@ -105,6 +121,7 @@ export function start(canvas: HTMLCanvasElement) {
     const dt = Math.min(.1, (now - last) / 1000), k = dt * HZ;
     last = now;
     const prevY = sy; sy += (scrollY - sy) * ease(.05, k);
+    pk += (progress() - pk) * ease(.004, k);                             // knot path follows scroll with a slow (~1s) glide
     t += .016 * k;
     s.x += (m.x - s.x) * ease(.03, k); s.y += (m.y - s.y) * ease(.03, k);
     const v = Math.min(1, Math.abs(sy - prevY) / (22 * k || 1));        // ~22px per 300Hz frame of smoothed scroll = full wobble
@@ -115,7 +132,7 @@ export function start(canvas: HTMLCanvasElement) {
       g.x += (lead.x - g.x) * ease(.35, Math.min(k, 5)); g.y += (lead.y - g.y) * ease(.35, Math.min(k, 5));
       g.el.style.translate = snap(g.x, g.y);
     });
-    render();
+    render(ease(.02, k));
     requestAnimationFrame(frame);
   }
 
