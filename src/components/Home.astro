@@ -1,0 +1,135 @@
+---
+import { Image } from 'astro:assets';
+import { person, t, type Lang } from '../data/profile';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = t[lang];
+const mail = (subject: string) => `mailto:${person.email}?subject=${encodeURIComponent(subject)}`;
+const ext = { target: '_blank', rel: 'noopener' };
+---
+<nav class="top" aria-label={lang === 'es' ? 'Principal' : 'Main'}>
+  <a href={lang === 'es' ? '/es/' : '/'}>alejololer@quito:~$</a>
+  <a href={c.nav.otherHref} hreflang={c.nav.other.toLowerCase()} lang={c.nav.other.toLowerCase()} aria-label={c.nav.otherLabel}>{c.nav.other}</a>
+</nav>
+
+<main>
+  <section id="hero">
+    <p class="mono cmd">alejololer@quito:~$ {c.hero.cmd}</p>
+    <h1>
+      <span class="sr-only">{person.short} — </span>
+      {c.hero.lines.map(l => <span class="glitch" data-t={l}>{l}</span>)}
+    </h1>
+    <p class="mono caret-text" aria-hidden="true">ＡＥＳＴＨＥＴＩＣ　ＥＮＧＩＮＥＥＲＩＮＧ</p>
+    <p class="mono scroll-hint" aria-hidden="true">{c.hero.scroll}</p>
+  </section>
+
+  <section id="about" aria-labelledby="about-h">
+    <p class="mono cmd reveal">{c.about.cmd}</p>
+    <h2 id="about-h" class="reveal">{c.about.title}</h2>
+    <p class="sub">{c.about.sub}</p>
+    <p class="lead">{c.about.body}</p>
+    <dl class="term">
+      {c.about.term.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+    </dl>
+  </section>
+
+  <section id="experience" aria-labelledby="exp-h">
+    <p class="mono cmd reveal">{c.exp.cmd}</p>
+    <h2 id="exp-h" class="reveal">{c.exp.title}</h2>
+    <div class="log">
+      {c.exp.items.map(e => (
+        <details>
+          <summary data-cursor={lang === 'es' ? '[ ver ]' : '[ more ]'}>
+            <span class="when">{e.when}</span>
+            <h3>{e.role} · {e.org}</h3>
+            <span class="hook">{e.hook}</span>
+          </summary>
+          <ul>{e.details.map(d => <li>{d}</li>)}</ul>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <section id="credentials" class="short" aria-labelledby="creds-h">
+    <p class="mono cmd reveal">{c.creds.cmd}</p>
+    <h2 id="creds-h" class="reveal">{c.creds.title}</h2>
+    <dl class="term stack">
+      {c.creds.items.map(i => <div><dt>{i.k}</dt><dd>{i.v}</dd></div>)}
+    </dl>
+  </section>
+
+  {c.service && (
+    <section id="servicios" aria-labelledby="svc-h">
+      <p class="mono cmd reveal">{c.service.cmd}</p>
+      <h2 id="svc-h" class="reveal">{c.service.title}</h2>
+      <p class="lead">{c.service.lead}</p>
+      <div class="includes">
+        {c.service.includes.map(([k, v]) => <div><b>{k}</b><span>{v}</span></div>)}
+      </div>
+      <ol class="steps">{c.service.steps.map(s => <li>{s}</li>)}</ol>
+      <p class="sub">{c.service.proof}</p>
+      <a class="btn" href={mail(c.service.mailSubject)} data-cursor="[ enviar ]">{c.service.cta} →</a>
+    </section>
+  )}
+
+  <section id="shipped" aria-labelledby="ship-h">
+    <p class="mono cmd reveal">{c.shipped.cmd}</p>
+    <h2 id="ship-h" class="reveal">{c.shipped.title}</h2>
+    <div class="wins">
+      {c.shipped.items.map(s => (
+        <article class="win">
+          <div class="bar" aria-hidden="true">{s.file}<i>_□×</i></div>
+          <div class="shot"><Image src={s.img} alt={s.alt} width={640} loading="lazy" /></div>
+          <div class="body">
+            <span class="tag">{s.tag}</span>
+            <h3>{s.name}</h3>
+            <p>{s.hook}</p>
+            <p class="result">{s.result}</p>
+            <a class="open" href={s.url} {...ext}>{c.shipped.open}<span class="sr-only"> {s.name}</span></a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section id="lab" class="short" aria-labelledby="lab-h">
+    <p class="mono cmd reveal">{c.lab.cmd}</p>
+    <h2 id="lab-h" class="reveal">{c.lab.title}</h2>
+    <div class="wins small">
+      {c.lab.items.map(l => (
+        <article class="win">
+          <div class="bar" aria-hidden="true">{l.name}<i>_□×</i></div>
+          <div class="body">
+            <p>{l.desc}</p>
+            <a class="open" href={l.url} {...ext} data-cursor="[ github ]">{c.shipped.open}<span class="sr-only"> {l.name}</span></a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section id="faq" class="short" aria-labelledby="faq-h">
+    <p class="mono cmd reveal">{c.faq.cmd}</p>
+    <h2 id="faq-h" class="reveal">{c.faq.title}</h2>
+    <div class="faq">
+      {c.faq.items.map(f => <details><summary data-cursor={lang === 'es' ? '[ ver ]' : '[ read ]'}>{f.q}</summary><p>{f.a}</p></details>)}
+    </div>
+  </section>
+
+  <section id="contact" class="short" aria-labelledby="contact-h">
+    <p class="mono cmd reveal">{c.contact.cmd}</p>
+    <h2 id="contact-h" class="reveal">{c.contact.title}</h2>
+    <div class="links">
+      <a href={mail(c.contact.mailSubject)}>{person.email}</a>
+      <a href={person.linkedin} {...ext}>LinkedIn</a>
+      <a href={person.github} {...ext}>GitHub</a>
+      <a href={person.cv} download="Carlos_Aleman_CV.pdf" data-cursor="[ pdf ]">{c.contact.cv}</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>// {c.footer}</span>
+  <a href={c.nav.otherHref} hreflang={c.nav.other.toLowerCase()}>{c.nav.otherLabel} →</a>
+</footer>

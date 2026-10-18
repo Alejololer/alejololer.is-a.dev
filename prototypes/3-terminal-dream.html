@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>P3 · Terminal Dream</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=VT323&display=swap" rel="stylesheet">
+<style>
+  :root { --dim:#888 }
+  * { box-sizing:border-box; margin:0 }
+  html { background:#000; color:#e8e8e8; font:300 16px/1.6 "Space Grotesk",sans-serif }
+  canvas { position:fixed; inset:0; width:100%; height:100%; z-index:0 }
+  /* CRT: scanlines + vignette + flicker */
+  .crt { position:fixed; inset:0; z-index:4; pointer-events:none;
+    background:repeating-linear-gradient(#0000 0 2px,#0000004d 2px 3px), radial-gradient(ellipse at center,#0000 55%,#000c 100%);
+    animation:flick 4s infinite }
+  @keyframes flick { 0%,97%,100% { opacity:1 } 98% { opacity:.85 } }
+  main { position:relative; z-index:1 }
+  section { min-height:100vh; padding:14vh 6vw; display:grid; align-content:center; gap:20px }
+  .mono { font:20px/1.2 VT323,monospace; letter-spacing:.08em; color:var(--dim) }
+  .mono::before { content:"> " }
+  h1 { font:700 clamp(48px,10vw,170px)/.9 "Space Grotesk"; letter-spacing:-.05em; text-transform:uppercase; position:relative }
+  h1 span { display:block }
+  .glitch { position:relative }
+  .glitch::before,.glitch::after { content:attr(data-t); position:absolute; inset:0; background:#000; opacity:0 }
+  .glitch::before { color:#fff; animation:g1 3s infinite steps(1); clip-path:inset(0 0 60% 0) }
+  .glitch::after { color:#888; animation:g2 2.4s infinite steps(1); clip-path:inset(55% 0 0 0) }
+  @keyframes g1 { 0%,92%{opacity:0} 93%{opacity:1;transform:translate(-6px,1px)} 96%{opacity:1;transform:translate(4px,-2px)} 97%{opacity:0} }
+  @keyframes g2 { 0%,88%{opacity:0} 90%{opacity:1;transform:translate(5px,0)} 94%{opacity:1;transform:translate(-3px,1px)} 95%{opacity:0} }
+  h2 { font:700 clamp(36px,5vw,72px)/1 "Space Grotesk"; letter-spacing:-.04em; text-transform:uppercase }
+  .cursor::after { content:"█"; animation:blink 1s steps(1) infinite; margin-left:4px }
+  @keyframes blink { 50% { opacity:0 } }
+  .wins { display:grid; gap:24px; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)) }
+  .win { background:#000; border:2px solid #fff; box-shadow:6px 6px 0 #fff; transition:transform .2s, box-shadow .2s }
+  .win:hover { transform:translate(-3px,-3px); box-shadow:9px 9px 0 #fff }
+  .bar { background:#fff; color:#000; display:flex; justify-content:space-between; padding:2px 8px; font:18px VT323,monospace }
+  .bar i { font-style:normal; letter-spacing:4px }
+  .win div:last-child { padding:18px }
+  .win h3 { font:500 26px/1.1 "Space Grotesk"; margin-bottom:6px }
+  .win p { color:#bbb; font-size:14px }
+  .term { border:1px solid #ffffff40; padding:20px; font:20px/1.4 VT323,monospace; max-width:720px; background:#000a }
+  .term b { color:#fff; font-weight:400 } .term span { color:var(--dim) }
+  footer { padding:6vh 6vw; font:18px VT323,monospace; color:var(--dim); position:relative; z-index:1 }
+  .reveal { animation:type linear both; animation-timeline:view(); animation-range:entry 0% entry 50% }
+  @keyframes type { from { clip-path:inset(0 100% 0 0) } }
+  /* cursor: blinking block caret with a phosphor-persistence trail; becomes [ open ] over windows */
+  .caret,.trail { position:fixed; left:0; top:0; z-index:5; pointer-events:none; width:10px; height:18px; margin:-9px 0 0 -5px; background:#fff }
+  .caret { animation:blink 1s steps(1) infinite; font:20px/18px VT323,monospace; color:#000; white-space:nowrap }
+  .caret.hot { width:auto; padding:0 6px; margin:-9px 0 0 -34px; animation:none }
+  .caret.hot::after { content:"[ open ]" }
+  .trail { background:#bbb }
+  .caret.hot ~ .trail { display:none }
+  @media (pointer:fine) { html, a, .win { cursor:none } }
+  @media (pointer:coarse) { .caret,.trail { display:none } }
+  @media (prefers-reduced-motion:reduce) { .crt,.glitch::before,.glitch::after,.reveal,.cursor::after,.caret { animation:none } .trail { display:none } }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="caret"></div>
+<div class="crt"></div>
+<main>
+  <section>
+    <p class="mono">alejololer@quito:~$ whoami</p>
+    <h1><span class="glitch" data-t="Built to last.">Built to last.</span><span class="glitch" data-t="Designed to">Designed to</span><span class="glitch" data-t="be noticed.">be noticed.</span></h1>
+    <p class="mono cursor">ＡＥＳＴＨＥＴＩＣ　ＥＮＧＩＮＥＥＲＩＮＧ</p>
+  </section>
+  <section>
+    <p class="mono reveal">cat about.txt</p>
+    <h2 class="reveal">I turn days into hours.</h2>
+    <div class="term reveal">
+      <b>name</b> <span>....</span> Carlos Alejandro Alemán<br>
+      <b>role</b> <span>....</span> Software Engineer @ Upstart 13<br>
+      <b>stack</b> <span>...</span> Django · Next.js · Astro · LLMs · Azure<br>
+      <b>edu</b> <span>.....</span> EPN, 28/30 · AZ-104<br>
+      <b>status</b> <span>..</span> just chillin'
+    </div>
+  </section>
+  <section>
+    <p class="mono reveal">ls ./shipped</p>
+    <div class="wins">
+      <article class="win"><div class="bar">virtus.exe<i>_□×</i></div><div><h3>Virtus Estudio Jurídico</h3><p>Top 3 on Google for “abogados Salcedo”.</p></div></article>
+      <article class="win"><div class="bar">asia_motors.exe<i>_□×</i></div><div><h3>Asia Motors</h3><p>Catalog, EV savings calculator, test drives.</p></div></article>
+      <article class="win"><div class="bar">con_carino.exe<i>_□×</i></div><div><h3>Con Cariño</h3><p>Cart that sends the order to WhatsApp.</p></div></article>
+    </div>
+  </section>
+</main>
+<footer>// built in Quito by a goalkeeper who refuses to let bugs through_</footer>
+
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"}}</script>
+<script type="module">
+import * as THREE from 'three';
+const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const r = new THREE.WebGLRenderer({ canvas: c, antialias: true });
+r.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x000000, .045);
+const cam = new THREE.PerspectiveCamera(55, 1, .1, 150);
+
+// low-poly terrain: flat-shaded grey + white edges, valley in the middle
+const W = 60, D = 120;
+const g = new THREE.PlaneGeometry(W, D, 40, 80); g.rotateX(-Math.PI / 2);
+const pa = g.attributes.position;
+for (let i = 0; i < pa.count; i++) {
+  const x = pa.getX(i), z = pa.getZ(i);
+  const h = Math.sin(x * .35 + z * (Math.PI * 8 / D)) * Math.cos(z * (Math.PI * 12 / D)) + Math.sin(x * .9) * .4;
+  pa.setY(i, h * (.4 + Math.abs(x) * .18) + Math.abs(x) * .15);
+}
+g.computeVertexNormals();
+const land = new THREE.Group();
+land.add(new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: 0x1a1a1a, flatShading: true, roughness: 1 })));
+land.add(new THREE.LineSegments(new THREE.EdgesGeometry(g, 1), new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: .4 })));
+const land2 = land.clone(); land2.position.z = -D;   // two tiles leapfrog for an endless ride
+scene.add(land, land2);
+
+// a floating torus "monument" that wobbles while you scroll and settles back to a clean knot when you stop
+const ku = { uV: { value: 0 }, uT: { value: 0 } };
+const tk = new THREE.Mesh(new THREE.TorusKnotGeometry(2, .5, 220, 18), new THREE.MeshStandardMaterial({ color: 0xdddddd, flatShading: true, metalness: .2, roughness: .4, fog: false }));
+tk.material.onBeforeCompile = sh => {
+  Object.assign(sh.uniforms, ku);
+  sh.vertexShader = 'uniform float uV, uT;\n' + sh.vertexShader.replace('#include <begin_vertex>', `
+    vec3 transformed = position;
+    float n = sin(position.x * 2.1 + uT * 1.3) * sin(position.y * 2.4 - uT * 1.1) * sin(position.z * 2.7 + uT * .9);
+    transformed += normal * n * 1.2 * uV;                           // uV = scroll speed, 0 at rest
+  `);
+};
+tk.position.set(5, 6, -14); scene.add(tk);
+
+scene.add(new THREE.AmbientLight(0xffffff, .25));
+const sunL = new THREE.DirectionalLight(0xffffff, 2.2); sunL.position.set(-10, 8, -20); scene.add(sunL);
+const key = new THREE.DirectionalLight(0xffffff, 1); key.position.set(6, 10, 15); scene.add(key);
+
+function size() { r.setSize(innerWidth, innerHeight, false); cam.aspect = innerWidth / innerHeight; cam.updateProjectionMatrix(); }
+addEventListener('resize', size); size();
+
+let p = 0, target = 0, t = 0, z = 0;
+addEventListener('scroll', () => target = scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight), { passive: true });
+
+// pointer: caret snaps to the pointer, ghost blocks chase it (CRT afterglow); camera pans like turning your head
+const caret = document.querySelector('.caret');
+const trail = Array.from({ length: 6 }, (_, i) => {
+  const el = document.createElement('div'); el.className = 'trail'; el.style.opacity = .45 - i * .07;
+  document.body.append(el); return { el, x: -50, y: -50 };
+});
+const m = { x: 0, y: 0 }, s = { x: 0, y: 0 }, cur = { x: -50, y: -50 }; // offscreen until the pointer shows up
+addEventListener('pointermove', e => {
+  cur.x = e.clientX; cur.y = e.clientY;
+  m.x = cur.x / innerWidth * 2 - 1; m.y = 1 - cur.y / innerHeight * 2;
+  // ponytail: snap to a 10×18 character grid, it's a terminal after all
+  caret.style.translate = `${Math.round(cur.x / 10) * 10}px ${Math.round(cur.y / 18) * 18}px`;
+  caret.classList.toggle('hot', !!e.target.closest('a,.win'));
+});
+
+// ponytail: everything slow on purpose, faster motion was dizzying; scroll only wobbles the knot
+let vel = 0;
+function frame() {
+  const prev = p; p += (target - p) * .05; t += .016;
+  const v = Math.min(1, Math.abs(p - prev) * 120);
+  vel += (v - vel) * (v > vel ? .15 : .04);                     // quick to react, slow to settle back
+  s.x += (m.x - s.x) * .03; s.y += (m.y - s.y) * .03;
+  trail.forEach((g, i) => {
+    const lead = i ? trail[i - 1] : cur;
+    g.x += (lead.x - g.x) * .35; g.y += (lead.y - g.y) * .35;
+    g.el.style.translate = `${Math.round(g.x / 10) * 10}px ${Math.round(g.y / 18) * 18}px`;
+  });
+  z += .018;                                           // steady, slow cruise
+  land.position.z = z % D; land2.position.z = land.position.z - D;
+  cam.position.set(Math.sin(t * .05) * .8, 4, 18);
+  cam.rotation.set(-.15 + s.y * .04, -s.x * .08, -s.x * .015);
+  ku.uV.value = vel; ku.uT.value = t;
+  tk.rotation.set(t * .05 - s.y * .3, t * .07 + s.x * .3, 0);
+  tk.position.set(5 + s.x * .8, 6 + s.y * .4, -14);
+  r.render(scene, cam);
+  if (!still) requestAnimationFrame(frame);
+}
+frame();
+</script>
+</body>
+</html>

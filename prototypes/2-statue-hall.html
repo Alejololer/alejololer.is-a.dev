@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>P2 · Statue Hall</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,300&family=Inter+Tight:wght@300;500&display=swap" rel="stylesheet">
+<style>
+  :root { --dim:#7a7a7a; --line:#ffffff1f }
+  * { box-sizing:border-box; margin:0 }
+  html { background:#050505; color:#eee; font:300 16px/1.65 "Inter Tight",sans-serif }
+  canvas { position:fixed; inset:0; width:100%; height:100%; z-index:0 }
+  main { position:relative; z-index:1 }
+  nav { position:fixed; z-index:3; top:0; inset-inline:0; display:flex; justify-content:space-between; padding:22px 5vw; font-size:13px; mix-blend-mode:difference }
+  nav a { color:#fff; text-decoration:none }
+  section { min-height:110vh; padding:14vh 5vw; display:grid; align-content:center }
+  .right { justify-items:end; text-align:right }
+  .num { font:300 13px "Inter Tight"; color:var(--dim); letter-spacing:.3em }
+  h1 { font:300 clamp(60px,12vw,200px)/.85 Fraunces,serif; letter-spacing:-.04em }
+  h1 i, h2 i { font-style:italic }
+  h2 { font:300 clamp(44px,7vw,120px)/.95 Fraunces,serif; letter-spacing:-.03em; max-width:12ch }
+  p.big { font:300 clamp(18px,1.8vw,26px)/1.5 Fraunces,serif; max-width:34ch; margin-top:1.2em; color:#cfcfcf }
+  .marquee { overflow:hidden; white-space:nowrap; border-block:1px solid var(--line); padding:14px 0; font-size:13px; letter-spacing:.6em; color:var(--dim); position:relative; z-index:1 }
+  .marquee span { display:inline-block; animation:mq 30s linear infinite }
+  @keyframes mq { to { transform:translateX(-50%) } }
+  .sites { display:grid; gap:0; margin-top:2em; width:min(900px,100%) }
+  .site { display:grid; grid-template-columns:3ch 1fr auto; gap:2vw; align-items:baseline; padding:22px 0; border-top:1px solid var(--line); color:inherit; text-decoration:none; transition:padding .4s, color .4s }
+  .site:hover { padding-left:2vw; color:#fff }
+  .site h3 { font:300 clamp(28px,4vw,56px)/1 Fraunces,serif }
+  .site small { color:var(--dim) }
+  .reveal { animation:fade linear both; animation-timeline:view(); animation-range:entry 10% cover 40% }
+  @keyframes fade { from { opacity:0; filter:blur(12px); transform:translateY(40px) } }
+  footer { padding:8vh 5vw; color:var(--dim); font-size:13px; position:relative; z-index:1 }
+  /* cursor: an inverting lens that swells over links; the pointer is also the sculpture's light */
+  .lens { position:fixed; left:0; top:0; z-index:5; pointer-events:none; width:22px; height:22px; margin:-11px; border-radius:50%; background:#fff; mix-blend-mode:difference; transition:scale .5s cubic-bezier(.2,.8,.2,1) }
+  .lens.hot { scale:4.5 }
+  @media (pointer:fine) { html, a { cursor:none } }
+  @media (pointer:coarse) { .lens { display:none } }
+  @media (prefers-reduced-motion:reduce) { .reveal,.marquee span { animation:none } }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="lens"></div>
+<nav><a href="#">Alejololer</a><a href="#">EN · ES</a></nav>
+<main>
+  <section>
+    <p class="num">CARLOS ALEJANDRO ALEMÁN — SOFTWARE ENGINEER</p>
+    <h1>Built to last.<br><i>Designed to<br>be noticed.</i></h1>
+  </section>
+  <div class="marquee"><span>ＡＥＳＴＨＥＴＩＣ　ＥＮＧＩＮＥＥＲＩＮＧ　✦　ＱＵＩＴＯ　ＥＣ　✦　ＪＵＳＴ　ＣＨＩＬＬＩＮ'　✦　ＡＥＳＴＨＥＴＩＣ　ＥＮＧＩＮＥＥＲＩＮＧ　✦　ＱＵＩＴＯ　ＥＣ　✦　ＪＵＳＴ　ＣＨＩＬＬＩＮ'　✦　</span></div>
+  <section class="right">
+    <p class="num reveal">I — ABOUT</p>
+    <h2 class="reveal">I turn <i>days</i> into hours.</h2>
+    <p class="big reveal">Mostly with LLMs, occasionally with coffee. Software Engineer at Upstart 13; freelance web builder for businesses that want to be found.</p>
+  </section>
+  <section>
+    <p class="num reveal">II — SHIPPED</p>
+    <h2 class="reveal">Sites in <i>the wild.</i></h2>
+    <div class="sites reveal">
+      <a class="site" href="#"><small>01</small><h3>Virtus Estudio Jurídico</h3><small>Top 3 · “abogados Salcedo”</small></a>
+      <a class="site" href="#"><small>02</small><h3>Asia Motors</h3><small>Catalog + EV savings calc</small></a>
+      <a class="site" href="#"><small>03</small><h3>Con Cariño</h3><small>WhatsApp checkout + admin</small></a>
+    </div>
+  </section>
+  <section class="right">
+    <p class="num reveal">III — CREDENTIALS</p>
+    <h2 class="reveal">EPN <i>28/30.</i><br>Azure AZ-104.</h2>
+  </section>
+</main>
+<footer>Designed &amp; built in Quito by a goalkeeper who refuses to let bugs through.</footer>
+
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"}}</script>
+<script type="module">
+import * as THREE from 'three';
+const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const r = new THREE.WebGLRenderer({ canvas: c, antialias: false });
+r.setPixelRatio(1); // ponytail: 1x on purpose, dithering wants chunky pixels
+const scene = new THREE.Scene();
+const cam = new THREE.PerspectiveCamera(40, 1, .1, 100);
+cam.position.z = 9;
+
+// noise-displaced sphere, shaded with ordered (Bayer) dithering → pure 1-bit look
+const u = { t: { value: 0 }, amp: { value: .3 }, freq: { value: 1.2 }, px: { value: 3 }, lp: { value: new THREE.Vector3(-.6, .8, .7) } };
+const blob = new THREE.Mesh(new THREE.IcosahedronGeometry(2.2, 64), new THREE.ShaderMaterial({
+  uniforms: u,
+  vertexShader: `
+    uniform float t, amp, freq; varying vec3 n; varying vec3 vp;
+    vec3 h(vec3 p){ return fract(sin(vec3(dot(p,vec3(127.1,311.7,74.7)),dot(p,vec3(269.5,183.3,246.1)),dot(p,vec3(113.5,271.9,124.6))))*43758.5453); }
+    float noise(vec3 p){ vec3 i=floor(p), f=fract(p); f=f*f*(3.-2.*f);
+      return mix(mix(mix(h(i).x,h(i+vec3(1,0,0)).x,f.x),mix(h(i+vec3(0,1,0)).x,h(i+vec3(1,1,0)).x,f.x),f.y),
+                 mix(mix(h(i+vec3(0,0,1)).x,h(i+vec3(1,0,1)).x,f.x),mix(h(i+vec3(0,1,1)).x,h(i+vec3(1,1,1)).x,f.x),f.y),f.z); }
+    float d(vec3 p){ return noise(p*freq+t*.4)*amp + sin(p.y*freq*2.+t)*amp*.3; }
+    void main(){
+      vec3 p = position + normal*d(position);
+      vec3 tg = normalize(cross(normal, vec3(0,1,.01))), bt = cross(normal, tg);
+      vec3 a = position+tg*.01, b = position+bt*.01;
+      a += normal*d(a); b += normal*d(b);
+      n = normalize(normalMatrix*normalize(cross(a-p, b-p)));
+      vec4 mv = modelViewMatrix*vec4(p,1.); vp = mv.xyz;
+      gl_Position = projectionMatrix*mv; }`,
+  fragmentShader: `
+    uniform float px; uniform vec3 lp; varying vec3 n; varying vec3 vp;
+    float bayer(vec2 c){ int x=int(mod(c.x,4.)), y=int(mod(c.y,4.)); int i=x+y*4;
+      int m[16]=int[16](0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5); return float(m[i])/16.; }
+    void main(){
+      vec3 l = normalize(lp);
+      float lit = max(dot(n,l),0.)*.9 + pow(1.-max(dot(n,normalize(-vp)),0.),3.)*.6;
+      float v = step(bayer(floor(gl_FragCoord.xy/px)), lit);
+      gl_FragColor = vec4(vec3(v),1.); }`
+}));
+scene.add(blob);
+
+function size() { r.setSize(innerWidth, innerHeight, false); cam.aspect = innerWidth / innerHeight; cam.updateProjectionMatrix(); }
+addEventListener('resize', size); size();
+
+let p = 0, target = 0, t = 0, vel = 0, pvel = 0;
+addEventListener('scroll', () => target = scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight), { passive: true });
+
+// pointer: lens follows with a soft lag; pointer position = light direction; pointer speed adds "boil"
+const lens = document.querySelector('.lens');
+const m = { x: -.5, y: .6 }, s = { ...m }, cur = { x: -100, y: -100 }, lag = { ...cur }; // offscreen until the pointer shows up
+addEventListener('pointermove', e => {
+  pvel = Math.min(1, pvel + Math.hypot(e.clientX - cur.x, e.clientY - cur.y) / 600);
+  cur.x = e.clientX; cur.y = e.clientY;
+  m.x = cur.x / innerWidth * 2 - 1; m.y = 1 - cur.y / innerHeight * 2;
+  lens.classList.toggle('hot', !!e.target.closest('a'));
+  if (still) lens.style.translate = `${cur.x}px ${cur.y}px`;
+});
+
+function frame() {
+  const prev = p; p += (target - p) * .06; t += .016;
+  s.x += (m.x - s.x) * .06; s.y += (m.y - s.y) * .06;
+  lag.x += (cur.x - lag.x) * .14; lag.y += (cur.y - lag.y) * .14;
+  lens.style.translate = `${lag.x}px ${lag.y}px`;
+  pvel *= .95;
+  vel += (Math.abs(p - prev) * 60 + pvel * .15 - vel) * .1;   // scroll + pointer speed make it "boil"
+  u.t.value = t; u.amp.value = .25 + vel * 2.5 + Math.sin(p * 9) * .15; u.freq.value = 1.1 + p * 1.6;
+  u.lp.value.set(s.x * 1.6, s.y * 1.6, .9);                     // your cursor is the light
+  const side = innerWidth > 760 ? 2.6 : 0;
+  blob.position.x = Math.cos(p * Math.PI * 3) * side + s.x * .3;  // swings opposite the text column
+  blob.position.y = Math.sin(p * Math.PI * 2) * .4 + s.y * .2;
+  blob.rotation.set(p * 3 - s.y * .4, t * .15 + p * 5 + s.x * .6, 0);
+  blob.scale.setScalar(.85 - p * .2);
+  r.render(scene, cam);
+  if (!still) requestAnimationFrame(frame);
+}
+frame();
+</script>
+</body>
+</html>

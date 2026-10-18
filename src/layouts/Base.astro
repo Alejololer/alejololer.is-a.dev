@@ -1,0 +1,91 @@
+---
+import { Font } from 'astro:assets';
+import '../styles/global.css';
+import { SITE, person, t, type Lang } from '../data/profile';
+
+interface Props { lang: Lang; title?: string; description?: string; noindex?: boolean }
+const { lang, noindex = false } = Astro.props;
+const c = t[lang];
+const title = Astro.props.title ?? c.meta.title;
+const description = Astro.props.description ?? c.meta.description;
+const canonical = new URL(Astro.url.pathname, SITE).href;
+const alt = { en: `${SITE}/`, es: `${SITE}/es/` };
+
+const personId = `${SITE}/#person`;
+const graph: Record<string, unknown>[] = [
+  {
+    '@type': 'Person', '@id': personId,
+    name: person.name, alternateName: [person.handle, person.short],
+    jobTitle: 'Software Engineer', url: `${SITE}/`, email: `mailto:${person.email}`, image: `${SITE}/og.png`,
+    address: { '@type': 'PostalAddress', addressLocality: person.city, addressCountry: person.country },
+    worksFor: { '@type': 'Organization', name: 'Upstart 13' },
+    alumniOf: { '@type': 'CollegeOrUniversity', name: 'Escuela Politécnica Nacional', sameAs: 'https://www.epn.edu.ec' },
+    hasCredential: { '@type': 'EducationalOccupationalCredential', name: 'Microsoft Certified: Azure Administrator Associate (AZ-104)', credentialCategory: 'certification', recognizedBy: { '@type': 'Organization', name: 'Microsoft' } },
+    knowsAbout: ['Python', 'Django', 'TypeScript', 'Next.js', 'Astro', 'Large Language Models', 'Retrieval-Augmented Generation', 'Microsoft Azure', 'Vercel', 'SEO', 'Generative Engine Optimization', 'Answer Engine Optimization'],
+    knowsLanguage: ['es', 'en'],
+    sameAs: [person.github, person.linkedin],
+  },
+  { '@type': 'WebSite', '@id': `${SITE}/#website`, url: `${SITE}/`, name: 'Alejololer', inLanguage: ['en', 'es'], publisher: { '@id': personId } },
+  { '@type': 'ProfilePage', '@id': `${canonical}#page`, url: canonical, name: title, inLanguage: lang, isPartOf: { '@id': `${SITE}/#website` }, mainEntity: { '@id': personId } },
+];
+if (!noindex) graph.push({
+  '@type': 'FAQPage', '@id': `${canonical}#faq`, inLanguage: lang,
+  mainEntity: c.faq.items.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+});
+if (c.service) graph.push({
+  '@type': 'Service', '@id': `${SITE}/es/#servicio`, name: 'Diseño web con SEO, GEO y AEO para negocios locales',
+  serviceType: 'Diseño y desarrollo web', description: c.service.lead, provider: { '@id': personId },
+  areaServed: { '@type': 'Country', name: 'Ecuador' }, availableLanguage: ['es', 'en'],
+});
+const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
+---
+<!doctype html>
+<html lang={lang}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+  {!noindex && <>
+    <link rel="alternate" hreflang="en" href={alt.en} />
+    <link rel="alternate" hreflang="es" href={alt.es} />
+    <link rel="alternate" hreflang="x-default" href={alt.en} />
+  </>}
+  <meta name="author" content={person.name} />
+  <meta name="theme-color" content="#000000" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="sitemap" href="/sitemap-index.xml" />
+
+  <meta property="og:type" content="profile" />
+  <meta property="og:site_name" content="Alejololer" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:image" content={`${SITE}/og.png`} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content={lang === 'es' ? 'es_EC' : 'en_US'} />
+  <meta property="profile:first_name" content="Carlos Alejandro" />
+  <meta property="profile:last_name" content="Alemán Osorio" />
+  <meta property="profile:username" content={person.handle} />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <Font cssVariable="--font-sans" preload />
+  <Font cssVariable="--font-mono" preload />
+  <script type="application/ld+json" set:html={jsonLd} />
+</head>
+<body>
+  <canvas id="scene" aria-hidden="true"></canvas>
+  <div class="crt" aria-hidden="true"></div>
+  <div class="caret" aria-hidden="true"></div>
+  <slot />
+  <script>
+    import '../scripts/eggs';
+    const canvas = document.getElementById('scene') as HTMLCanvasElement;
+    // the 3D scene is decoration: load it after the page is interactive so it never blocks the first paint
+    const go = () => import('../scripts/scene').then(m => m.start(canvas));
+    if ('requestIdleCallback' in window) requestIdleCallback(go, { timeout: 1500 }); else setTimeout(go, 300);
+  </script>
+</body>
+</html>

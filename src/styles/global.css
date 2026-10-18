@@ -1,0 +1,146 @@
+:root {
+  --bg: #000;
+  --fg: #e8e8e8;
+  --hi: #fff;
+  --dim: #8c8c8c;
+  --line: #ffffff40;
+  --accent: #fff;
+  --gutter: clamp(16px, 6vw, 96px);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; margin: 0 }
+html { background: var(--bg); color: var(--fg); font: 300 16px/1.6 var(--font-sans); -webkit-font-smoothing: antialiased }
+body { overflow-x: hidden }
+a { color: inherit }
+img { max-width: 100%; height: auto; display: block }
+::selection { background: var(--hi); color: #000 }
+:focus-visible { outline: 2px solid var(--hi); outline-offset: 4px }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap }
+
+/* --- scene + CRT overlay --- */
+#scene { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; transition: filter 1s }
+.crt { position: fixed; inset: 0; z-index: 4; pointer-events: none;
+  background: repeating-linear-gradient(#0000 0 2px, #0000004d 2px 3px), radial-gradient(ellipse at center, #0000 55%, #000c 100%);
+  animation: flick 4s infinite }
+@keyframes flick { 0%, 97%, 100% { opacity: 1 } 98% { opacity: .85 } }
+
+/* --- layout --- */
+main, footer { position: relative; z-index: 1 }
+nav.top { position: fixed; z-index: 3; top: 0; inset-inline: 0; display: flex; justify-content: space-between; align-items: center; padding: 14px var(--gutter); font: 20px/1 var(--font-mono); mix-blend-mode: difference }
+nav.top a { text-decoration: none; color: #fff }
+nav.top a:hover { text-decoration: underline }
+section { min-height: 100vh; padding: 14vh var(--gutter); display: grid; align-content: center; gap: 24px }
+section.short { min-height: 70vh }
+
+.mono { font: 20px/1.2 var(--font-mono); letter-spacing: .08em; color: var(--dim) }
+.mono.cmd::before { content: "> " }
+h1 { font: 700 clamp(44px, 10vw, 170px)/.9 var(--font-sans); letter-spacing: -.05em; text-transform: uppercase }
+h1 span { display: block }
+h2 { font: 700 clamp(34px, 5vw, 72px)/1 var(--font-sans); letter-spacing: -.04em; text-transform: uppercase; max-width: 18ch }
+h3 { font: 500 26px/1.1 var(--font-sans) }
+p.lead { max-width: 62ch; color: #cfcfcf; font-size: clamp(16px, 1.3vw, 19px) }
+.sub { font: 24px/1.2 var(--font-mono); color: var(--hi) }
+
+/* --- glitch (decorative copies are pseudo-elements, screen readers read the real text once) --- */
+.glitch { position: relative }
+.glitch::before, .glitch::after { content: attr(data-t) / ""; position: absolute; inset: 0; background: var(--bg); opacity: 0 }
+.glitch::before { color: var(--hi); animation: g1 3s infinite steps(1); clip-path: inset(0 0 60% 0) }
+.glitch::after { color: var(--dim); animation: g2 2.4s infinite steps(1); clip-path: inset(55% 0 0 0) }
+@keyframes g1 { 0%, 92% { opacity: 0 } 93% { opacity: 1; transform: translate(-6px, 1px) } 96% { opacity: 1; transform: translate(4px, -2px) } 97% { opacity: 0 } }
+@keyframes g2 { 0%, 88% { opacity: 0 } 90% { opacity: 1; transform: translate(5px, 0) } 94% { opacity: 1; transform: translate(-3px, 1px) } 95% { opacity: 0 } }
+.caret-text { font-size: clamp(12px, 3.6vw, 20px); white-space: nowrap }
+.caret-text::after { content: "█"; animation: blink 1s steps(1) infinite; margin-left: 4px }
+@keyframes blink { 50% { opacity: 0 } }
+.scroll-hint { position: absolute; bottom: 5vh; left: var(--gutter) }
+#hero { position: relative }
+
+/* --- terminal block --- */
+.term { border: 1px solid var(--line); padding: 20px; font: 20px/1.45 var(--font-mono); max-width: 720px; background: #000b }
+.term dt { color: var(--hi); display: inline } .term dd { display: inline; margin: 0 } .term dd::before { content: " ...... "; color: var(--dim) }
+.term div { display: block }
+.term.stack dt, .term.stack dd { display: block } .term.stack dd { color: var(--dim) } .term.stack dd::before { content: none }
+.term.stack div + div { margin-top: 14px }
+
+/* --- git log timeline --- */
+.log { display: grid; gap: 0; max-width: 900px; border-left: 1px solid var(--line) }
+.log details { padding: 18px 0 18px 24px; position: relative; background: #000a }
+.log details::before { content: "●"; position: absolute; left: -7px; top: 22px; font-size: 12px; color: var(--hi) }
+.log summary { cursor: pointer; list-style: none; display: grid; gap: 4px }
+.log summary::-webkit-details-marker { display: none }
+.log .when { font: 18px var(--font-mono); color: var(--dim) }
+.log .when::before { content: "commit · " }
+.log .hook { color: #cfcfcf }
+.log summary h3::after { content: " +"; font: 20px var(--font-mono); color: var(--dim) }
+.log details[open] summary h3::after { content: " −" }
+.log ul { margin: 12px 0 0; padding-left: 18px; color: #bbb; font-size: 15px; display: grid; gap: 6px; max-width: 70ch }
+
+/* --- win95 windows --- */
+.wins { display: grid; gap: 28px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)) }
+.win { background: #000; border: 2px solid var(--hi); box-shadow: 6px 6px 0 var(--hi); transition: transform .2s, box-shadow .2s; display: flex; flex-direction: column }
+.win:hover, .win:focus-within { transform: translate(-3px, -3px); box-shadow: 9px 9px 0 var(--hi) }
+.bar { background: var(--hi); color: #000; display: flex; justify-content: space-between; padding: 2px 8px; font: 18px var(--font-mono) }
+.bar i { font-style: normal; letter-spacing: 4px }
+.win .body { padding: 18px; display: grid; gap: 8px; flex: 1; align-content: start }
+.win .shot { border-bottom: 2px solid var(--hi); aspect-ratio: 16 / 10; overflow: hidden }
+.win .shot img { width: 100%; height: 100%; object-fit: cover; object-position: top; filter: grayscale(1) contrast(1.1); transition: filter .4s }
+.win:hover .shot img, .win:focus-within .shot img { filter: none }
+.win .tag { font: 16px var(--font-mono); color: var(--dim); text-transform: uppercase; letter-spacing: .1em }
+.win p { color: #bbb; font-size: 15px }
+.win .result { color: var(--hi) }
+.win .open { font: 20px var(--font-mono); text-decoration: none; margin-top: 6px; justify-self: start }
+.win .open:hover { background: var(--hi); color: #000 }
+.wins.small { grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)) }
+.wins.small .win { box-shadow: 4px 4px 0 var(--hi) }
+
+/* --- service (es) --- */
+.includes { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); max-width: 1100px }
+.includes div { background: #000d; padding: 20px }
+.includes b { display: block; font-weight: 500; color: var(--hi); margin-bottom: 6px }
+.includes span { color: #bbb; font-size: 15px }
+.steps { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 20px; font: 22px var(--font-mono) }
+.steps li { counter-increment: s } .steps li::before { content: counter(s) ") "; color: var(--dim) }
+.steps li:not(:last-child)::after { content: "  →"; color: var(--dim) }
+.btn { display: inline-block; justify-self: start; font: 24px var(--font-mono); padding: 6px 18px; background: var(--hi); color: #000; text-decoration: none; border: 2px solid var(--hi); box-shadow: 5px 5px 0 #888; transition: transform .15s, box-shadow .15s }
+.btn:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 #888 }
+.btn.ghost { background: transparent; color: var(--hi) }
+
+/* --- faq --- */
+.faq { max-width: 860px; display: grid; gap: 0; border-top: 1px solid var(--line) }
+.faq details { border-bottom: 1px solid var(--line); padding: 18px 0; background: #000a }
+.faq summary { cursor: pointer; font: 500 20px/1.3 var(--font-sans); list-style: none; display: flex; justify-content: space-between; gap: 16px }
+.faq summary::-webkit-details-marker { display: none }
+.faq summary::after { content: "[+]"; font: 20px var(--font-mono); color: var(--dim) }
+.faq details[open] summary::after { content: "[−]" }
+.faq p { margin-top: 10px; color: #bbb; max-width: 70ch }
+
+/* --- contact --- */
+.links { display: flex; flex-wrap: wrap; gap: 14px 28px; font: 24px var(--font-mono) }
+.links a { text-decoration: none; border-bottom: 1px solid var(--dim) }
+.links a:hover { color: #000; background: var(--hi) }
+
+footer { padding: 6vh var(--gutter); font: 18px var(--font-mono); color: var(--dim); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px }
+footer a { text-decoration: none }
+
+/* --- reveal: types itself in as it enters the viewport --- */
+.reveal { animation: type linear both; animation-timeline: view(); animation-range: entry 0% entry 50% }
+@keyframes type { from { clip-path: inset(0 100% 0 0) } }
+
+/* --- cursor: blinking block caret + phosphor trail --- */
+.caret, .trail { position: fixed; left: 0; top: 0; z-index: 5; pointer-events: none; width: 10px; height: 18px; margin: -9px 0 0 -5px; background: var(--hi) }
+.caret { translate: -100px -100px; animation: blink 1s steps(1) infinite; font: 20px/18px var(--font-mono); color: #000; white-space: nowrap }
+.caret.hot { width: auto; padding: 0 6px; margin: -9px 0 0 -34px; animation: none }
+.caret.hot::after { content: attr(data-label) }
+.trail { background: #bbb }
+.caret.hot ~ .trail { display: none }
+@media (pointer: fine) { html.js, html.js a, html.js summary, html.js .win { cursor: none } }
+@media (pointer: coarse) { .caret, .trail { display: none } }
+
+/* --- konami: full vaporwave for 10s --- */
+html.vapor { --hi: #ff71ce; --dim: #01cdfe; --line: #b967ff80 }
+html.vapor #scene { filter: sepia(1) hue-rotate(250deg) saturate(4) }
+html.vapor h1, html.vapor h2 { color: #fffb96; text-shadow: 3px 3px 0 #ff71ce, -3px -3px 0 #01cdfe }
+
+@media (prefers-reduced-motion: reduce) {
+  .crt, .glitch::before, .glitch::after, .reveal, .caret-text::after, .caret { animation: none }
+  .trail { display: none }
+}
