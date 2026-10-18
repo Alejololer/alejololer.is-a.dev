@@ -99,18 +99,20 @@ export function start(canvas: HTMLCanvasElement) {
     r.render(scene, cam);
   }
 
+  // calibration: the approved prototype stepped per frame on a ~300Hz monitor, so k = "300Hz frames elapsed"
+  const HZ = 300;
   function frame(now = performance.now()) {
-    const dt = Math.min(.1, (now - last) / 1000), k = dt * 60;
+    const dt = Math.min(.1, (now - last) / 1000), k = dt * HZ;
     last = now;
     const prevY = sy; sy += (scrollY - sy) * ease(.05, k);
-    t += dt;
+    t += .016 * k;
     s.x += (m.x - s.x) * ease(.03, k); s.y += (m.y - s.y) * ease(.03, k);
-    const v = Math.min(1, Math.abs(sy - prevY) / (22 * k || 1));        // ~22px per frame of smoothed scroll = full wobble
+    const v = Math.min(1, Math.abs(sy - prevY) / (22 * k || 1));        // ~22px per 300Hz frame of smoothed scroll = full wobble
     vel += (v - vel) * ease(v > vel ? .15 : .04, k);                     // quick to react, slow to settle back
-    z += 1.1 * dt;                                                       // steady, slow cruise (world units/s)
+    z += .018 * k;                                                       // steady cruise
     trail.forEach((g, i) => {
       const lead = i ? trail[i - 1] : cur;
-      g.x += (lead.x - g.x) * ease(.35, k); g.y += (lead.y - g.y) * ease(.35, k);
+      g.x += (lead.x - g.x) * ease(.35, Math.min(k, 5)); g.y += (lead.y - g.y) * ease(.35, Math.min(k, 5));
       g.el.style.translate = snap(g.x, g.y);
     });
     render();
