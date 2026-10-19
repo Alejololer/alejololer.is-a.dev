@@ -33,6 +33,7 @@ export const t = {
     },
     nav: {
       other: 'ES', otherHref: '/es/', otherLabel: 'Leer en español', label: 'Sections', hint: '0-7 jump',
+      prev: 'Previous section', next: 'Next section', list: 'All sections',
       sections: [['hero', 'whoami'], ['about', 'cat about'], ['experience', 'git log'], ['credentials', 'cat creds'], ['shipped', 'ls shipped'], ['lab', 'ls lab'], ['faq', 'man'], ['contact', './contact']],
     },
     hero: { cmd: 'whoami', lines: ['Built to last.', 'Designed to', 'be noticed.'], scroll: "scroll ↓ (it's worth it)" },
@@ -125,6 +126,7 @@ export const t = {
     },
     nav: {
       other: 'EN', otherHref: '/', otherLabel: 'Read in English', label: 'Secciones', hint: '0-8 saltar',
+      prev: 'Sección anterior', next: 'Sección siguiente', list: 'Todas las secciones',
       sections: [['hero', 'whoami'], ['about', 'cat sobre-mí'], ['experience', 'git log'], ['credentials', 'cat creds'], ['freelance', 'cat freelance'], ['shipped', 'ls proyectos'], ['lab', 'ls lab'], ['faq', 'man'], ['contact', './contacto']],
     },
     hero: { cmd: 'whoami', lines: ['Hecho para durar.', 'Diseñado para', 'que te vean.'], scroll: 'scroll ↓ (vale la pena)' },

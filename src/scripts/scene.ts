@@ -104,13 +104,14 @@ export function start(canvas: HTMLCanvasElement) {
 
   // knot ⇄ lambda: raycast clicks that land on the knot (ignored on controls or while selecting text)
   let lambda = false, mo = 0;
-  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+  // hit test against a sphere around the figure, not the exact tube: forgiving enough for a fingertip
+  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), ball = new THREE.Sphere();
   const overHero = (x: number, y: number) => {
     ray.setFromCamera(ndc.set(x / innerWidth * 2 - 1, 1 - y / innerHeight * 2), cam);
-    return ray.intersectObject(lambda ? lam : tk, true).length > 0;
+    return ray.ray.intersectsSphere(ball.set(hero.position, 2.7 * hero.scale.x));
   };
   const busyTarget = (el: EventTarget | null) =>
-    (el instanceof Element && !!el.closest('a, button, summary, input, textarea, .win, .tmux, .term, .includes'))
+    (el instanceof Element && !!el.closest('a, button, summary, input, textarea, .win, .tmux, .remote, .term, .includes'))
     || !!getSelection()?.toString();
   addEventListener('click', e => {
     if (busyTarget(e.target) || !overHero(e.clientX, e.clientY)) return;

@@ -28,7 +28,7 @@ img { max-width: 100%; height: auto; display: block }
 
 /* --- layout --- */
 main, footer { position: relative; z-index: 1 }
-section { min-height: 100vh; padding: 14vh var(--gutter); display: grid; align-content: center; gap: 1.5rem }
+section { min-height: 100vh; padding: 14vh var(--gutter); display: grid; grid-template-columns: minmax(0, 1fr); align-content: center; gap: 1.5rem }
 section.short { min-height: 70vh }
 
 .mono { font: 1.25rem/1.2 var(--font-mono); letter-spacing: .08em; color: var(--dim) }
@@ -146,7 +146,30 @@ footer a { text-decoration: none }
 .tmux a[aria-current]::after { content: "*" }
 .tmux .hint { color: #00000080 }
 @media (pointer: coarse) { .tmux .hint { display: none } }
-@media (max-width: 640px) { .tmux .session, .tmux .pos { display: none } .tmux { gap: .5rem } }
+.tmux .ch, .remote { display: none }
+
+/* --- phones: compact top bar + a TV remote within thumb reach --- */
+@media (max-width: 640px) {
+  .tmux { gap: .5rem }
+  .tmux ol, .tmux .pos { display: none }
+  .tmux .ch { display: block; margin-left: auto }
+  footer { padding-bottom: 9rem }
+  .remote { display: grid; position: fixed; z-index: 3; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); width: 7.25rem;
+    background: var(--hi); color: #000; border: 2px solid var(--hi); box-shadow: 4px 4px 0 #888; font-family: var(--font-mono) }
+  .remote button { all: unset; display: grid; place-items: center; min-height: 44px; cursor: pointer; text-align: center; -webkit-tap-highlight-color: transparent }
+  .remote button:focus-visible { outline: 2px solid #000; outline-offset: -4px }
+  .remote button:active { background: #000; color: var(--hi) }
+  .remote .up, .remote .down { font-size: 1.1rem }
+  .remote .up { border-bottom: 1px solid #00000033 } .remote .down { border-top: 1px solid #00000033 }
+  .remote .now { padding: .35rem .4rem; line-height: 1.05; gap: .1rem }
+  .remote .now b { font-size: 1.6rem; font-weight: 400 }
+  .remote .now span { font-size: 1rem; max-width: 6.5rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+  .remote-list { position: absolute; right: -2px; bottom: calc(100% + 12px); list-style: none; padding: .35rem 0; margin: 0; min-width: 13.5rem;
+    background: #000; border: 2px solid var(--hi); box-shadow: 4px 4px 0 #888 }
+  .remote-list a { display: block; padding: .6rem .9rem; color: var(--hi); text-decoration: none; font: 1.3rem var(--font-mono) }
+  .remote-list a[aria-current] { background: var(--hi); color: #000 }
+  .remote-list a[aria-current]::after { content: "*" }
+}
 
 /* --- CRT "channel change": screen collapses into a bright line, then opens back up --- */
 .tv { position: fixed; inset: 0; z-index: 6; pointer-events: none }

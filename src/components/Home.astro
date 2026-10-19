@@ -14,12 +14,23 @@ const ext = { target: '_blank', rel: 'noopener' };
     <svg class="logo" viewBox="-1.25 -1.25 2.5 2.5" aria-hidden="true"><circle r="1.08" fill="none" stroke="currentColor" stroke-width=".16" /><path fill="currentColor" transform="scale(.66)" d="M-.75-1H-.35L.8 1H.4L-.037.24-.45 1H-.85L-.2325-.1Z" /></svg>alejololer
   </a>
   <ol>
-    {c.nav.sections.map(([id, label], i) => <li><a href={`#${id}`} data-key={i} data-cursor={`[ ${i} ]`}>{i}:{label}</a></li>)}
+    {c.nav.sections.map(([id, label], i) => <li><a href={`#${id}`} data-key={i} data-label={label} data-cursor={`[ ${i} ]`}>{i}:{label}</a></li>)}
   </ol>
   <span class="pos" aria-hidden="true"><span class="hint">{c.nav.hint}</span> <b>Top</b></span>
+  <span class="ch" aria-hidden="true">CH 00</span>
   <a class="lang" href={c.nav.otherHref} hreflang={c.nav.other.toLowerCase()} lang={c.nav.other.toLowerCase()}>{c.nav.other}<span class="sr-only"> · {c.nav.otherLabel}</span></a>
 </nav>
 <div class="tv" aria-hidden="true"><u></u><i></i></div>
+
+<!-- phones: a TV remote within thumb reach. ▲/▼ change channel (section), the middle button lists them all -->
+<div class="remote" role="group" aria-label={c.nav.label}>
+  <ol class="remote-list" id="remote-list" hidden>
+    {c.nav.sections.map(([id, label], i) => <li><a href={`#${id}`} data-key={i}>{i}:{label}</a></li>)}
+  </ol>
+  <button class="up" type="button" aria-label={c.nav.prev}>▲</button>
+  <button class="now" type="button" aria-label={c.nav.list} aria-expanded="false" aria-controls="remote-list"><b class="ch">CH 00</b><span class="ch-name">whoami</span></button>
+  <button class="down" type="button" aria-label={c.nav.next}>▼</button>
+</div>
 
 <main>
   <section id="hero">
