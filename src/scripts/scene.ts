@@ -42,9 +42,21 @@ export function start(canvas: HTMLCanvasElement) {
       transformed += normal * n * 1.2 * uV;
     `);
   };
+  // easter egg: click the knot and it turns into a 3D lambda in a ring (and back). Own material: the scroll
+  // wobble would crack the extrusion's flat faces apart.
+  const lamMat = new THREE.MeshStandardMaterial({ color: 0xdddddd, flatShading: true, metalness: .2, roughness: .4, fog: false });
+  const LAMBDA: [number, number][] = [[-.75, 1], [-.35, 1], [.8, -1], [.4, -1], [-.037, -.24], [-.45, -1], [-.85, -1], [-.2325, .1]];
+  const lg = new THREE.ExtrudeGeometry(new THREE.Shape(LAMBDA.map(([x, y]) => new THREE.Vector2(x * 1.55, y * 1.55))),
+    { depth: .5, bevelEnabled: true, bevelThickness: .12, bevelSize: .07, bevelSegments: 2 });
+  lg.center();
+  const lam = new THREE.Group();
+  lam.add(new THREE.Mesh(lg, lamMat), new THREE.Mesh(new THREE.TorusGeometry(2.45, .2, 12, 96), lamMat));
+
   // the knot lives in its own layer, drawn after a depth clear: it floats above the terrain instead of sinking into it
   const fg = new THREE.Scene();
-  fg.add(tk);
+  const hero = new THREE.Group();
+  hero.add(tk, lam);
+  fg.add(hero);
   for (const layer of [scene, fg]) {
     layer.add(new THREE.AmbientLight(0xffffff, .25));
     const sun = new THREE.DirectionalLight(0xffffff, 2.2); sun.position.set(-10, 8, -20);
@@ -67,8 +79,8 @@ export function start(canvas: HTMLCanvasElement) {
     r.setSize(innerWidth, innerHeight, false);
     cam.aspect = innerWidth / innerHeight; cam.updateProjectionMatrix();
     narrow = cam.aspect < 1;
-    tk.scale.setScalar(narrow ? .7 : 1);
-    tk.material.color.set(narrow ? 0x555555 : 0xdddddd);   // on phones copy runs over the knot: dim it so white text keeps contrast
+    hero.scale.setScalar(narrow ? .7 : 1);
+    for (const mat of [tk.material, lamMat]) mat.color.set(narrow ? 0x555555 : 0xdddddd);   // on phones copy runs over the knot: dim it so white text keeps contrast
     if (still) render();
   }
 
@@ -89,6 +101,25 @@ export function start(canvas: HTMLCanvasElement) {
     return { el, x: -50, y: -50 };
   }) : [];
   const m = { x: 0, y: 0 }, s = { x: 0, y: 0 }, cur = { x: -50, y: -50 };
+
+  // knot ⇄ lambda: raycast clicks that land on the knot (ignored on controls or while selecting text)
+  let lambda = false, mo = 0;
+  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+  const overHero = (x: number, y: number) => {
+    ray.setFromCamera(ndc.set(x / innerWidth * 2 - 1, 1 - y / innerHeight * 2), cam);
+    return ray.intersectObject(lambda ? lam : tk, true).length > 0;
+  };
+  const busyTarget = (el: EventTarget | null) =>
+    (el instanceof Element && !!el.closest('a, button, summary, input, textarea, .win, .tmux, .term, .includes'))
+    || !!getSelection()?.toString();
+  addEventListener('click', e => {
+    if (busyTarget(e.target) || !overHero(e.clientX, e.clientY)) return;
+    lambda = !lambda;
+    vel = 1;                                  // the knot "shudders" as it morphs
+    if (caret?.classList.contains('hot')) caret.dataset.label = lambda ? '[ λ ]' : '[ ? ]';
+    if (still) { mo = lambda ? 1 : 0; render(); }
+  });
+
   if (caret && !coarse) {
     document.documentElement.classList.add('js');
     addEventListener('pointermove', e => {
@@ -97,8 +128,10 @@ export function start(canvas: HTMLCanvasElement) {
       caret.style.translate = snap(cur.x, cur.y);
       const el = e.target instanceof Element ? e.target : null;
       const hot = el?.closest<HTMLElement>('a, summary, [data-cursor]');
-      caret.classList.toggle('hot', !!hot);
+      const onHero = !hot && !busyTarget(el) && overHero(cur.x, cur.y);   // hint that the knot is clickable
+      caret.classList.toggle('hot', !!hot || onHero);
       if (hot) caret.dataset.label = hot.closest<HTMLElement>('[data-cursor]')?.dataset.cursor ?? defLabel;
+      else if (onHero) caret.dataset.label = lambda ? '[ λ ]' : '[ ? ]';
     });
   }
 
@@ -109,8 +142,13 @@ export function start(canvas: HTMLCanvasElement) {
     cam.updateMatrixWorld();
     ku.uV.value = vel; ku.uT.value = t;
     tk.rotation.set(t * .05 - s.y * .3, t * .07 + s.x * .3, 0);
+    lam.rotation.set(-s.y * .3, Math.sin(t * .2) * .45 + s.x * .4, 0);   // lambda stays readable: gentle sway, no tumbling
+    const e = mo * mo * (3 - 2 * mo);                                       // smoothstep: shrink one, grow the other
+    tk.scale.setScalar(1 - e); lam.scale.setScalar(e);
+    tk.visible = e < .999; lam.visible = e > .001;
+    hero.rotation.y = Math.sin(mo * Math.PI) * 2.4;                          // a spin through the swap
     knotTarget(pk, t);
-    tk.position.lerp(aim, placed ? glide : 1); placed = true;
+    hero.position.lerp(aim, placed ? glide : 1); placed = true;
     r.clear(); r.render(scene, cam);
     r.clearDepth(); r.render(fg, cam);
   }
@@ -127,6 +165,7 @@ export function start(canvas: HTMLCanvasElement) {
     const v = Math.min(1, Math.abs(sy - prevY) / (22 * k || 1));        // ~22px per 300Hz frame of smoothed scroll = full wobble
     vel += (v - vel) * ease(v > vel ? .15 : .04, k);                     // quick to react, slow to settle back
     z += .018 * k;                                                       // steady cruise
+    mo += ((lambda ? 1 : 0) - mo) * ease(.012, k);                       // ~0.6s knot ⇄ lambda morph
     trail.forEach((g, i) => {
       const lead = i ? trail[i - 1] : cur;
       g.x += (lead.x - g.x) * ease(.35, Math.min(k, 5)); g.y += (lead.y - g.y) * ease(.35, Math.min(k, 5));

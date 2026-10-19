@@ -10,7 +10,9 @@ const ext = { target: '_blank', rel: 'noopener' };
 ---
 <!-- tmux-style status bar (top): jump between sections by click or number keys, with a CRT "channel change" -->
 <nav class="tmux" aria-label={c.nav.label}>
-  <a class="session" href={lang === 'es' ? '/es/' : '/'}>[alejololer]</a>
+  <a class="session" href={lang === 'es' ? '/es/' : '/'}>
+    <svg class="logo" viewBox="-1.25 -1.25 2.5 2.5" aria-hidden="true"><circle r="1.08" fill="none" stroke="currentColor" stroke-width=".16" /><path fill="currentColor" transform="scale(.66)" d="M-.75-1H-.35L.8 1H.4L-.037.24-.45 1H-.85L-.2325-.1Z" /></svg>alejololer
+  </a>
   <ol>
     {c.nav.sections.map(([id, label], i) => <li><a href={`#${id}`} data-key={i} data-cursor={`[ ${i} ]`}>{i}:{label}</a></li>)}
   </ol>
