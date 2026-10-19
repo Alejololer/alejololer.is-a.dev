@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { TessellateModifier } from 'three/addons/modifiers/TessellateModifier.js';
 
 // Port of prototypes/3-terminal-dream.html. Rule: everything slow, nothing dizzying.
 export function start(canvas: HTMLCanvasElement) {
@@ -42,14 +43,24 @@ export function start(canvas: HTMLCanvasElement) {
       transformed += normal * n * 1.2 * uV;
     `);
   };
-  // easter egg: click the knot and it turns into a 3D lambda in a ring (and back). Own material: the scroll
-  // wobble would crack the extrusion's flat faces apart.
+  // easter egg: click the knot and it turns into a 3D lambda in a ring (and back). Same scroll wobble, but displaced
+  // by position only: the extrusion's flat faces have duplicated vertices, and pushing them along their normals would
+  // crack it apart. Tessellated so it bends in visible facets, like the knot; crisp and flat again at rest.
   const lamMat = new THREE.MeshStandardMaterial({ color: 0xdddddd, flatShading: true, metalness: .2, roughness: .4, fog: false });
+  lamMat.onBeforeCompile = sh => {
+    Object.assign(sh.uniforms, ku);
+    sh.vertexShader = 'uniform float uV, uT;\n' + sh.vertexShader.replace('#include <begin_vertex>', `
+      vec3 p = position, transformed = position;
+      transformed += sin(p.yzx * vec3(2.4, 2.7, 2.1) + uT * vec3(-1.1, .9, 1.3)) * sin(dot(p, vec3(1.7, 1.3, 1.1)) + uT) * .35 * uV;
+    `);
+  };
   const LAMBDA: [number, number][] = [[-.75, 1], [-.35, 1], [.8, -1], [.4, -1], [-.037, -.24], [-.45, -1], [-.85, -1], [-.2325, .1]];
-  const lg = new THREE.ExtrudeGeometry(new THREE.Shape(LAMBDA.map(([x, y]) => new THREE.Vector2(x * 1.55, y * 1.55))),
-    { depth: .5, bevelEnabled: true, bevelThickness: .12, bevelSize: .07, bevelSegments: 2 });
+  // high iteration cap: the modifier stops once no edge is too long, so shared edges always split alike (no T-junction pinholes)
+  const lg = new TessellateModifier(.4, 20).modify(new THREE.ExtrudeGeometry(new THREE.Shape(LAMBDA.map(([x, y]) => new THREE.Vector2(x * 1.55, y * 1.55))),
+    { depth: .5, bevelEnabled: true, bevelThickness: .12, bevelSize: .07, bevelSegments: 2 }));
   lg.center();
-  const lam = new THREE.Group();
+  const lam = new THREE.Group(), look = new THREE.Vector3();
+  lam.rotation.order = 'YXZ';   // yaw toward the camera, then pitch
   lam.add(new THREE.Mesh(lg, lamMat), new THREE.Mesh(new THREE.TorusGeometry(2.45, .2, 12, 96), lamMat));
 
   // the knot lives in its own layer, drawn after a depth clear: it floats above the terrain instead of sinking into it
@@ -143,13 +154,16 @@ export function start(canvas: HTMLCanvasElement) {
     cam.updateMatrixWorld();
     ku.uV.value = vel; ku.uT.value = t;
     tk.rotation.set(t * .05 - s.y * .3, t * .07 + s.x * .3, 0);
-    lam.rotation.set(-s.y * .3, Math.sin(t * .2) * .45 + s.x * .4, 0);   // lambda stays readable: gentle sway, no tumbling
     const e = mo * mo * (3 - 2 * mo);                                       // smoothstep: shrink one, grow the other
     tk.scale.setScalar(1 - e); lam.scale.setScalar(e);
     tk.visible = e < .999; lam.visible = e > .001;
     hero.rotation.y = Math.sin(mo * Math.PI) * 2.4;                          // a spin through the swap
     knotTarget(pk, t);
     hero.position.lerp(aim, placed ? glide : 1); placed = true;
+    // lambda stays readable: it turns to face the camera wherever it roams (off-center, perspective made it look away),
+    // then a gentle sway, no tumbling
+    look.subVectors(cam.position, hero.position).normalize();
+    lam.rotation.set(-Math.asin(look.y) - s.y * .3, Math.atan2(look.x, look.z) + Math.sin(t * .2) * .3 + s.x * .4, 0);
     r.clear(); r.render(scene, cam);
     r.clearDepth(); r.render(fg, cam);
   }
