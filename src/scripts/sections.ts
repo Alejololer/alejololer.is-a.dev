@@ -26,6 +26,7 @@ if (bar && tv) {
     target.scrollIntoView({ behavior: 'instant' });
     await wait(70);
     tv!.classList.replace('off', 'static');   // reopen through a burst of static…
+    dispatchEvent(new Event('tv:on'));        // …and the 3D scene runs a refresh beam (scene.ts / fx.ts)
     await wait(260);
     tv!.classList.remove('static');           // …that fades out
     busy = false;

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { TessellateModifier } from 'three/addons/modifiers/TessellateModifier.js';
+import { addFx } from './fx';
 
 // Port of prototypes/3-terminal-dream.html. Rule: everything slow, nothing dizzying.
 export function start(canvas: HTMLCanvasElement) {
@@ -68,12 +69,15 @@ export function start(canvas: HTMLCanvasElement) {
   const hero = new THREE.Group();
   hero.add(tk, lam);
   fg.add(hero);
+  let fgKey!: THREE.DirectionalLight;
   for (const layer of [scene, fg]) {
     layer.add(new THREE.AmbientLight(0xffffff, .25));
     const sun = new THREE.DirectionalLight(0xffffff, 2.2); sun.position.set(-10, 8, -20);
     const key = new THREE.DirectionalLight(0xffffff, 1); key.position.set(6, 10, 15);
     layer.add(sun, key);
+    fgKey = key;   // fg goes last: the figure's own key light
   }
+  const fx = addFx({ land, heroMats: [tk.material, lamMat], key: fgKey, px: r.getPixelRatio() });
   r.autoClear = false;
 
   // the knot roams the free space as you scroll: a slow Lissajous path in screen space (NDC),
@@ -164,6 +168,7 @@ export function start(canvas: HTMLCanvasElement) {
     // then a gentle sway, no tumbling
     look.subVectors(cam.position, hero.position).normalize();
     lam.rotation.set(-Math.asin(look.y) - s.y * .3, Math.atan2(look.x, look.z) + Math.sin(t * .2) * .3 + s.x * .4, 0);
+    fx(t, pk, r.domElement.height, narrow);
     r.clear(); r.render(scene, cam);
     r.clearDepth(); r.render(fg, cam);
   }
