@@ -8,10 +8,16 @@ const c = t[lang];
 const mail = (subject: string) => `mailto:${person.email}?subject=${encodeURIComponent(subject)}`;
 const ext = { target: '_blank', rel: 'noopener' };
 ---
-<nav class="top" aria-label={lang === 'es' ? 'Principal' : 'Main'}>
-  <a href={lang === 'es' ? '/es/' : '/'}>alejololer@quito:~$</a>
-  <a href={c.nav.otherHref} hreflang={c.nav.other.toLowerCase()} lang={c.nav.other.toLowerCase()}>{c.nav.other}<span class="sr-only"> · {c.nav.otherLabel}</span></a>
+<!-- tmux-style status bar (top): jump between sections by click or number keys, with a CRT "channel change" -->
+<nav class="tmux" aria-label={c.nav.label}>
+  <a class="session" href={lang === 'es' ? '/es/' : '/'}>[alejololer]</a>
+  <ol>
+    {c.nav.sections.map(([id, label], i) => <li><a href={`#${id}`} data-key={i} data-cursor={`[ ${i} ]`}>{i}:{label}</a></li>)}
+  </ol>
+  <span class="pos" aria-hidden="true"><span class="hint">{c.nav.hint}</span> <b>Top</b></span>
+  <a class="lang" href={c.nav.otherHref} hreflang={c.nav.other.toLowerCase()} lang={c.nav.other.toLowerCase()}>{c.nav.other}<span class="sr-only"> · {c.nav.otherLabel}</span></a>
 </nav>
+<div class="tv" aria-hidden="true"><u></u><i></i></div>
 
 <main>
   <section id="hero">
@@ -132,3 +138,8 @@ const ext = { target: '_blank', rel: 'noopener' };
   <span>// {c.footer}</span>
   <a href={c.nav.otherHref} hreflang={c.nav.other.toLowerCase()}>{c.nav.otherLabel} →</a>
 </footer>
+
+
+<script>
+  import '../scripts/sections';
+</script>

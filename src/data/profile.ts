@@ -31,7 +31,10 @@ export const t = {
       title: 'Alejololer · Carlos Alejandro Alemán, Software Engineer',
       description: 'Software Engineer in Quito, Ecuador, building production web products with Django, Next.js, Astro and LLMs.',
     },
-    nav: { other: 'ES', otherHref: '/es/', otherLabel: 'Leer en español' },
+    nav: {
+      other: 'ES', otherHref: '/es/', otherLabel: 'Leer en español', label: 'Sections', hint: '0-7 jump',
+      sections: [['hero', 'whoami'], ['about', 'cat about'], ['experience', 'git log'], ['credentials', 'cat creds'], ['shipped', 'ls shipped'], ['lab', 'ls lab'], ['faq', 'man'], ['contact', './contact']],
+    },
     hero: { cmd: 'whoami', lines: ['Built to last.', 'Designed to', 'be noticed.'], scroll: "scroll ↓ (it's worth it)" },
     about: {
       cmd: 'cat about.txt',
@@ -120,7 +123,10 @@ export const t = {
       title: 'Alejololer · Carlos Alejandro Alemán, ingeniero de software',
       description: 'Ingeniero de software en Quito, Ecuador. Construyo productos web en producción con Django, Next.js, Astro y LLMs, y sitios para negocios locales con SEO, GEO y AEO.',
     },
-    nav: { other: 'EN', otherHref: '/', otherLabel: 'Read in English' },
+    nav: {
+      other: 'EN', otherHref: '/', otherLabel: 'Read in English', label: 'Secciones', hint: '0-8 saltar',
+      sections: [['hero', 'whoami'], ['about', 'cat sobre-mí'], ['experience', 'git log'], ['credentials', 'cat creds'], ['freelance', 'cat freelance'], ['shipped', 'ls proyectos'], ['lab', 'ls lab'], ['faq', 'man'], ['contact', './contacto']],
+    },
     hero: { cmd: 'whoami', lines: ['Hecho para durar.', 'Diseñado para', 'que te vean.'], scroll: 'scroll ↓ (vale la pena)' },
     about: {
       cmd: 'cat sobre-mi.txt',

@@ -28,9 +28,6 @@ img { max-width: 100%; height: auto; display: block }
 
 /* --- layout --- */
 main, footer { position: relative; z-index: 1 }
-nav.top { position: fixed; z-index: 3; top: 0; inset-inline: 0; display: flex; justify-content: space-between; align-items: center; padding: .875rem var(--gutter); font: 1.25rem/1 var(--font-mono); mix-blend-mode: difference }
-nav.top a { text-decoration: none; color: #fff }
-nav.top a:hover { text-decoration: underline }
 section { min-height: 100vh; padding: 14vh var(--gutter); display: grid; align-content: center; gap: 1.5rem }
 section.short { min-height: 70vh }
 
@@ -136,6 +133,34 @@ footer a { text-decoration: none }
 .caret.hot ~ .trail { display: none }
 @media (pointer: fine) { html.js, html.js a, html.js summary, html.js .win { cursor: none } }
 @media (pointer: coarse) { .caret, .trail { display: none } }
+
+/* --- tmux status bar (top) --- */
+.tmux { position: fixed; z-index: 3; left: 0; right: 0; top: 0; height: 2rem; display: flex; align-items: center; gap: 1rem; padding: 0 var(--gutter); background: var(--hi); color: #000; font: 1.125rem/1 var(--font-mono); white-space: nowrap }
+.tmux ol { list-style: none; padding: 0; display: flex; gap: .2rem; flex: 1; overflow-x: auto; scrollbar-width: none }
+.tmux a { display: block; padding: .25rem .45rem; text-decoration: none }
+.tmux .lang { border-left: 1px solid #0000004d; padding-left: .8rem }
+.tmux a:hover { background: #0000001f }
+.tmux a[aria-current] { background: #000; color: var(--hi) }
+.tmux a[aria-current]::after { content: "*" }
+.tmux .hint { color: #00000080 }
+@media (pointer: coarse) { .tmux .hint { display: none } }
+@media (max-width: 640px) { .tmux .session, .tmux .pos { display: none } .tmux { gap: .5rem } }
+
+/* --- CRT "channel change": screen collapses into a bright line, then opens back up --- */
+.tv { position: fixed; inset: 0; z-index: 6; pointer-events: none }
+.tv::before, .tv::after { content: ""; position: absolute; left: 0; right: 0; height: 0; background: #000; transition: height .17s cubic-bezier(.7, 0, .3, 1) }
+.tv::before { top: 0 } .tv::after { bottom: 0 }
+.tv i { position: absolute; z-index: 2; left: 0; right: 0; top: 50%; height: 2px; margin-top: -1px; background: #fff; box-shadow: 0 0 14px 3px #fff; opacity: 0; transform: scaleX(0); transition: transform .2s ease-in, opacity .2s }
+.tv.off::before, .tv.off::after { height: 50% }
+.tv.off i { opacity: 1; transform: scaleX(1); transition: transform .12s ease-out, opacity .05s }
+/* static: grainy snow + a rolling bright band, strongest while the screen reopens, then it fades out */
+.tv u { position: absolute; inset: 0; z-index: 1; opacity: 0; transition: opacity .45s ease-out; mix-blend-mode: screen;
+  background: linear-gradient(#0000 0 46%, #ffffff30 50%, #0000 54%) 0 0 / 100% 300%,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: snow .18s steps(3) infinite, roll .5s linear infinite }
+.tv.off u, .tv.static u { opacity: .7; transition: opacity .06s }
+@keyframes snow { 33% { background-position: 0 0, -60px 40px } 66% { background-position: 0 0, 50px -70px } }
+@keyframes roll { to { background-position: 0 100%, 0 0 } }
 
 /* --- konami: full vaporwave for 10s --- */
 html.vapor { --hi: #ff71ce; --dim: #01cdfe; --line: #b967ff80 }
