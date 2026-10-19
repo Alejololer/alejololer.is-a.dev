@@ -148,17 +148,18 @@ footer a { text-decoration: none }
 
 /* --- CRT "channel change": screen collapses into a bright line, then opens back up --- */
 .tv { position: fixed; inset: 0; z-index: 6; pointer-events: none }
-.tv::before, .tv::after { content: ""; position: absolute; left: 0; right: 0; height: 0; background: #000; transition: height .17s cubic-bezier(.7, 0, .3, 1) }
+.tv::before, .tv::after { content: ""; position: absolute; z-index: 1; left: 0; right: 0; height: 0; background: #000; transition: height .17s cubic-bezier(.7, 0, .3, 1) }
 .tv::before { top: 0 } .tv::after { bottom: 0 }
 .tv i { position: absolute; z-index: 2; left: 0; right: 0; top: 50%; height: 2px; margin-top: -1px; background: #fff; box-shadow: 0 0 14px 3px #fff; opacity: 0; transform: scaleX(0); transition: transform .2s ease-in, opacity .2s }
 .tv.off::before, .tv.off::after { height: 50% }
 .tv.off i { opacity: 1; transform: scaleX(1); transition: transform .12s ease-out, opacity .05s }
-/* static: grainy snow + a rolling bright band, strongest while the screen reopens, then it fades out */
-.tv u { position: absolute; inset: 0; z-index: 1; opacity: 0; transition: opacity .45s ease-out; mix-blend-mode: screen;
+/* static: grainy snow + a rolling bright band. Only while reopening, and *under* the black shutters,
+   so it only shows on the slice of the site being revealed; then it fades out */
+.tv u { position: absolute; inset: 0; z-index: 0; opacity: 0; transition: opacity .45s ease-out; mix-blend-mode: screen;
   background: linear-gradient(#0000 0 46%, #ffffff30 50%, #0000 54%) 0 0 / 100% 300%,
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   animation: snow .18s steps(3) infinite, roll .5s linear infinite }
-.tv.off u, .tv.static u { opacity: .7; transition: opacity .06s }
+.tv.static u { opacity: .6; transition: opacity .06s }
 @keyframes snow { 33% { background-position: 0 0, -60px 40px } 66% { background-position: 0 0, 50px -70px } }
 @keyframes roll { to { background-position: 0 100%, 0 0 } }
 
