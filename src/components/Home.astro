@@ -28,7 +28,7 @@ const ext = { target: '_blank', rel: 'noopener' };
     {c.nav.sections.map(([id, label], i) => <li><a href={`#${id}`} data-key={i}>{i}:{label}</a></li>)}
   </ol>
   <button class="up" type="button" aria-label={c.nav.prev}>▲</button>
-  <button class="now" type="button" aria-label={c.nav.list} aria-expanded="false" aria-controls="remote-list"><b class="ch">CH 00</b><span class="ch-name">whoami</span></button>
+  <button class="now" type="button" aria-expanded="false" aria-controls="remote-list"><b class="ch">CH 00</b><span class="ch-name">whoami</span><span class="sr-only"> · {c.nav.list}</span></button>
   <button class="down" type="button" aria-label={c.nav.next}>▼</button>
 </div>
 

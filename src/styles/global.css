@@ -144,7 +144,7 @@ footer a { text-decoration: none }
 .tmux a:hover { background: #0000001f }
 .tmux a[aria-current] { background: #000; color: var(--hi) }
 .tmux a[aria-current]::after { content: "*" }
-.tmux .hint { color: #00000080 }
+.tmux .hint { color: #00000099 }
 @media (pointer: coarse) { .tmux .hint { display: none } }
 .tmux .ch, .remote { display: none }
 
