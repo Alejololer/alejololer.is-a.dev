@@ -130,8 +130,19 @@ const ext = { target: '_blank', rel: 'noopener' };
   <section id="faq" class="short" aria-labelledby="faq-h">
     <p class="mono cmd reveal">{c.faq.cmd}</p>
     <h2 id="faq-h" class="reveal">{c.faq.title}</h2>
-    <div class="faq">
-      {c.faq.items.map(f => <details><summary data-cursor={lang === 'es' ? '[ ver ]' : '[ read ]'}>{f.q}</summary><p>{f.a}</p></details>)}
+    <!-- a man page: each question is a flag; opening one "runs" it (see the man styles) -->
+    <div class="man">
+      <p class="man-head" aria-hidden="true"><span>ALEJOLOLER(1)</span><span>{c.faq.manual}</span><span>ALEJOLOLER(1)</span></p>
+      <p class="man-sec" aria-hidden="true">{c.faq.options}</p>
+      {c.faq.items.map(f => (
+        <details name="faq">
+          <summary data-cursor="[ RET ]"><code aria-hidden="true">{f.flag}</code><span>{f.q}</span></summary>
+          <div class="out">
+            <p class="run" aria-hidden="true" style={`--n:${f.flag.length + 13}`}>$ alejololer {f.flag}</p>
+            <p class="ans">{f.a}</p>
+          </div>
+        </details>
+      ))}
     </div>
   </section>
 
@@ -155,4 +166,17 @@ const ext = { target: '_blank', rel: 'noopener' };
 
 <script>
   import '../scripts/sections';
+
+  // closing a man flag "quits" it: the output collapses to a line before the <details> shuts
+  for (const d of document.querySelectorAll<HTMLDetailsElement>('.man details')) {
+    const out = d.querySelector<HTMLElement>('.out')!;
+    out.addEventListener('animationend', a => {
+      if (a.animationName === 'tvoff') { d.classList.remove('closing'); d.open = false; }
+    });
+    d.querySelector('summary')!.addEventListener('click', e => {
+      if (!d.open || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      e.preventDefault();
+      d.classList.add('closing');
+    });
+  }
 </script>

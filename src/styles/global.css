@@ -6,6 +6,7 @@
   --line: #ffffff40;
   --accent: #fff;
   --gutter: clamp(16px, 6vw, 10rem);
+  --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   color-scheme: dark;
 }
 * { box-sizing: border-box; margin: 0 }
@@ -104,13 +105,42 @@ p.lead { max-width: 62ch; color: #cfcfcf; font-size: 1.15rem }
 .btn.ghost { background: transparent; color: var(--hi) }
 
 /* --- faq --- */
-.faq { max-width: 54rem; display: grid; gap: 0; border-top: 1px solid var(--line) }
-.faq details { border-bottom: 1px solid var(--line); padding: 1.1rem 0; background: #000a }
-.faq summary { cursor: pointer; font: 500 1.25rem/1.3 var(--font-sans); list-style: none; display: flex; justify-content: space-between; gap: 16px }
-.faq summary::-webkit-details-marker { display: none }
-.faq summary::after { content: "[+]"; font: 1.25rem var(--font-mono); color: var(--dim) }
-.faq details[open] summary::after { content: "[−]" }
-.faq p { margin-top: .6rem; color: #bbb; max-width: 70ch }
+/* a man page: each question is a flag. Opening one "runs" it: the command types itself, the output panel
+   powers on like a CRT (bright line → open, through a burst of static) and the answer prints line by line.
+   Closing collapses it back to a line. The answer is plain text in the DOM the whole time (SEO, screen readers). */
+.man { max-width: 54rem; font: 1.25rem/1.45 var(--font-mono); background: #000b; border: 1px solid var(--line); padding: 1rem 1.25rem 1.25rem }
+.man-head { display: flex; justify-content: space-between; gap: 1rem; color: var(--dim); margin-bottom: 1rem }
+.man-sec { color: var(--hi); letter-spacing: .08em; margin-bottom: .25rem }
+.man summary { cursor: pointer; list-style: none; display: grid; grid-template-columns: 11ch 1fr auto; grid-auto-flow: dense; gap: .1rem 1rem; align-items: baseline; padding: .3rem .6rem; margin: 0 -.6rem }
+.man summary::-webkit-details-marker { display: none }
+.man summary code { font: inherit; color: var(--hi) }
+.man summary span { font: 500 1.125rem/1.35 var(--font-sans); color: var(--fg) }
+.man summary::after { content: "[RET]"; color: var(--dim) }
+.man details[open] summary::after { content: "[q]" }
+.man summary:hover, .man details[open] summary { background: var(--hi) }
+.man summary:hover *, .man summary:hover::after, .man details[open] summary *, .man details[open] summary::after { color: #000 }
+.out { position: relative; margin: .5rem 0 .9rem 2ch; padding: .5rem 1rem .7rem; border-left: 2px solid var(--hi); overflow: hidden }
+.out::before { content: ""; position: absolute; inset: 0; background: var(--noise); mix-blend-mode: screen; opacity: 0; pointer-events: none }
+.run { color: var(--dim); white-space: nowrap; overflow: hidden; width: calc(var(--n) * 1ch); max-width: 100% }
+.ans { margin-top: .3rem; color: #ccc; max-width: 70ch; mask: linear-gradient(#000 0 0) no-repeat }
+.ans::after { content: "█"; font-family: var(--font-mono); color: var(--hi); margin-left: 3px; animation: blink 1s steps(1) infinite }
+.man details[open] .out { animation: tvon .3s cubic-bezier(.2, .8, .3, 1) }
+.man details[open] .out::before { animation: hiss .5s ease-out, snow1 .18s steps(3) infinite }
+.man details[open] .run { animation: type .3s steps(var(--n)) .12s backwards }
+.man details[open] .ans { animation: print .42s steps(6) .45s backwards }
+.man details.closing .out { animation: tvoff .18s ease-in forwards }
+@keyframes tvon { 0% { transform: scaleY(.03); filter: brightness(4) } 60% { transform: none; filter: brightness(1.8) } }
+@keyframes tvoff { to { transform: scaleY(.03); filter: brightness(4); opacity: 0 } }
+@keyframes hiss { from { opacity: .55 } to { opacity: 0 } }
+@keyframes snow1 { 33% { background-position: -60px 40px } 66% { background-position: 50px -70px } }
+@keyframes type { from { width: 0 } }
+@keyframes print { from { mask-size: 100% 0 } to { mask-size: 100% 6lh } }   /* steps(6): one line per step */
+@media (max-width: 640px) {
+  .man { padding: .8rem .9rem 1rem }
+  .man-head span:last-child { display: none }
+  .man summary { grid-template-columns: 1fr auto }
+  .man summary span { grid-column: 1 / -1 }
+}
 
 /* --- contact --- */
 .links { display: flex; flex-wrap: wrap; gap: .875rem 1.75rem; font: 1.5rem var(--font-mono) }
@@ -182,7 +212,7 @@ footer a { text-decoration: none }
    so it only shows on the slice of the site being revealed; then it fades out */
 .tv u { position: absolute; inset: 0; z-index: 0; opacity: 0; transition: opacity .45s ease-out; mix-blend-mode: screen;
   background: linear-gradient(#0000 0 46%, #ffffff30 50%, #0000 54%) 0 0 / 100% 300%,
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    var(--noise);
   animation: snow .18s steps(3) infinite, roll .5s linear infinite }
 .tv.static u { opacity: .6; transition: opacity .06s }
 @keyframes snow { 33% { background-position: 0 0, -60px 40px } 66% { background-position: 0 0, 50px -70px } }
@@ -196,4 +226,5 @@ html.vapor h1, html.vapor h2 { color: #fffb96; text-shadow: 3px 3px 0 #ff71ce, -
 @media (prefers-reduced-motion: reduce) {
   .crt, .glitch::before, .glitch::after, .reveal, .caret-text::after, .caret { animation: none }
   .trail { display: none }
+  .man .out, .man .out::before, .man .run, .man .ans, .ans::after { animation: none !important }
 }

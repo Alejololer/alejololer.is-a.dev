@@ -102,12 +102,14 @@ export const t = {
     faq: {
       cmd: 'man alejololer',
       title: 'FAQ',
+      manual: 'User Commands',
+      options: 'OPTIONS',
       items: [
-        { q: 'Who is Alejololer?', a: 'Carlos Alejandro Alemán Osorio, a Software Engineer in Quito, Ecuador, working with Django, Next.js, Astro and LLMs.' },
-        { q: 'Are you available for freelance work?', a: 'Yes. I build websites for small businesses, with SEO, GEO and AEO included.' },
-        { q: "What's your stack?", a: 'Python/Django, TypeScript/Next.js, Astro, PostgreSQL, Azure and Vercel, plus LLM integration (RAG, structured extraction).' },
-        { q: 'Where are you based?', a: 'Quito, Ecuador. I work remotely with clients anywhere.' },
-        { q: 'Why the username?', a: 'I needed one, this one showed up, and it never left. Like most good decisions.' },
+        { flag: '--whoami', q: 'Who is Alejololer?', a: 'Carlos Alejandro Alemán Osorio, a Software Engineer in Quito, Ecuador, working with Django, Next.js, Astro and LLMs.' },
+        { flag: '--freelance', q: 'Are you available for freelance work?', a: 'Yes. I build websites for small businesses, with SEO, GEO and AEO included.' },
+        { flag: '--stack', q: "What's your stack?", a: 'Python/Django, TypeScript/Next.js, Astro, PostgreSQL, Azure and Vercel, plus LLM integration (RAG, structured extraction).' },
+        { flag: '--location', q: 'Where are you based?', a: 'Quito, Ecuador. I work remotely with clients anywhere.' },
+        { flag: '--username', q: 'Why the username?', a: 'I needed one, this one showed up, and it never left. Like most good decisions.' },
       ],
     },
     contact: {
@@ -209,12 +211,14 @@ export const t = {
     faq: {
       cmd: 'man alejololer',
       title: 'Preguntas frecuentes',
+      manual: 'Manual de usuario',
+      options: 'OPCIONES',
       items: [
-        { q: '¿Haces páginas web para negocios?', a: 'Sí, como freelance. Los construyo con SEO, GEO y AEO para que se encuentren en Google y en asistentes de IA.' },
-        { q: '¿Cuánto tarda un sitio?', a: 'De días a semanas, según el nivel de detalle.' },
-        { q: '¿Qué es GEO y AEO?', a: 'GEO es optimizar para que los asistentes de IA (ChatGPT, Gemini) mencionen tu negocio. AEO es estructurar tu contenido para dar respuestas directas a lo que pregunta la gente.' },
-        { q: '¿Trabajas fuera de Quito?', a: 'Sí. Trabajo de forma remota con negocios de todo Ecuador.' },
-        { q: '¿Quién es Alejololer?', a: 'Carlos Alejandro Alemán Osorio, ingeniero de software en Quito, Ecuador, que trabaja con Django, Next.js, Astro y LLMs.' },
+        { flag: '--negocios', q: '¿Haces páginas web para negocios?', a: 'Sí, como freelance. Los construyo con SEO, GEO y AEO para que se encuentren en Google y en asistentes de IA.' },
+        { flag: '--tiempo', q: '¿Cuánto tarda un sitio?', a: 'De días a semanas, según el nivel de detalle.' },
+        { flag: '--geo-aeo', q: '¿Qué es GEO y AEO?', a: 'GEO es optimizar para que los asistentes de IA (ChatGPT, Gemini) mencionen tu negocio. AEO es estructurar tu contenido para dar respuestas directas a lo que pregunta la gente.' },
+        { flag: '--remoto', q: '¿Trabajas fuera de Quito?', a: 'Sí. Trabajo de forma remota con negocios de todo Ecuador.' },
+        { flag: '--whoami', q: '¿Quién es Alejololer?', a: 'Carlos Alejandro Alemán Osorio, ingeniero de software en Quito, Ecuador, que trabaja con Django, Next.js, Astro y LLMs.' },
       ],
     },
     contact: {
