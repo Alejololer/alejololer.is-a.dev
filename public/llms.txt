@@ -23,5 +23,6 @@ Carlos Alejandro Alemán Osorio (online: Alejololer) works at Upstart 13 buildin
 - [Portfolio (English)](https://alejololer.is-a.dev/)
 - [Portafolio (Español)](https://alejololer.is-a.dev/es/)
 - [CV (PDF)](https://alejololer.is-a.dev/cv.pdf)
+- [CV en español (PDF)](https://alejololer.is-a.dev/cv-es.pdf)
 - [GitHub](https://github.com/Alejololer)
 - [LinkedIn](https://www.linkedin.com/in/alejoaleman)

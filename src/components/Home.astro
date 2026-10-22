@@ -153,7 +153,7 @@ const ext = { target: '_blank', rel: 'noopener' };
       <a href={mail(c.contact.mailSubject)}>{person.email}</a>
       <a href={person.linkedin} {...ext}>LinkedIn</a>
       <a href={person.github} {...ext}>GitHub</a>
-      <a href={person.cv} download="Carlos_Aleman_CV.pdf" data-cursor="[ pdf ]">{c.contact.cv}</a>
+      <a href={c.contact.cvHref} download={c.contact.cvFile} data-cursor="[ pdf ]">{c.contact.cv}</a>
     </div>
   </section>
 </main>
