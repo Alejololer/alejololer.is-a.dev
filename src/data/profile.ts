@@ -74,6 +74,7 @@ export const t = {
       items: [
         { k: 'B.Eng. Software Engineering', v: 'Escuela Politécnica Nacional · 2021–2026 · grade 28/30' },
         { k: 'Azure Administrator Associate (AZ-104)', v: 'Microsoft Certified · Oct 2026' },
+        { k: 'Claude Certified Developer', v: 'Anthropic · Oct 2026' },
       ],
     },
     service: null,
@@ -171,6 +172,7 @@ export const t = {
       items: [
         { k: 'Ingeniería de Software', v: 'Escuela Politécnica Nacional · 2021–2026 · nota 28/30' },
         { k: 'Azure Administrator Associate (AZ-104)', v: 'Microsoft Certified · Oct 2026' },
+        { k: 'Claude Certified Developer', v: 'Anthropic · Oct 2026' },
       ],
     },
     // ponytail: portfolio tone on purpose — is-a.dev only accepts non-commercial sites, so this describes the work, it doesn't sell it

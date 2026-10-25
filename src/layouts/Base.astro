@@ -20,7 +20,10 @@ const graph: Record<string, unknown>[] = [
     address: { '@type': 'PostalAddress', addressLocality: person.city, addressCountry: person.country },
     worksFor: { '@type': 'Organization', name: 'Upstart 13' },
     alumniOf: { '@type': 'CollegeOrUniversity', name: 'Escuela Politécnica Nacional', sameAs: 'https://www.epn.edu.ec' },
-    hasCredential: { '@type': 'EducationalOccupationalCredential', name: 'Microsoft Certified: Azure Administrator Associate (AZ-104)', credentialCategory: 'certification', recognizedBy: { '@type': 'Organization', name: 'Microsoft' } },
+    hasCredential: [
+      { '@type': 'EducationalOccupationalCredential', name: 'Microsoft Certified: Azure Administrator Associate (AZ-104)', credentialCategory: 'certification', recognizedBy: { '@type': 'Organization', name: 'Microsoft' } },
+      { '@type': 'EducationalOccupationalCredential', name: 'Claude Certified Developer', credentialCategory: 'certification', recognizedBy: { '@type': 'Organization', name: 'Anthropic' } },
+    ],
     knowsAbout: ['Python', 'Django', 'TypeScript', 'Next.js', 'Astro', 'Large Language Models', 'Retrieval-Augmented Generation', 'Microsoft Azure', 'Vercel', 'SEO', 'Generative Engine Optimization', 'Answer Engine Optimization'],
     knowsLanguage: ['es', 'en'],
     sameAs: [person.github, person.linkedin],
