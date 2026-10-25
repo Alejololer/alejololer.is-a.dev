@@ -40,7 +40,7 @@ export const t = {
       cmd: 'cat about.txt',
       title: 'I turn days into hours.',
       sub: 'Mostly with LLMs, occasionally with coffee.',
-      body: "I'm Carlos Alejandro Alemán, better known as Alejololer. I'm a Software Engineer at Upstart 13, where I build LLM features that turn messy business documents into structured data and cut drafting time from days to hours. On the side I design and ship websites for small businesses that actually get found. I graduated from Escuela Politécnica Nacional and I'm a Microsoft Certified Azure Administrator.",
+      body: "I'm Carlos Alejandro Alemán, better known as Alejololer. I'm a Software Engineer at Upstart 13, where I build LLM features that turn messy business documents into structured data and cut drafting time from days to hours. On the side I design and ship websites for small businesses that actually get found. I graduated from Escuela Politécnica Nacional and I'm a Microsoft Certified Azure Administrator and a Claude Certified Developer.",
       term: [['name', 'Carlos Alejandro Alemán'], ['role', 'Software Engineer @ Upstart 13'], ['stack', 'Django · Next.js · Astro · LLMs · Azure'], ['based', 'Quito, Ecuador'], ['status', "just chillin'"]],
     },
     exp: {
@@ -138,7 +138,7 @@ export const t = {
       cmd: 'cat sobre-mi.txt',
       title: 'Convierto días en horas.',
       sub: 'Casi siempre con LLMs, a veces con café.',
-      body: 'Soy Carlos Alejandro Alemán, aunque en internet me conocen como Alejololer. Soy ingeniero de software en Upstart 13, donde construyo funciones con LLMs que convierten documentos desordenados en datos estructurados y bajan el tiempo de redacción de días a horas. Además diseño y publico sitios web para negocios locales que de verdad aparecen cuando alguien los busca.',
+      body: 'Soy Carlos Alejandro Alemán, aunque en internet me conocen como Alejololer. Soy ingeniero de software en Upstart 13, donde construyo funciones con LLMs que convierten documentos desordenados en datos estructurados y bajan el tiempo de redacción de días a horas. Además diseño y publico sitios web para negocios locales que de verdad aparecen cuando alguien los busca. Me gradué de la Escuela Politécnica Nacional y tengo las certificaciones Microsoft Certified: Azure Administrator y Claude Certified Developer.',
       term: [['nombre', 'Carlos Alejandro Alemán'], ['rol', 'Ingeniero de software @ Upstart 13'], ['stack', 'Django · Next.js · Astro · LLMs · Azure'], ['base', 'Quito, Ecuador'], ['estado', "just chillin'"]],
     },
     exp: {

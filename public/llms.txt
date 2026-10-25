@@ -2,7 +2,7 @@
 
 > Software Engineer based in Quito, Ecuador. Builds production web products with Python/Django, TypeScript/Next.js, Astro and LLMs, and builds fast, search-optimized websites (SEO, GEO, AEO) for small businesses in Ecuador.
 
-Carlos Alejandro Alemán Osorio (online: Alejololer) works at Upstart 13 building production features with Django and Next.js, including LLM integrations on the OpenAI API that extract structured data from unstructured client documents and cut document drafting from days to hours. He holds a B.Eng. in Software Engineering from Escuela Politécnica Nacional (Quito, graduation grade 28/30) and the Microsoft Certified: Azure Administrator Associate (AZ-104) certification. Previously he was a Software Developer at Sagat Farm, where he was named Best Intern of the Cycle. He speaks Spanish (native) and English (professional).
+Carlos Alejandro Alemán Osorio (online: Alejololer) works at Upstart 13 building production features with Django and Next.js, including LLM integrations on the OpenAI API that extract structured data from unstructured client documents and cut document drafting from days to hours. He holds a B.Eng. in Software Engineering from Escuela Politécnica Nacional (Quito, graduation grade 28/30) and the Microsoft Certified: Azure Administrator Associate (AZ-104) and Claude Certified Developer certifications. Previously he was a Software Developer at Sagat Farm, where he was named Best Intern of the Cycle. He speaks Spanish (native) and English (professional).
 
 ## Freelance work
 - Builds custom-designed websites for local businesses in Ecuador with Astro or Next.js, hosted on Vercel.
