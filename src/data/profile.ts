@@ -40,23 +40,24 @@ export const t = {
       cmd: 'cat about.txt',
       title: 'I turn days into hours.',
       sub: 'Mostly with LLMs, occasionally with coffee.',
-      body: "I'm Carlos Alejandro Alemán, better known as Alejololer. I'm a Software Engineer at Upstart 13, where I build LLM features that turn messy business documents into structured data and cut drafting time from days to hours. On the side I design and ship websites for small businesses that actually get found. I graduated from Escuela Politécnica Nacional and I'm a Microsoft Certified Azure Administrator and a Claude Certified Developer.",
-      term: [['name', 'Carlos Alejandro Alemán'], ['role', 'Software Engineer @ Upstart 13'], ['stack', 'Django · Next.js · Astro · LLMs · Azure'], ['based', 'Quito, Ecuador'], ['status', "just chillin'"]],
+      body: "I'm Carlos Alejandro Alemán, better known as Alejololer. I'm a Software Engineer at Upstart 13, where I own auth, the data model and the frontend architecture of an AI platform built on the Claude Agent SDK. Before that I built LLM features that turned messy client documents into structured data and cut drafting time from days to hours. On the side I design and ship websites for small businesses that actually get found. I graduated from Escuela Politécnica Nacional. I'm Azure AZ-104 certified and a Claude Certified Developer.",
+      term: [['name', 'Carlos Alejandro Alemán'], ['role', 'Junior Software Engineer @ Upstart 13'], ['stack', 'TypeScript · React · Django · LLMs · Azure'], ['based', 'Quito, Ecuador'], ['status', "just chillin'"]],
     },
     exp: {
       cmd: 'git log --career',
       title: 'Experience',
       items: [
-        { when: 'Oct 2025 — now', role: 'Software Engineer', org: 'Upstart 13', hook: 'LLM features that turned days of document drafting into hours.', details: [
-          'Built LLM features on the OpenAI API that extract structured data from unstructured client documents; piloted with 2 clients.',
-          'Helped turn pilot learnings into a redesigned platform during a product pivot, focused on lower latency and faster development.',
-          'Owned features end to end in an 11-engineer agile team (Django, Next.js), from scoping to deployment.',
-          'Stabilized failing Azure dev and test environments, unblocking QA and team builds.',
+        { when: 'Oct 2025 — now', role: 'Junior Software Engineer', org: 'Upstart 13', hook: 'Owns auth, the data model and the frontend architecture of an AI platform built on the Claude Agent SDK.', details: [
+          'Own core areas of the AI platform: authentication and permissions, data model and APIs, and frontend architecture (TypeScript, React, Next.js, Prisma, PostgreSQL).',
+          'Drive tickets from design to delivery with minimal oversight on a 5-person team, proposing technical solutions and reporting directly to product owners.',
+          "Helped bring formal architecture design and clear product ownership into the team's development process.",
+          'Built LLM features on the OpenAI API (Django, Next.js), extracting structured data from client documents and cutting drafting from days to hours; piloted with 2 clients.',
+          'Stabilized failing Azure dev/test environments (env variables, logging), unblocking QA and team builds.',
+          'Trained the incoming intern through structured shadowing and handed off the onboarding platforms.',
         ] },
         { when: 'May 2025 — Oct 2025', role: 'Tech HR Intern', org: 'Upstart 13', hook: 'Automated onboarding with a custom WordPress + Moodle plugin. One login, zero copy-paste.', details: [
           'Built a WordPress and Moodle plugin that automated new-hire onboarding.',
           'Implemented unified login and progress sync between the intranet and Moodle.',
-          'Trained the incoming intern and handed off both platforms.',
         ] },
         { when: '2025 — now', role: 'Freelance Web Developer', org: 'Independent', hook: 'Websites for local businesses, from first call to launch day.', details: [
           'Built and deployed websites for small businesses with Next.js and Astro on Vercel, managing each project directly with the client.',
@@ -64,7 +65,7 @@ export const t = {
         { when: 'Sep 2024 — Apr 2025', role: 'Software Developer', org: 'Sagat Farm', hook: '~30% less bug downtime, 20–40% faster queries, "Best Intern of the Cycle."', details: [
           'Delivered 6+ web and mobile features for a floriculture operations system; automated deployments with GitHub Actions.',
           'Cut bug-related downtime ~30% and sped up key queries 20–40% with refactors and parameterized SQL.',
-          'Named "Best Intern of the Cycle" and promoted to developer.',
+          'Named "Best Intern of the Cycle" and promoted to developer after resolving 10+ bugs across three internal tools.',
         ] },
       ],
     },
@@ -74,7 +75,7 @@ export const t = {
       items: [
         { k: 'B.Eng. Software Engineering', v: 'Escuela Politécnica Nacional · 2021–2026 · grade 28/30' },
         { k: 'Azure Administrator Associate (AZ-104)', v: 'Microsoft Certified · Oct 2026' },
-        { k: 'Claude Certified Developer', v: 'Anthropic · Oct 2026' },
+        { k: 'Claude Certified Developer: Foundations', v: 'Anthropic · Oct 2026' },
       ],
     },
     service: null,
@@ -107,7 +108,7 @@ export const t = {
       items: [
         { flag: '--whoami', q: 'Who is Alejololer?', a: 'Carlos Alejandro Alemán Osorio, a Software Engineer in Quito, Ecuador, working with Django, Next.js, Astro and LLMs.' },
         { flag: '--freelance', q: 'Are you available for freelance work?', a: 'Yes. I build websites for small businesses, with SEO, GEO and AEO included.' },
-        { flag: '--stack', q: "What's your stack?", a: 'Python/Django, TypeScript/Next.js, Astro, PostgreSQL, Azure and Vercel, plus LLM integration (RAG, structured extraction).' },
+        { flag: '--stack', q: "What's your stack?", a: 'TypeScript/React/Next.js, Python/Django, Astro, Prisma, PostgreSQL, Azure and Vercel, plus LLM work with the Claude Agent SDK and the OpenAI API (RAG, structured extraction).' },
         { flag: '--location', q: 'Where are you based?', a: 'Quito, Ecuador. I work remotely with clients anywhere.' },
         { flag: '--username', q: 'Why the username?', a: 'I needed one, this one showed up, and it never left. Like most good decisions.' },
       ],
@@ -138,31 +139,32 @@ export const t = {
       cmd: 'cat sobre-mi.txt',
       title: 'Convierto días en horas.',
       sub: 'Casi siempre con LLMs, a veces con café.',
-      body: 'Soy Carlos Alejandro Alemán, aunque en internet me conocen como Alejololer. Soy ingeniero de software en Upstart 13, donde construyo funciones con LLMs que convierten documentos desordenados en datos estructurados y bajan el tiempo de redacción de días a horas. Además diseño y publico sitios web para negocios locales que de verdad aparecen cuando alguien los busca. Me gradué de la Escuela Politécnica Nacional y tengo las certificaciones Microsoft Certified: Azure Administrator y Claude Certified Developer.',
-      term: [['nombre', 'Carlos Alejandro Alemán'], ['rol', 'Ingeniero de software @ Upstart 13'], ['stack', 'Django · Next.js · Astro · LLMs · Azure'], ['base', 'Quito, Ecuador'], ['estado', "just chillin'"]],
+      body: 'Soy Carlos Alejandro Alemán, aunque en internet me conocen como Alejololer. Trabajo como ingeniero de software en Upstart 13, en una plataforma de IA hecha con el Claude Agent SDK; ahí me toca la autenticación, el modelo de datos y cómo está armado el frontend. Antes hice funciones con LLMs que leen documentos de clientes y sacan lo importante, así que un borrador que tomaba días ahora sale en horas. Aparte diseño sitios web para negocios locales que de verdad aparecen cuando alguien los busca. Me gradué de la Politécnica Nacional y tengo dos certificaciones: Azure AZ-104 y Claude Certified Developer.',
+      term: [['nombre', 'Carlos Alejandro Alemán'], ['rol', 'Junior Software Engineer @ Upstart 13'], ['stack', 'TypeScript · React · Django · LLMs · Azure'], ['base', 'Quito, Ecuador'], ['estado', "just chillin'"]],
     },
     exp: {
       cmd: 'git log --carrera',
       title: 'Experiencia',
       items: [
-        { when: 'Oct 2025 — hoy', role: 'Ingeniero de software', org: 'Upstart 13', hook: 'Funciones con LLMs que llevaron la redacción de documentos de días a horas.', details: [
-          'Construí funciones con la API de OpenAI que extraen datos estructurados de documentos de clientes; piloto con 2 clientes.',
-          'Ayudé a convertir lo aprendido en el piloto en una plataforma rediseñada, enfocada en menor latencia y desarrollo más rápido.',
-          'Responsable de features de punta a punta en un equipo ágil de 11 ingenieros (Django, Next.js).',
-          'Estabilicé los entornos de desarrollo y pruebas en Azure, desbloqueando a QA y al equipo.',
+        { when: 'Oct 2025 — hoy', role: 'Junior Software Engineer', org: 'Upstart 13', hook: 'La autenticación, los datos y el frontend de una plataforma de IA hecha con el Claude Agent SDK pasan por mí.', details: [
+          'Tengo a cargo partes centrales de la plataforma: autenticación y permisos, el modelo de datos y las APIs, y la arquitectura del frontend (TypeScript, React, Next.js, Prisma, PostgreSQL).',
+          'En un equipo de 5 personas, llevo mis tickets del diseño a producción casi sin supervisión: propongo la solución técnica y reporto directo a los product owners.',
+          'Ayudé a que el equipo empezara a diseñar la arquitectura antes de programar y a que cada parte del producto tuviera un responsable claro.',
+          'Hice funciones con la API de OpenAI (Django, Next.js) que sacan datos estructurados de documentos de clientes. Lo que antes eran días de redacción pasó a ser cuestión de horas, y se probó con 2 clientes.',
+          'Puse a funcionar de nuevo los entornos de desarrollo y pruebas en Azure, que tenían las variables de entorno desconectadas y ningún log, y QA y el equipo pudieron volver a trabajar.',
+          'Formé al pasante que tomó mi lugar, trabajando lado a lado con él, y le dejé las plataformas de onboarding.',
         ] },
         { when: 'May 2025 — Oct 2025', role: 'Tech HR Intern', org: 'Upstart 13', hook: 'Onboarding automatizado con un plugin propio para WordPress + Moodle. Un login, cero copiar y pegar.', details: [
-          'Construí un plugin de WordPress y Moodle que automatizó el onboarding de nuevos empleados.',
-          'Implementé login unificado y sincronización de progreso entre la intranet y Moodle.',
-          'Capacité al siguiente pasante y entregué ambas plataformas.',
+          'Hice un plugin de WordPress y Moodle que se encarga solo del onboarding de quien entra a la empresa.',
+          'Logré que la intranet y Moodle compartieran un solo login y el avance de cada persona.',
         ] },
         { when: '2025 — hoy', role: 'Desarrollador web freelance', org: 'Independiente', hook: 'Sitios para negocios locales, desde la primera llamada hasta el lanzamiento.', details: [
           'Construyo y publico sitios para pequeños negocios con Next.js y Astro en Vercel, trabajando directo con cada cliente.',
         ] },
         { when: 'Sep 2024 — Abr 2025', role: 'Desarrollador de software', org: 'Sagat Farm', hook: '~30% menos caídas por bugs, consultas 20–40% más rápidas, "Mejor pasante del ciclo".', details: [
-          'Entregué 6+ funciones web y móviles para un sistema de operaciones florícolas; automaticé despliegues con GitHub Actions.',
-          'Reduje ~30% las caídas por bugs y aceleré consultas clave 20–40% con refactors y SQL parametrizado.',
-          'Nombrado "Mejor pasante del ciclo" y promovido a desarrollador.',
+          'Entregué más de 6 funciones web y móviles para el sistema que maneja la operación de una florícola, y automaticé sus despliegues con GitHub Actions.',
+          'Bajé cerca de un 30% las caídas por bugs y las consultas clave quedaron entre 20 y 40% más rápidas, refactorizando código viejo y parametrizando el SQL.',
+          'Me eligieron "Mejor pasante del ciclo" y pasé a desarrollador después de resolver más de 10 bugs en tres herramientas internas.',
         ] },
       ],
     },
@@ -172,7 +174,7 @@ export const t = {
       items: [
         { k: 'Ingeniería de Software', v: 'Escuela Politécnica Nacional · 2021–2026 · nota 28/30' },
         { k: 'Azure Administrator Associate (AZ-104)', v: 'Microsoft Certified · Oct 2026' },
-        { k: 'Claude Certified Developer', v: 'Anthropic · Oct 2026' },
+        { k: 'Claude Certified Developer: Foundations', v: 'Anthropic · Oct 2026' },
       ],
     },
     // ponytail: portfolio tone on purpose — is-a.dev only accepts non-commercial sites, so this describes the work, it doesn't sell it
