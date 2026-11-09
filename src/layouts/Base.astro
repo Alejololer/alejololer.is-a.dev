@@ -35,7 +35,7 @@ if (!noindex) graph.push({
   '@type': 'FAQPage', '@id': `${canonical}#faq`, inLanguage: lang,
   mainEntity: c.faq.items.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
 });
-const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
+const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c');   // copy can never close the script tag
 ---
 <!doctype html>
 <html lang={lang}>
@@ -69,8 +69,9 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': grap
   <meta property="profile:username" content={person.handle} />
   <meta name="twitter:card" content="summary_large_image" />
 
-  <Font cssVariable="--font-sans" preload />
-  <Font cssVariable="--font-mono" preload />
+  {/* preload only what the first screen paints; latin-ext and the 500 weight load on demand */}
+  <Font cssVariable="--font-sans" preload={[{ subset: 'latin', weight: 300 }, { subset: 'latin', weight: 700 }]} />
+  <Font cssVariable="--font-mono" preload={[{ subset: 'latin' }]} />
   <script type="application/ld+json" set:html={jsonLd} />
 </head>
 <body>

@@ -19,6 +19,9 @@ if (bar && tv) {
     if (!target || busy) return;
     history.replaceState(null, '', id === 'hero' ? location.pathname : `#${id}`);
     navigator.vibrate?.(8);                   // a tiny "click" on phones that support it
+    // preventDefault on the link also cancels the browser's focus move: do it by hand, so Tab continues inside the section
+    target.tabIndex = -1;
+    target.focus({ preventScroll: true });
     if (still) return target.scrollIntoView();
     busy = true;
     tv!.classList.add('off');

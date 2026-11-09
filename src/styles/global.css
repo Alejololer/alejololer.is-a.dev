@@ -29,8 +29,9 @@ img { max-width: 100%; height: auto; display: block }
 
 /* --- layout --- */
 main, footer { position: relative; z-index: 1 }
-section { min-height: 100vh; padding: 14vh var(--gutter); display: grid; grid-template-columns: minmax(0, 1fr); align-content: center; gap: 1.5rem }
+section { min-height: 100vh; min-height: 100svh; padding: 14vh var(--gutter); display: grid; grid-template-columns: minmax(0, 1fr); align-content: center; gap: 1.5rem }
 section.short { min-height: 70vh }
+section:focus-visible { outline: none }   /* sections only take focus as a jump target (sections.ts) */
 
 .mono { font: 1.25rem/1.2 var(--font-mono); letter-spacing: .08em; color: var(--dim) }
 .mono.cmd::before { content: "> " }
@@ -133,7 +134,6 @@ p.lead { max-width: 62ch; color: #cfcfcf; font-size: 1.15rem }
 @keyframes tvoff { to { transform: scaleY(.03); filter: brightness(4); opacity: 0 } }
 @keyframes hiss { from { opacity: .55 } to { opacity: 0 } }
 @keyframes snow1 { 33% { background-position: -60px 40px } 66% { background-position: 50px -70px } }
-@keyframes type { from { width: 0 } }
 @keyframes print { from { mask-size: 100% 0 } to { mask-size: 100% 6lh } }   /* steps(6): one line per step */
 @media (max-width: 640px) {
   .man { padding: .8rem .9rem 1rem }

@@ -25,7 +25,7 @@ document.querySelector('.tmux .session')?.addEventListener('click', e => {
   const now = performance.now();
   taps = [...taps.filter(t => now - t < 700), now];
   if (taps.length >= 3) { taps = []; vapor(); }
-  else scrollTo({ top: 0, behavior: 'smooth' });
+  else scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
 });
 
 console.log(`%c
