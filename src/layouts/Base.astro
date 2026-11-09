@@ -16,7 +16,7 @@ const graph: Record<string, unknown>[] = [
   {
     '@type': 'Person', '@id': personId,
     name: person.name, alternateName: [person.handle, person.short],
-    jobTitle: 'Software Engineer', url: `${SITE}/`, email: `mailto:${person.email}`, image: `${SITE}/og.png`,
+    jobTitle: 'Software Engineer', description: c.meta.description, url: `${SITE}/`, email: `mailto:${person.email}`, image: `${SITE}/og.png`,
     address: { '@type': 'PostalAddress', addressLocality: person.city, addressCountry: person.country },
     worksFor: { '@type': 'Organization', name: 'Upstart 13' },
     alumniOf: { '@type': 'CollegeOrUniversity', name: 'Escuela Politécnica Nacional', sameAs: 'https://www.epn.edu.ec' },
@@ -29,7 +29,9 @@ const graph: Record<string, unknown>[] = [
     sameAs: [person.github, person.linkedin],
   },
   { '@type': 'WebSite', '@id': `${SITE}/#website`, url: `${SITE}/`, name: 'Alejololer', inLanguage: ['en', 'es'], publisher: { '@id': personId } },
-  { '@type': 'ProfilePage', '@id': `${canonical}#page`, url: canonical, name: title, inLanguage: lang, isPartOf: { '@id': `${SITE}/#website` }, mainEntity: { '@id': personId } },
+  { '@type': 'ProfilePage', '@id': `${canonical}#page`, url: canonical, name: title, inLanguage: lang,
+    dateModified: new Date().toISOString(),   // ponytail: build date = last deploy; switch to a hand-kept date if rebuilds without content changes become common
+    isPartOf: { '@id': `${SITE}/#website` }, mainEntity: { '@id': personId } },
 ];
 if (!noindex) graph.push({
   '@type': 'FAQPage', '@id': `${canonical}#faq`, inLanguage: lang,

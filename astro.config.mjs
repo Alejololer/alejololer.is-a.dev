@@ -5,7 +5,7 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://alejololer.is-a.dev',
   i18n: { defaultLocale: 'en', locales: ['en', 'es'] },
-  integrations: [sitemap({ i18n: { defaultLocale: 'en', locales: { en: 'en', es: 'es' } } })],
+  integrations: [sitemap({ lastmod: new Date(), i18n: { defaultLocale: 'en', locales: { en: 'en', es: 'es' } } })],
   // no inlined scripts, so the CSP in vercel.json can stay at script-src 'self' (no hashes to keep in sync)
   vite: { build: { assetsInlineLimit: 0 } },
   fonts: [
