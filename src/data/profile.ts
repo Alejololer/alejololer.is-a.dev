@@ -92,7 +92,7 @@ export const t = {
       friction: 'friction',
       open: '[ open ]',
       items: [
-        { ...shipped.virtus, tag: 'Law firm · Salcedo', hook: 'A law firm website that answers questions before the client even calls.', result: 'Averages position 3.1 on Google for “abogado de Salcedo” (Search Console, Sep–Nov 2026).', friction: 'needing a lawyer and not knowing who to call.', alt: 'Virtus Estudio Jurídico homepage' },
+        { ...shipped.virtus, tag: 'Law firm · Salcedo', hook: 'A law firm website that answers questions before the client even calls.', result: 'Showed up on Google for 106 different searches between Sep and Nov 2026 (Search Console).', friction: 'needing a lawyer and not knowing who to call.', alt: 'Virtus Estudio Jurídico homepage' },
         { ...shipped.asia, tag: 'Vehicle importer · Ecuador', hook: 'Vehicles that go far, and a website that keeps up.', result: 'Catalog, EV savings calculator, test drives and quotes.', friction: 'a trip to the dealership just to compare and get a quote.', alt: 'Asia Motors Importadora homepage' },
         { ...shipped.carino, tag: 'Gift shop · Latacunga', hook: 'Strawberries, chocolate and a one-tap WhatsApp checkout.', result: 'Catalog + cart that sends the order to WhatsApp, with an admin panel.', friction: 'ordering a gift over ten messages back and forth.', alt: 'Con Cariño homepage' },
       ],
@@ -205,7 +205,7 @@ export const t = {
         ['Hosting', 'Publicados en Vercel: rápidos y con HTTPS.'],
       ],
       steps: ['Entender el negocio', 'Diseño y construcción', 'Lanzamiento + visibilidad'],
-      proof: 'Resultado: Virtus promedia la posición 3,1 en Google para “abogado de Salcedo” (Search Console, sep–nov 2026).',
+      proof: 'Resultado: Virtus apareció en Google para 106 búsquedas distintas entre septiembre y noviembre de 2026 (Search Console).',
     },
     shipped: {
       cmd: 'ls ./proyectos',
@@ -214,7 +214,7 @@ export const t = {
       friction: 'fricción',
       open: '[ abrir ]',
       items: [
-        { ...shipped.virtus, tag: 'Estudio jurídico · Salcedo', hook: 'Un sitio de abogados que responde preguntas antes de que el cliente llame.', result: 'Posición promedio 3,1 en Google para “abogado de Salcedo” (Search Console, sep–nov 2026).', friction: 'necesitar un abogado y no saber a quién llamar.', alt: 'Página de inicio de Virtus Estudio Jurídico' },
+        { ...shipped.virtus, tag: 'Estudio jurídico · Salcedo', hook: 'Un sitio de abogados que responde preguntas antes de que el cliente llame.', result: 'Apareció en Google para 106 búsquedas distintas entre septiembre y noviembre de 2026 (Search Console).', friction: 'necesitar un abogado y no saber a quién llamar.', alt: 'Página de inicio de Virtus Estudio Jurídico' },
         { ...shipped.asia, tag: 'Importadora de vehículos · Ecuador', hook: 'Vehículos que llegan lejos, y un sitio que les sigue el ritmo.', result: 'Catálogo, calculadora de ahorro eléctrico, test drives y cotizaciones.', friction: 'tener que ir al concesionario solo para comparar y cotizar.', alt: 'Página de inicio de Asia Motors Importadora' },
         { ...shipped.carino, tag: 'Detalles · Latacunga', hook: 'Fresas, chocolate y un pedido por WhatsApp en un toque.', result: 'Catálogo + carrito que envía el pedido a WhatsApp, con panel de administración.', friction: 'pedir un regalo entre diez mensajes de ida y vuelta.', alt: 'Página de inicio de Con Cariño' },
       ],
