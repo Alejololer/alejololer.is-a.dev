@@ -97,7 +97,7 @@ export const t = {
         { name: 'RAG_Presidentes', url: gh('RAG_Presidentes'), desc: 'Retrieval-augmented generation over presidential data.' },
         { name: 'TripTikBot', url: gh('TripTikBot'), desc: 'AI agent that finds travel experiences.' },
         { name: 'shop-base', url: gh('shop-base'), desc: 'Reusable storefront + CMS template. Astro, Neon, WhatsApp checkout.' },
-        { name: 'ez-finance', url: gh('ez-finance'), desc: 'FinanzasFácil, a personal finance app.' },
+        { name: 'ez-finance', url: gh('ez-finance-showcase'), desc: 'Personal finance with automatic expense capture: bank notices → Claude → inbox. Public anonymized copy; the live implementation is private.' },
       ],
     },
     faq: {
@@ -210,7 +210,7 @@ export const t = {
         { name: 'RAG_Presidentes', url: gh('RAG_Presidentes'), desc: 'Generación aumentada por recuperación sobre datos de presidentes.' },
         { name: 'TripTikBot', url: gh('TripTikBot'), desc: 'Agente de IA para encontrar experiencias de viaje.' },
         { name: 'shop-base', url: gh('shop-base'), desc: 'Plantilla reutilizable de tienda + CMS. Astro, Neon, checkout por WhatsApp.' },
-        { name: 'ez-finance', url: gh('ez-finance'), desc: 'FinanzasFácil, app de finanzas personales.' },
+        { name: 'ez-finance', url: gh('ez-finance-showcase'), desc: 'Finanzas personales con captura automática de gastos: avisos del banco → Claude → bandeja. Copia pública anonimizada; la implementación en uso es privada.' },
       ],
     },
     faq: {
