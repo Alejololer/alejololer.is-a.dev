@@ -176,7 +176,7 @@ footer a { text-decoration: none }
 .tmux a[aria-current] { background: #000; color: var(--hi) }
 .tmux a[aria-current]::after { content: "*" }
 .tmux .hint { color: #00000099 }
-@media (pointer: coarse) { .tmux .hint { display: none } }
+@media (pointer: coarse), (max-width: 1500px) { .tmux .hint { display: none } }   /* the hint is the first thing to go when the section list needs the room */
 .tmux .ch, .remote { display: none }
 
 /* --- phones: compact top bar + a TV remote within thumb reach --- */
