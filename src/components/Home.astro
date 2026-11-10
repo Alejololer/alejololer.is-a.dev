@@ -53,6 +53,15 @@ const ext = { target: '_blank', rel: 'noopener' };
     </dl>
   </section>
 
+  <section id="ikigai" class="short" aria-labelledby="iki-h">
+    <p class="mono cmd reveal">{c.ikigai.cmd}</p>
+    <h2 id="iki-h" class="reveal">{c.ikigai.title}</h2>
+    <p class="sub">{c.ikigai.sub}</p>
+    <dl class="term">
+      {c.ikigai.items.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+    </dl>
+  </section>
+
   <section id="experience" aria-labelledby="exp-h">
     <p class="mono cmd reveal">{c.exp.cmd}</p>
     <h2 id="exp-h" class="reveal">{c.exp.title}</h2>
@@ -94,6 +103,7 @@ const ext = { target: '_blank', rel: 'noopener' };
   <section id="shipped" aria-labelledby="ship-h">
     <p class="mono cmd reveal">{c.shipped.cmd}</p>
     <h2 id="ship-h" class="reveal">{c.shipped.title}</h2>
+    <p class="sub">{c.shipped.sub}</p>
     <div class="wins">
       {c.shipped.items.map(s => (
         <article class="win">
@@ -102,6 +112,7 @@ const ext = { target: '_blank', rel: 'noopener' };
           <div class="body">
             <span class="tag">{s.tag}</span>
             <h3>{s.name}</h3>
+            <p class="friction">{c.shipped.friction}: {s.friction}</p>
             <p>{s.hook}</p>
             <p class="result">{s.result}</p>
             <a class="open" href={s.url} {...ext}>{c.shipped.open}<span class="sr-only"> {s.name}</span></a>
@@ -119,6 +130,7 @@ const ext = { target: '_blank', rel: 'noopener' };
         <article class="win">
           <div class="bar" aria-hidden="true">{l.name}<i>_□×</i></div>
           <div class="body">
+            <p class="friction">{c.shipped.friction}: {l.friction}</p>
             <p>{l.desc}</p>
             <a class="open" href={l.url} {...ext} data-cursor="[ github ]">{c.shipped.open}<span class="sr-only"> {l.name}</span></a>
           </div>
