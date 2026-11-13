@@ -1,0 +1,28 @@
+---
+// PROTO: a "ransom note" line. Each letter is a tile cut from a different page: font, ink and tilt
+// cycle on co-prime periods, so it looks random but renders the same on every build.
+// Hover glitches a tile; clicking re-cuts it from another "magazine" (next font + ink) and fires 'cut:hit' on it.
+// `silent`: no screen-reader copy of the text (the caller provides its own, e.g. one name for a heading split in two lines).
+interface Props { text: string; silent?: boolean }
+const { text, silent = false } = Astro.props;
+let i = text.length * 3;
+const tile = () => { i++; return { cls: `f${i % 5} c${i % 3}`, style: `--r:${(i * 37) % 9 - 4}deg;--y:${((i * 53) % 7 - 3) / 50}em` }; };
+---
+<span class="cut">{!silent && <span class="sr-only">{text} </span>}{text.split(' ').map(w => <span class="w" aria-hidden="true">{[...w].map(ch => { const t = tile(); return <b class={t.cls} style={t.style}>{ch}</b>; })}</span>)}</span>
+
+<script>
+  document.addEventListener('click', e => {
+    // by geometry, not by event target: mid-glitch the tile is clipped, and a click on the clipped half lands on its parent
+    const cut = (e.target as Element).closest('.cut');
+    const b = cut && [...cut.querySelectorAll<HTMLElement>('b')].find(t => {
+      const r = t.getBoundingClientRect();
+      return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+    });
+    if (!b) return;
+    b.className = b.className.replace('zap', '').replace(/f(\d)/, (_, n) => `f${(+n + 1) % 5}`).replace(/c(\d)/, (_, n) => `c${(+n + 1) % 3}`);
+    void b.offsetWidth;                         // restart the animation if it was already running
+    b.classList.add('zap');
+    b.dispatchEvent(new CustomEvent('cut:hit', { bubbles: true }));
+  });
+  document.addEventListener('animationend', e => (e.target as Element).classList?.remove('zap'));
+</script>

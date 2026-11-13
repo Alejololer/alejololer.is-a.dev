@@ -13,7 +13,7 @@ What drives him: finding the friction people have learned to live with and repla
 
 ## Websites built
 - [Virtus Estudio Jurídico](https://virtusestudiojuridico.com): multidisciplinary law firm in Salcedo, Cotopaxi. Appeared on Google for 106 different search queries in its first two months, September to November 2026 (Google Search Console). Includes a free child-support calculator with PDF output.
-- [Asia Motors Importadora](https://asia-motors-eta.vercel.app): official importer of Skyworth, Kenbo, 212 and FAW vehicles in Ecuador. Catalog, EV savings calculator, test drive booking and quotes.
+- [Asia Motors Importadora](https://asia-motors-eta.vercel.app): official importer of Skyworth, Kenbo, 212 and FAW vehicles in Ecuador. Catalog, EV savings calculator, test drive booking and quotes. Built as a proposal; the client did not adopt it.
 - [Con Cariño](https://con-carino.vercel.app): gift shop in Latacunga. Catalog and cart that sends orders to WhatsApp, with an admin panel.
 
 ## Open source

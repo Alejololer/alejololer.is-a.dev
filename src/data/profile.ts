@@ -39,7 +39,7 @@ export const t = {
     about: {
       cmd: 'cat about.txt',
       title: 'I go looking for the friction people stopped noticing, and make it simple.',
-      sub: 'Days into hours. Mostly with LLMs, occasionally with coffee.',
+      sub: 'Days into hours. Mostly with LLMs.',
       body: "I'm Carlos Alejandro Alemán, better known as Alejololer. I like getting to the root of a problem, fixing it without over-engineering, and making the fix look as good as it works. I'm a Software Engineer at Upstart 13, where I own auth, the data model and the frontend architecture of an AI platform built on the Claude Agent SDK. Before that I built LLM features that turned messy client documents into structured data and cut drafting time from days to hours. On the side I design and ship websites for small businesses that actually get found, which mostly means turning tech-speak into plain language. I graduated from Escuela Politécnica Nacional. I'm Azure AZ-104 certified and a Claude Certified Developer.",
       term: [['name', 'Carlos Alejandro Alemán'], ['role', 'Junior Software Engineer @ Upstart 13'], ['stack', 'TypeScript · React · Django · LLMs · Azure'], ['based', 'Quito, Ecuador'], ['status', "just chillin'"]],
     },
@@ -87,13 +87,13 @@ export const t = {
     service: null,
     shipped: {
       cmd: 'ls ./shipped',
-      title: 'Sites in the wild',
+      title: "Sites I've built",
       sub: 'Built to last. Designed to be noticed.',
       friction: 'friction',
       open: '[ open ]',
       items: [
         { ...shipped.virtus, tag: 'Law firm · Salcedo', hook: 'A law firm website that answers questions before the client even calls.', result: 'Showed up on Google for 106 different searches in its first two months (Search Console).', friction: 'needing a lawyer and not knowing who to call.', alt: 'Virtus Estudio Jurídico homepage' },
-        { ...shipped.asia, tag: 'Vehicle importer · Ecuador', hook: 'Vehicles that go far, and a website that keeps up.', result: 'Catalog, EV savings calculator, test drives and quotes.', friction: 'a trip to the dealership just to compare and get a quote.', alt: 'Asia Motors Importadora homepage' },
+        { ...shipped.asia, tag: 'Vehicle importer · Ecuador · proposal', hook: 'Vehicles that go far, and a website that keeps up.', result: 'Catalog, EV savings calculator, test drives and quotes.', friction: 'a trip to the dealership just to compare and get a quote.', alt: 'Asia Motors Importadora homepage' },
         { ...shipped.carino, tag: 'Gift shop · Latacunga', hook: 'Strawberries, chocolate and a one-tap WhatsApp checkout.', result: 'Catalog + cart that sends the order to WhatsApp, with an admin panel.', friction: 'ordering a gift over ten messages back and forth.', alt: 'Con Cariño homepage' },
       ],
     },
@@ -101,7 +101,7 @@ export const t = {
       cmd: 'ls ~/lab',
       title: 'Lab',
       items: [
-        { name: 'usdx-autochart', url: gh('usdx-autochart'), desc: 'Generates singable UltraStar Deluxe karaoke charts from audio. Because singing badly deserves accurate charts.', friction: 'charting every song by hand.' },
+        { name: 'usdx-autochart', url: gh('usdx-autochart'), desc: 'Generates singable UltraStar Deluxe karaoke charts from audio.', friction: 'charting every song by hand.' },
         { name: 'RAG_Presidentes', url: gh('RAG_Presidentes'), desc: 'Retrieval-augmented generation over presidential data.', friction: 'digging through pages for one fact.' },
         { name: 'TripTikBot', url: gh('TripTikBot'), desc: 'AI agent that finds travel experiences.', friction: 'planning a trip across twenty open tabs.' },
         { name: 'shop-base', url: gh('shop-base'), desc: 'Reusable storefront + CMS template. Astro, Neon, WhatsApp checkout.', friction: 'starting every shop from scratch.' },
@@ -130,7 +130,7 @@ export const t = {
       cvFile: 'Carlos_Aleman_CV.pdf',
       mailSubject: 'Hi Alejo',
     },
-    footer: 'built in Quito by a goalkeeper who refuses to let bugs through_',
+    footer: 'built in Quito_',
   },
 
   es: {
@@ -147,7 +147,7 @@ export const t = {
     about: {
       cmd: 'cat sobre-mi.txt',
       title: 'Encuentro las fricciones que la gente ya aprendió a ignorar y las convierto en soluciones simples.',
-      sub: 'Convierto días en horas. Casi siempre con LLMs, a veces con café.',
+      sub: 'Convierto días en horas. Casi siempre con LLMs.',
       body: 'Soy Carlos Alejandro Alemán, aunque en internet me conocen como Alejololer. Me gusta llegar a la raíz de un problema, resolverlo sin sobreingeniería y que la solución se vea tan bien como funciona. Trabajo como ingeniero de software en Upstart 13, en una plataforma de IA hecha con el Claude Agent SDK; ahí me toca la autenticación, el modelo de datos y cómo está armado el frontend. Antes hice funciones con LLMs que leen documentos de clientes y sacan lo importante, así que un borrador que tomaba días ahora sale en horas. Aparte diseño sitios web para negocios locales que de verdad aparecen cuando alguien los busca, y ahí me toca traducir lo técnico a un idioma que cualquiera entienda. Me gradué de la Politécnica Nacional y tengo dos certificaciones: Azure AZ-104 y Claude Certified Developer.',
       term: [['nombre', 'Carlos Alejandro Alemán'], ['rol', 'Junior Software Engineer @ Upstart 13'], ['stack', 'TypeScript · React · Django · LLMs · Azure'], ['base', 'Quito, Ecuador'], ['estado', "just chillin'"]],
     },
@@ -209,13 +209,13 @@ export const t = {
     },
     shipped: {
       cmd: 'ls ./proyectos',
-      title: 'Sitios en producción',
+      title: 'Sitios que he construido',
       sub: 'Hechos para durar. Diseñados para que te vean.',
       friction: 'fricción',
       open: '[ abrir ]',
       items: [
         { ...shipped.virtus, tag: 'Estudio jurídico · Salcedo', hook: 'Un sitio de abogados que responde preguntas antes de que el cliente llame.', result: 'Apareció en Google para 106 búsquedas distintas en sus primeros dos meses (Search Console).', friction: 'necesitar un abogado y no saber a quién llamar.', alt: 'Página de inicio de Virtus Estudio Jurídico' },
-        { ...shipped.asia, tag: 'Importadora de vehículos · Ecuador', hook: 'Vehículos que llegan lejos, y un sitio que les sigue el ritmo.', result: 'Catálogo, calculadora de ahorro eléctrico, test drives y cotizaciones.', friction: 'tener que ir al concesionario solo para comparar y cotizar.', alt: 'Página de inicio de Asia Motors Importadora' },
+        { ...shipped.asia, tag: 'Importadora de vehículos · Ecuador · propuesta', hook: 'Vehículos que llegan lejos, y un sitio que les sigue el ritmo.', result: 'Catálogo, calculadora de ahorro eléctrico, test drives y cotizaciones.', friction: 'tener que ir al concesionario solo para comparar y cotizar.', alt: 'Página de inicio de Asia Motors Importadora' },
         { ...shipped.carino, tag: 'Detalles · Latacunga', hook: 'Fresas, chocolate y un pedido por WhatsApp en un toque.', result: 'Catálogo + carrito que envía el pedido a WhatsApp, con panel de administración.', friction: 'pedir un regalo entre diez mensajes de ida y vuelta.', alt: 'Página de inicio de Con Cariño' },
       ],
     },
@@ -223,7 +223,7 @@ export const t = {
       cmd: 'ls ~/lab',
       title: 'Lab',
       items: [
-        { name: 'usdx-autochart', url: gh('usdx-autochart'), desc: 'Genera canciones de karaoke UltraStar Deluxe a partir de audio. Cantar mal merece partituras precisas.', friction: 'armar a mano la partitura de cada canción.' },
+        { name: 'usdx-autochart', url: gh('usdx-autochart'), desc: 'Genera canciones de karaoke UltraStar Deluxe a partir de audio.', friction: 'armar a mano la partitura de cada canción.' },
         { name: 'RAG_Presidentes', url: gh('RAG_Presidentes'), desc: 'Generación aumentada por recuperación sobre datos de presidentes.', friction: 'buscar un dato entre páginas y páginas.' },
         { name: 'TripTikBot', url: gh('TripTikBot'), desc: 'Agente de IA para encontrar experiencias de viaje.', friction: 'planear un viaje con veinte pestañas abiertas.' },
         { name: 'shop-base', url: gh('shop-base'), desc: 'Plantilla reutilizable de tienda + CMS. Astro, Neon, checkout por WhatsApp.', friction: 'empezar cada tienda desde cero.' },
@@ -252,7 +252,7 @@ export const t = {
       cvFile: 'Carlos_Aleman_CV_ES.pdf',
       mailSubject: 'Hola Alejo',
     },
-    footer: 'hecho en Quito por un arquero que no deja pasar bugs_',
+    footer: 'hecho en Quito_',
   },
 } as const;
 
