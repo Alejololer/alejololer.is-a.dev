@@ -93,7 +93,7 @@ export function start(canvas: HTMLCanvasElement) {
   // or null to let it roam again. data-hero-pin on <html> covers a pin set before this module loaded.
   const pin0 = document.documentElement.dataset.heroPin?.split(',').map(Number);
   let pin: number[] | null = pin0 && pin0.length >= 2 ? pin0 : null;
-  addEventListener('hero:pin', e => { pin = (e as CustomEvent<number[] | null>).detail; vel = Math.max(vel, .45); if (still) render(); });   // it shudders while it is chased
+  addEventListener('hero:pin', e => { pin = (e as CustomEvent<number[] | null>).detail; if (still) render(); else vel = Math.max(vel, .45); });   // it shudders while it is chased (a frozen scene just redraws it there)
   function knotTarget(p: number, t: number) {
     if (pin) return aim.set(pin[0] / innerWidth * 2 - 1, 1 - pin[1] / innerHeight * 2, .5).unproject(cam).sub(cam.position).normalize().multiplyScalar(30).add(cam.position);
     const nx = narrow ? .45 * Math.sin(p * Math.PI * 3) : .62 + .16 * Math.sin(p * Math.PI * 3 + .6);
@@ -199,7 +199,7 @@ export function start(canvas: HTMLCanvasElement) {
     if (px > 1) r.setPixelRatio(1);
     else if (cap > 30) cap = 30;
     else if (px > .5) { r.setPixelRatio(.5); canvas.style.imageRendering = 'pixelated'; }   // chunky, but on purpose
-    else { still = true; trail.forEach(g => g.el.remove()); }   // can't even hold ~19fps at half res: freeze the frame, give the CPU back to the page
+    else { still = true; vel = 0; trail.forEach(g => g.el.remove()); }   // can't even hold ~19fps at half res: freeze the frame, give the CPU back to the page
   }
   function frame(now = performance.now()) {
     if (still) return;
