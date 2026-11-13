@@ -198,7 +198,8 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
   function pinHero() {
     const r = live.getBoundingClientRect();
     // phones: the figure comes to the live camera while that camera is on screen, and roams otherwise
-    const at = desk.matches || (r.bottom > 80 && r.top < innerHeight - 80) ? [Math.round(r.left + r.width / 2), Math.round(r.top + r.height / 2), Math.round(Math.min(r.width, r.height))] : null;   // x, y, and the side the figure is sized to
+    const at = desk.matches || (r.bottom > 80 && r.top < innerHeight - 80) ? [Math.round(r.left + r.width / 2), Math.round(r.top + r.height / 2), Math.round(Math.min(live.offsetWidth, live.offsetHeight))] : null;   // x, y, and the side the figure is sized to
+    // (side from offset*, not the rect: on load the camera is mid-tvon, squashed to scaleY(.03), and the figure came out tiny)
     if (String(at) === pinned) return;
     pinned = String(at);
     if (at) document.documentElement.dataset.heroPin = at.join(); else delete document.documentElement.dataset.heroPin;
