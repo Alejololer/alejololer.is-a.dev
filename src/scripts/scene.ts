@@ -185,6 +185,9 @@ export async function start(canvas: HTMLCanvasElement) {
 
   // calibration: the approved prototype stepped per frame on a ~300Hz monitor, so k = "300Hz frames elapsed"
   const HZ = 300, root = document.documentElement;
+  // ?fps: the frame-rate lab (fpslab.ts, temporary) draws only every Nth frame and measures what a frame costs
+  let every = 1, tick = 0, kd = 0, probe: ReturnType<typeof import('./fpslab').lab> | undefined;
+  if (new URLSearchParams(location.search).has('fps')) import('./fpslab').then(m => { probe = m.lab(r, n => { every = n; }); });
   function frame(now = performance.now()) {
     const dt = Math.min(.1, (now - last) / 1000), k = dt * HZ;
     last = now;
@@ -203,7 +206,14 @@ export async function start(canvas: HTMLCanvasElement) {
       if (at !== g.at) g.el.style.translate = g.at = at;                // at rest the ghosts cost no style work
     });
     // nothing to draw while a full-screen page covers the canvas (phones: an open item, see cover() in Tablero.astro)
-    if (!root.hasAttribute('data-covered')) render(ease(pin ? .006 : .02, k));   // pinned: it trails behind its window (~0.5s) instead of snapping to it
+    kd += k;                                                             // frames elapsed since the last one drawn
+    if (!root.hasAttribute('data-covered') && ++tick % every === 0) {
+      probe?.begin();
+      render(ease(pin ? .006 : .02, kd));                                // pinned: it trails behind its window (~0.5s) instead of snapping to it
+      probe?.end();
+      kd = 0;
+    }
+    probe?.tick(now);
     requestAnimationFrame(frame);
   }
 
