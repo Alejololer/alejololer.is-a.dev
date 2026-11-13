@@ -24,7 +24,7 @@ const phone = [0, 3, 4, 5, 2, 7, 8, 1, 6];
 // "about me" is short here: the first two sentences of the bio. The rest of it (job, past work, degree) is what the other cameras show.
 const intro = c.about.body.split('. ').slice(0, 2).join('. ') + '.';
 const slugs = ['whoami', 'afk', 'contact', 'experience', 'shipped', 'credentials', 'live', 'lab', 'faq'];
-const headings = [undefined, u.afkTitle, c.contact.title, c.exp.title, c.shipped.title, c.creds.title, u.liveTitle, c.lab.title, c.faq.title];
+const headings = [undefined, u.afkTitle, c.contact.title, c.exp.title, c.shipped.title, c.creds.title, undefined, c.lab.title, c.faq.title];
 // phones: the FNAF camera map. Each camera is a room [left, top, width, height] on a 100×80 plan; halls join two rooms.
 const rooms = [[36, 2, 28, 16], [6, 46, 20, 14], [36, 66, 28, 12], [6, 24, 26, 14], [38, 24, 24, 14], [30, 46, 22, 14], [56, 46, 18, 14], [68, 24, 26, 14], [78, 46, 16, 14]];
 const halls = [[0, 4], [3, 4], [4, 7], [3, 1], [4, 5], [4, 6], [7, 8], [5, 2], [6, 2]];
@@ -106,7 +106,6 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
       </Cam>
 
       <Cam u={u} i={6} slug={slugs[6]} heading={headings[6]} at={at[6]} title={cams[6]} class="live">
-        <p class="mono">{u.live}</p>
       </Cam>
       <Cam u={u} i={7} slug={slugs[7]} heading={headings[7]} at={at[7]} title={cams[7]} n={c.lab.items.length}>
         <div class="list">{c.lab.items.map((l, i) => (

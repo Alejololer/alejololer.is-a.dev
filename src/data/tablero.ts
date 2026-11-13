@@ -3,15 +3,15 @@
 import type { Lang } from './profile';
 
 export const ui: Record<Lang, {
-  names: string[]; afkTitle: string; liveTitle: string; liveBar: string; afk: string[][];
-  tip: string; live: string; grow: string; esc: string; close: string; see: string; prev: string; next: string;
+  names: string[]; afkTitle: string; liveBar: string; afk: string[][];
+  tip: string; grow: string; esc: string; close: string; see: string; prev: string; next: string;
   keys: string; cView: string; cGrow: string;
   ariaNav: string; ariaMap: string; ariaToggle: string; role: string; egg: string[];
 }> = {
   es: {
     // plain names: the top bar and the phone's camera list say these; the terminal commands stay as decoration on each camera's bar
     names: ['Inicio', 'Fuera del teclado', 'Contacto', 'Experiencia', 'Proyectos', 'Credenciales', 'En vivo', 'Lab', 'Preguntas'],
-    afkTitle: 'Fuera del teclado', liveTitle: 'En vivo', liveBar: 'en vivo',
+    afkTitle: 'Fuera del teclado', liveBar: 'en vivo',
     // dictated by the user (2026-11-12)
     afk: [
       ['juegos', 'PC y Switch 2. Mundo abierto e historias profundas; mi favorito es Breath of the Wild.'],
@@ -21,7 +21,6 @@ export const ui: Record<Lang, {
       ['username', 'Necesitaba uno, apareció este y nunca se fue.'],
     ],
     tip: 'clic en una cámara para ampliarla · arrástrala por su barra',
-    live: 'señal en vivo · la figura sigue a esta ventana: muévela',
     grow: '[ ampliar ]', esc: '[x] esc', close: '[x] cerrar', see: 'ver →', prev: '← ant', next: 'sig →',
     keys: '0-8 cámara · esc muro', cView: '[ ver ]', cGrow: '[ ampliar ]',
     ariaNav: 'Cámaras', ariaMap: 'Mapa de cámaras', ariaToggle: 'Ampliar o cerrar', role: 'ingeniero de software',
@@ -29,7 +28,7 @@ export const ui: Record<Lang, {
   },
   en: {
     names: ['Home', 'Away from keyboard', 'Contact', 'Experience', 'Projects', 'Credentials', 'Live', 'Lab', 'FAQ'],
-    afkTitle: 'Away from keyboard', liveTitle: 'Live', liveBar: 'live',
+    afkTitle: 'Away from keyboard', liveBar: 'live',
     afk: [
       ['games', 'PC and Switch 2. Open worlds and deep stories; my favorite is Breath of the Wild.'],
       ['music', 'I listen to a bit of everything and I care how it sounds. An audiophile would call me a poser: I use XM4s and Galaxy Buds 4 Pro.'],
@@ -38,7 +37,6 @@ export const ui: Record<Lang, {
       ['username', 'I needed one, this one showed up and never left.'],
     ],
     tip: 'click a camera to enlarge it · drag it by its title bar',
-    live: 'live feed · the shape follows this window: move it',
     grow: '[ enlarge ]', esc: '[x] esc', close: '[x] close', see: 'view →', prev: '← prev', next: 'next →',
     keys: '0-8 camera · esc wall', cView: '[ view ]', cGrow: '[ enlarge ]',
     ariaNav: 'Cameras', ariaMap: 'Camera map', ariaToggle: 'Enlarge or close', role: 'software engineer',
