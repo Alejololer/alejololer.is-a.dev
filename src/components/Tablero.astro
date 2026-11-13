@@ -141,7 +141,6 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
     </div>
     <ol class="map-list">{names.map((n, i) => <li><button type="button" data-cam={i}><span>0{i}</span> {n}</button></li>)}</ol>
   </nav>
-  <div class="snow" aria-hidden="true"></div>
 
 <script type="application/json" id="egg" set:html={JSON.stringify(u.egg)} />
 
@@ -174,18 +173,24 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
     clearTimeout(tuned);
     tuned = window.setTimeout(() => pane.classList.remove('on'), 1200);
   }
-  if (!still) {
-    const seen = new IntersectionObserver(es => {
-      for (const e of es) if (e.isIntersecting && !desk.matches) {
-        const p = e.target as HTMLElement;
-        seen.unobserve(p);
-        if (maxed()) continue;
-        p.classList.add('on');
-        setTimeout(() => { if (!p.classList.contains('max')) p.classList.remove('on'); }, 900);
-      }
-    }, { threshold: .15 });
-    for (const p of panes) seen.observe(p);
+  // phones: one camera tunes in inside its own frame (restarting if it was already at it)
+  const boots = new WeakMap<HTMLElement, number>();
+  function boot(p: HTMLElement) {
+    if (still || maxed()) return;
+    clearTimeout(boots.get(p));
+    p.classList.remove('on');
+    void p.offsetWidth;
+    p.classList.add('on');
+    boots.set(p, window.setTimeout(() => { if (!p.classList.contains('max')) p.classList.remove('on'); }, 900));
   }
+  const seen = new IntersectionObserver(es => {
+    for (const e of es) if (e.isIntersecting && !desk.matches) {
+      const p = e.target as HTMLElement;
+      seen.unobserve(p);
+      if (!p.classList.contains('on')) boot(p);
+    }
+  }, { threshold: .15 });
+  for (const p of panes) seen.observe(p);
 
   // the live camera is a hole onto the 3D scene: tell the scene where the hole is and the figure drifts after it (scene.ts, 'hero:pin')
   const live = document.querySelector<HTMLElement>('.pane.live')!;
@@ -230,7 +235,7 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
 
   // --- phones: the cameras are a column and the page scrolls. The map (folded into its label) jumps to one ---
   const rooms = [...document.querySelectorAll<HTMLElement>('.map-rooms [data-cam]')];
-  const map = document.querySelector<HTMLElement>('.map')!, now = map.querySelector<HTMLElement>('.map-now')!, snow = document.querySelector<HTMLElement>('.snow')!;
+  const map = document.querySelector<HTMLElement>('.map')!, now = map.querySelector<HTMLElement>('.map-now')!;
   const fold = (open: boolean) => { map.classList.toggle('open', open); now.setAttribute('aria-expanded', String(open)); };
   function setCam(i: number) {
     cam = i;
@@ -240,9 +245,10 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
     pinHero();
   }
   function goCam(i: number) {
-    if (!still) { snow.classList.add('on'); setTimeout(() => snow.classList.remove('on'), 240); }   // a cut, with static, instead of a long scroll
+    // a cut instead of a long scroll: the page is already there, and the camera you asked for tunes in so you see where you landed
     panes[i].scrollIntoView({ block: 'start', behavior: 'instant' });
     setCam(i);
+    boot(panes[i]);
     jumped = performance.now();
   }
   let jumped = 0;   // the last cameras cannot reach the top of the screen: right after a jump, the scroll does not get a say

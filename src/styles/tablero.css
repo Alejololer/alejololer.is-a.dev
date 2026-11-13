@@ -144,10 +144,12 @@ html:has(.pane.max) { overflow: hidden }
 }
 /* phones (anything that is not the desktop wall): the cameras stack and the page scrolls down. Picking an item slides its page in
    from the right; there, swiping sideways goes through the camera's other items. The map folds into a label and jumps to a camera. */
-.map, .snow, .back { display: none }
+.map, .back { display: none }
 @media (max-width: 1199px), (max-height: 799px) {
   .board { padding-bottom: 5rem }
-  .pane { scroll-margin-top: 2.6rem }
+  /* the scroll settles camera by camera: near a camera's top it comes to rest with its bar just under the top bar */
+  html:has(.tablero) { scroll-snap-type: y proximity }
+  .pane { scroll-margin-top: 2.6rem; scroll-snap-align: start }
   .pane.live { height: 55svh }
   .board .tip, .bar [data-max] { display: none }
   .max .more-btn { display: block }
@@ -195,8 +197,6 @@ html:has(.pane.max) { overflow: hidden }
     display: grid; place-items: center; border: 1px solid var(--hi); background: #000; color: var(--hi); -webkit-tap-highlight-color: transparent }
   .map-rooms [data-cam][aria-current] { background: var(--hi); color: #000 }
   .map button:focus-visible { outline: 2px solid var(--hi); outline-offset: 2px }
-  .snow { display: block; position: fixed; inset: 2rem 0 0; z-index: 2; pointer-events: none; background: #000 var(--noise); opacity: 0 }
-  .snow.on { opacity: .85; animation: snow1 .18s steps(3) infinite }
 }
 
 @media (prefers-reduced-motion: reduce) { .feed article.sel, .cut b:hover, .cut b.zap { animation: none } }
