@@ -300,7 +300,7 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
 
   // cut: the item flicks on (tvon). Not when the window itself is opening: the tune-in is the effect there
   function select(pane: HTMLElement, i: number, cut = true) {
-    pane.classList.toggle('cut', cut);
+    pane.classList.toggle('swap', cut);
     const n = pane.querySelectorAll('.list [data-i]').length, feed = pane.querySelector<HTMLElement>('.feed');
     if (!n) return;
     i = (i + n) % n;
