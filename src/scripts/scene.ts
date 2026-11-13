@@ -84,7 +84,13 @@ export function start(canvas: HTMLCanvasElement) {
   // right of the copy on wide screens, across the top on narrow ones; placed at a fixed distance along that view ray
   let narrow = false;
   const aim = new THREE.Vector3();
+  // a page can pin the figure to a point on screen instead (the tablero's live camera): 'hero:pin' with detail [x, y] in CSS px,
+  // or null to let it roam again. data-hero-pin on <html> covers a pin set before this module loaded.
+  const pin0 = document.documentElement.dataset.heroPin?.split(',').map(Number);
+  let pin: number[] | null = pin0?.length === 2 ? pin0 : null;
+  addEventListener('hero:pin', e => { pin = (e as CustomEvent<number[] | null>).detail; vel = Math.max(vel, .45); });   // it shudders while it is chased
   function knotTarget(p: number, t: number) {
+    if (pin) return aim.set(pin[0] / innerWidth * 2 - 1, 1 - pin[1] / innerHeight * 2, .5).unproject(cam).sub(cam.position).normalize().multiplyScalar(30).add(cam.position);
     const nx = narrow ? .45 * Math.sin(p * Math.PI * 3) : .62 + .16 * Math.sin(p * Math.PI * 3 + .6);
     const ny = (narrow ? .55 + .12 * Math.cos(p * Math.PI * 4) : .3 * Math.cos(p * Math.PI * 2.4)) + .03 * Math.sin(t * .3);
     return aim.set(nx, ny, .5).unproject(cam).sub(cam.position).normalize().multiplyScalar(30).add(cam.position);
@@ -191,7 +197,7 @@ export function start(canvas: HTMLCanvasElement) {
       g.x += (lead.x - g.x) * ease(.35, Math.min(k, 5)); g.y += (lead.y - g.y) * ease(.35, Math.min(k, 5));
       g.el.style.translate = snap(g.x, g.y);
     });
-    render(ease(.02, k));
+    render(ease(pin ? .006 : .02, k));                                   // pinned: it trails behind its window (~0.5s) instead of snapping to it
     requestAnimationFrame(frame);
   }
 

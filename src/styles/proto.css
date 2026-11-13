@@ -1,0 +1,228 @@
+/* The home page (Tablero.astro): the wall of cameras and its ransom-note logo. */
+
+/* --- ransom-note letters (Cut.astro): monochrome tiles, one "magazine" per font --- */
+.cut { display: flex; flex-wrap: wrap; gap: .14em .4em; line-height: 1; padding: .08em 0 }
+.cut .w { display: flex; gap: .05em }
+.cut b { display: grid; place-items: center; min-width: .74em; padding: .05em .1em .08em; font: 700 1em/1 var(--font-sans); letter-spacing: 0; text-transform: uppercase;
+  background: var(--hi); color: #000; rotate: var(--r); translate: 0 var(--y); box-shadow: .04em .05em 0 #0009 }
+.cut .c1 { background: #000; color: var(--hi); outline: 2px solid var(--hi); outline-offset: -2px }
+.cut .c2 { background: #9a9a9a }
+.cut .f1 { font-family: var(--font-mono); font-weight: 400; font-size: 1.12em }
+.cut .f2 { font-family: Georgia, 'Times New Roman', serif; font-style: italic; text-transform: none }
+.cut .f3 { font-family: 'Courier New', monospace }
+.cut .f4 { font-family: Impact, 'Arial Black', sans-serif; font-weight: 400 }
+/* hover: one short glitch (no loop). click (.zap, set by Cut.astro): a harder one while the tile is re-cut */
+.cut b:hover { animation: tile-g .3s steps(1) }
+.cut b.zap { animation: tile-z .45s steps(1) }
+@keyframes tile-g {
+  0% { translate: -.06em var(--y); filter: invert(1) }
+  33% { translate: .05em var(--y); clip-path: inset(0 0 45% 0) }
+  66% { translate: -.02em var(--y); clip-path: inset(50% 0 0 0) } }
+@keyframes tile-z {
+  0% { filter: invert(1); scale: 1.15 }
+  20% { clip-path: inset(0 0 60% 0); translate: .1em var(--y) }
+  40% { clip-path: inset(55% 0 0 0); translate: -.1em var(--y) }
+  60% { filter: invert(1) }
+  80% { rotate: 0deg } }
+
+/* ============ A · tablero: a wall of monitors. Each camera is a win95 window: drag, resize, blow up ============ */
+.board { --g: clamp(12px, 1.6vw, 2rem); line-height: 1.35; position: relative; z-index: 1; display: grid; gap: .75rem; grid-template-columns: minmax(0, 1fr); padding: 2.75rem var(--g) 2.25rem }
+.pane { position: relative; display: flex; flex-direction: column; min-height: 0; border: 1px solid var(--line); background: #000d }
+.pane:focus { outline: none }
+.pane:hover, .pane:focus, .pane:focus-within, .pane.max { border-color: var(--hi) }
+/* title bar: grey while idle, white on the active camera (win95 inactive/active) */
+.pane .bar { position: sticky; top: 0; z-index: 1; flex: none; align-items: center; background: var(--dim); font-size: 1.1rem; user-select: none }
+.pane:hover .bar, .pane:focus .bar, .pane:focus-within .bar, .pane.max .bar { background: var(--hi) }
+.bar button, .dnav button, .more-btn { all: unset; padding: 0 .4rem }
+.bar [data-max]::before { content: var(--t-grow) }
+/* the section's name, big: a camera on the wall is a headline plus names, and says so that it opens */
+.pane .ttl { padding: .7rem .9rem 0; font: 700 1.9rem/1 var(--font-sans); letter-spacing: -.03em; text-transform: uppercase }
+.max .ttl { display: none }
+.max.pane:not(:has(.feed)) .ttl { display: block; padding: 1.25rem clamp(1rem, 2vw, 2rem) 0 }
+.max .bar [data-max]::before { content: var(--t-esc) }
+.bar button:hover, .bar button:focus-visible { background: #000; color: var(--hi) }
+.pbody { display: grid; gap: .5rem; align-content: start; padding: .7rem .9rem .8rem }
+.pbody > * { min-width: 0 }
+/* the big window tuning in (.on, set by tune() in tablero.astro), as an old TV changing channel: the picture is two sheets of static
+   shut on a bright line across the middle. The line (.scan) draws from the centre out to the sides while the window grows (--wait),
+   then the sheets pull apart from the middle towards the top and bottom, uncovering the content. */
+.scan { display: none }
+.pane { --wait: .28s }
+.pane.on::before, .pane.on::after { content: ""; position: absolute; left: 0; right: 0; height: 50%; z-index: 2; pointer-events: none; background: #000 var(--noise); animation: cam-open .34s var(--wait) cubic-bezier(.7, 0, .3, 1) both, snow1 .18s steps(3) infinite }
+.pane.on::before { top: 0 } .pane.on::after { bottom: 0 }
+.pane.on.live::before, .pane.on.live::after { background-color: #000c }
+.pane.on .scan { display: block; position: absolute; z-index: 3; left: 0; right: 0; top: 50%; height: 3px; margin-top: -1px; pointer-events: none; background: #fff; box-shadow: 0 0 16px 4px #fff; animation: scan-x .2s ease-out both, scan-out .25s calc(var(--wait) + .1s) ease-in forwards }
+@keyframes cam-open { to { height: 0 } }
+@keyframes scan-x { from { transform: scaleX(0) } }
+@keyframes scan-out { to { opacity: 0 } }
+.pane.on .feed article.sel { animation: none }
+.board h1 { font-size: clamp(2.3rem, 4.3vw, 6rem); letter-spacing: 0; width: fit-content }
+.board .mono, .board .sub { font-size: 1.2rem }
+.who .id { display: grid; gap: .5rem; align-content: start }
+.who p { font-size: 1rem; color: #cfcfcf }
+.more-btn { justify-self: start; border: 1px solid var(--line); padding: .05rem .5rem; font: 1.1rem var(--font-mono); color: var(--hi) }
+.more-btn:hover, .more-btn:focus-visible { background: var(--hi); color: #000 }
+.who .more, .max .more-btn, .max .tip { display: none }
+.board .tip { color: var(--dim); font-size: 1.05rem }
+/* the live feed: a window with no glass, straight onto the 3D scene (and its clickable figure) */
+.pane.live, .pane.live.max { background: none }
+.pane.live .pbody { flex: 1; min-height: 12rem; align-content: end }
+.pane.live { height: calc(var(--h) * 1%) }
+
+.list { display: grid }
+.row { all: unset; box-sizing: border-box; display: grid; grid-template-columns: 8.5ch minmax(0, 1fr) auto; gap: 0 .75rem; align-items: baseline; width: 100%; padding: .28rem .5rem; border-bottom: 1px solid #ffffff1f }
+.row.n { grid-template-columns: 2.5ch minmax(0, 1fr) auto }
+.row::after { content: var(--t-see); grid-area: 1 / 3; font-family: var(--font-mono); color: var(--dim) }
+.row .k { font: 1.15rem var(--font-mono); color: var(--dim) }
+.row b { font-weight: 500; font-size: 1.1rem; overflow-wrap: anywhere }
+.bar span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.bar button { flex: none; white-space: nowrap }
+.row small { grid-column: 2; font-size: .95rem; color: #ccc }
+.row .tall { display: none; font-family: var(--font-mono); font-size: 1.15rem; color: #a8a8a8 }   /* the brand lines: only where the screen has the room */
+@media (max-width: 1199px), (max-height: 799px) { .row .tall { display: block } }
+.list.chips { display: flex; flex-wrap: wrap; gap: .4rem }
+.chip { all: unset; padding: .05rem .5rem; border: 1px solid var(--line); font: 1.1rem var(--font-mono); color: var(--hi) }
+:is(.row, .chip):is(:hover, :focus-visible), .max :is(.row, .chip).sel { background: var(--hi); color: #000; outline: none }
+.row:is(:hover, :focus-visible) *, .row:is(:hover, :focus-visible)::after, .max .row.sel *, .max .row.sel::after { color: #000 }
+.board .term { padding: 0; border: 0; background: none; font-size: 1.2rem; line-height: 1.2 }
+.board .term.stack div + div { margin-top: .4rem }
+.board .links { font-size: 1.15rem; gap: .4rem 1.1rem }
+
+/* the feed: what a camera shows once it is blown up. Always in the HTML, only painted while maximised */
+.feed, .dnav { display: none }
+.feed article { display: none; gap: .7rem; align-content: start; max-width: 70ch }
+.feed article.sel { display: grid; animation: tvon .3s cubic-bezier(.2, .8, .3, 1) }
+.feed h3, .who .more h3 { font: 700 clamp(1.6rem, 3vw, 2.6rem)/1 var(--font-sans); letter-spacing: -.03em; text-transform: uppercase }
+.feed ul, .who .more ul { display: grid; gap: .4rem; padding-left: 1.1rem; color: #ccc; font-size: 1rem }
+.feed .shot { border: 2px solid var(--hi); aspect-ratio: 16 / 9; overflow: hidden }
+.feed .shot img { width: 100%; height: 100%; object-fit: cover; object-position: top }
+.feed .open { justify-self: start; font: 1.25rem var(--font-mono); text-decoration: none }
+.feed .open:hover { background: var(--hi); color: #000 }
+
+html:has(.pane.max) { overflow: hidden }
+/* blown up = a bigger window in the middle of the wall. The other cameras stay where they are, dimmed, and a click on them (or on the wall) switches or closes */
+.board:has(.max) .pane:not(.max) { opacity: .4 }
+.pane.max { position: fixed; left: 50% !important; top: 50% !important; translate: -50% -50%; width: min(66rem, 90vw) !important; height: auto !important; max-height: 84vh !important; overflow: auto; background: #000; box-shadow: 8px 8px 0 var(--hi) }
+.pane.max:not(:has(.feed), .who, .live) { width: min(38rem, 90vw) !important }
+.pane.live.max { height: 78vh !important; box-shadow: none }
+::view-transition-group(cam) { animation-duration: .28s; animation-timing-function: cubic-bezier(.2, .8, .3, 1) }
+.max .pbody { flex: 1; gap: 1rem 2rem; padding: 1.25rem clamp(1rem, 2vw, 2rem) }
+.max .pbody:has(.feed) { grid-template-columns: minmax(13rem, 1fr) minmax(0, 2.4fr); align-items: start }
+.max .feed { display: block }
+.max .list.chips { flex-direction: column; align-items: start }
+.max.who .pbody { grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) }
+.max.who .more { display: grid; gap: .7rem; align-content: start; max-width: 70ch }
+.max .term { font-size: 1.25rem; line-height: 1.35 }
+.max .dnav { display: flex; position: sticky; bottom: 0; justify-content: space-between; padding: .4rem 1rem; border-top: 1px solid var(--line); background: #000; font: 1.15rem var(--font-mono); color: var(--dim) }
+.dnav button:hover, .dnav button:focus-visible { background: var(--hi); color: #000 }
+
+@media (min-width: 1200px) and (min-height: 800px) {
+  /* the wall is sized by the screen's height as much as its width, so it fills a big monitor instead of leaving it empty */
+  html:has(.proto-tablero) { overflow: hidden; font-size: clamp(16px, min(1.35vw, 1.8vh), 32px) }
+  .pane .bar { touch-action: none }
+  /* no grid: every camera floats where its --x/--y/--w put it (in % of the wall), overlapping like real windows */
+  .board { position: fixed; inset: 2rem 0 1.5rem; display: block; padding: 0 }
+  .pane { position: absolute; left: calc(var(--x) * 1%); top: calc(var(--y) * 1%); width: calc(var(--w) * 1%); max-height: 80%; overflow: auto; box-shadow: 5px 5px 0 #ffffff26; scrollbar-width: thin; scrollbar-color: var(--dim) #0000 }
+  .pane:hover, .pane:focus, .pane:focus-within { box-shadow: 5px 5px 0 var(--hi) }
+  /* on the wall: names only. Roles, answers and descriptions wait in the big window */
+  .pane:not(.max) .row.n small { display: none }
+  .pane:not(.max) .term.stack { display: flex; flex-wrap: wrap; gap: .25rem 1rem }
+  .pane:not(.max) .term.stack div { margin: 0 }
+  .pane:not(.max) .term.stack dd { display: none }
+  .pane:not(.max) .term.stack::after { content: var(--t-see); margin-left: auto; color: var(--dim) }
+  html:not(.js) .pane:is([data-edge="e"], [data-edge="w"]) { cursor: ew-resize }
+  html:not(.js) .pane:is([data-edge="n"], [data-edge="s"]) { cursor: ns-resize }
+  html:not(.js) .pane:is([data-edge="nw"], [data-edge="se"]) { cursor: nwse-resize }
+  html:not(.js) .pane:is([data-edge="ne"], [data-edge="sw"]) { cursor: nesw-resize }
+}
+/* phones: the monitors stack and scroll; a blown-up camera takes the whole screen and steps with ant/sig */
+@media (pointer: coarse) {
+  .pane .bar { font-size: 1.25rem; padding-block: .3rem }
+  .bar [data-max] { min-width: 44px; text-align: center }
+  .max .bar [data-max]::before { content: "[x]" }
+  .max .dnav button { padding: .5rem .8rem }
+}
+/* phones (anything that is not the desktop wall): the cameras stack and the page scrolls down. Picking an item slides its page in
+   from the right; there, swiping sideways goes through the camera's other items. The map folds into a label and jumps to a camera. */
+.map, .snow, .back { display: none }
+@media (max-width: 1199px), (max-height: 799px) {
+  .board { padding-bottom: 5rem }
+  #whoami { order: 0 } #experience { order: 1 } #shipped { order: 2 } #credentials { order: 3 } #contact { order: 4 } #lab { order: 5 } #faq { order: 6 } #afk { order: 7 } #live { order: 8 }
+  .pane { scroll-margin-top: 2.6rem }
+  .pane.live { height: 40svh }
+  .board .tip, .bar [data-max] { display: none }
+  .max .more-btn { display: block }
+  /* .max here only means "one of my items is open": the camera stays where it is in the page (so nothing jumps), under the item's page */
+  .pane.max { position: relative; left: auto !important; top: auto !important; translate: none; width: auto !important; max-height: none !important; overflow: visible; background: #000d; box-shadow: none }
+  .board:has(.max) .pane:not(.max) { opacity: 1 }
+  .max .ttl { display: block }
+  .max .pbody { padding: .7rem .9rem .8rem }
+  .max .pbody:has(.feed) { grid-template-columns: minmax(0, 1fr) }
+  /* "about me" is one page of the same kind, opened by its button */
+  .max.who .more { position: fixed; inset: 2rem 0 0; z-index: 4; max-width: none; overflow-y: auto; padding: 1.25rem 1rem 3rem; background: #000; }
+  .who .back { all: unset; justify-self: start; padding: .3rem .6rem; border: 1px solid var(--line); font: 1.15rem var(--font-mono); color: var(--hi) }
+  .max.who .more { padding-bottom: 5rem }
+  .max.who .back { position: fixed; z-index: 5; left: 0; right: 0; bottom: 0; padding: .7rem 1rem calc(.7rem + env(safe-area-inset-bottom)); border: 0; border-top: 1px solid var(--line); background: #000 }
+  .max .feed { display: flex; position: fixed; inset: 2rem 0 0; z-index: 4; background: #000; overflow: auto hidden; scroll-snap-type: x mandatory; overscroll-behavior: contain; scrollbar-width: none }
+  /* the item's page tunes in like the big window does, over the whole screen */
+  .pane { --wait: .12s }
+  .pane.on::before, .pane.on::after, .pane.on .scan { position: fixed; z-index: 6 }
+  .pane.on::before, .pane.on::after { height: calc(50% - 1rem) }
+  .pane.on::before { top: 2rem }
+  .pane.on .scan { top: calc(50% + 1rem) }
+  .max .feed article { display: grid; flex: 0 0 100%; max-width: none; scroll-snap-align: start; scroll-snap-stop: always; overflow-y: auto; padding: 1.25rem 1rem 5rem; animation: none }
+  .max .dnav { position: fixed; z-index: 5; left: 0; right: 0; bottom: 0; padding-bottom: calc(.4rem + env(safe-area-inset-bottom)) }
+  .back { display: block }
+
+  .map { display: block; position: fixed; z-index: 3; right: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); max-width: min(15rem, 62vw); padding: .3rem .35rem; background: #000e; border: 1px solid var(--hi); box-shadow: 4px 4px 0 #ffffff40; font: 1.1rem var(--font-mono) }
+  .map.open { width: min(17rem, 80vw); max-width: none }
+  .map-list { list-style: none; padding: 0; margin: .3rem 0 0; display: grid; grid-template-columns: 1fr 1fr }
+  .map-list button { all: unset; box-sizing: border-box; display: block; width: 100%; min-height: 44px; padding: .55rem .3rem; color: var(--hi); font-size: 1.15rem }
+  .map-list span { color: var(--dim) }
+  .map-list button:active { background: var(--hi); color: #000 }
+  .map:not(.open) :is(.map-rooms, .map-list) { display: none }
+  html:has(.pane.max) .map { display: none }
+  .map-now { all: unset; box-sizing: border-box; display: block; width: 100%; padding: .15rem .1rem; color: var(--hi); white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+  .map-now::before { content: "● "; animation: blink 1s steps(1) infinite }
+  .map-now::after { content: " ▴" }
+  .map.open .map-now::after { content: " ▾" }
+  .map-rooms { position: relative; aspect-ratio: 100 / 80; margin-top: .25rem }
+  .map-tip { padding-top: .3rem; color: var(--dim); font-size: 1rem; text-align: center }
+  .map svg { position: absolute; inset: 0; width: 100%; height: 100% }
+  .map line { stroke: var(--dim); stroke-width: 2; vector-effect: non-scaling-stroke }
+  .map-rooms [data-cam] { all: unset; box-sizing: border-box; position: absolute; left: calc(var(--x) * 1%); top: calc(var(--y) * 1.25%); width: calc(var(--w) * 1%); height: calc(var(--h) * 1.25%);
+    display: grid; place-items: center; border: 1px solid var(--hi); background: #000; color: var(--hi); -webkit-tap-highlight-color: transparent }
+  .map-rooms [data-cam][aria-current] { background: var(--hi); color: #000 }
+  .map button:focus-visible { outline: 2px solid var(--hi); outline-offset: 2px }
+  .snow { display: block; position: fixed; inset: 2rem 0 0; z-index: 2; pointer-events: none; background: #000 var(--noise); opacity: 0 }
+  .snow.on { opacity: .85; animation: snow1 .18s steps(3) infinite }
+}
+
+@media (prefers-reduced-motion: reduce) { .feed article.sel, .cut b:hover, .cut b.zap { animation: none } }
+
+/* ============ tablero extras ============ */
+/* first deal: the cameras stay dark until the script has placed them (1.2s fallback if it never runs), then switch on one by one */
+@media (min-width: 1200px) and (min-height: 800px) {
+  .board:not(.ready) .pane { opacity: 0; animation: cam-show 0s 1.2s forwards }
+  .board.ready .pane { animation: tvon .3s cubic-bezier(.2, .8, .3, 1) backwards }
+  .board.sliding .pane { transition: left .4s cubic-bezier(.2, .8, .3, 1), top .4s cubic-bezier(.2, .8, .3, 1) }   /* [barajar] */
+}
+@keyframes cam-show { to { opacity: 1 } }
+
+/* pixel cursors: the caret turns into a 16×16 icon (drawn at 2×, hard edges) over title bars and window edges */
+.caret.hot[data-label^="ico-"] { width: 32px; height: 32px; padding: 0; margin: -16px 0 0 -16px; background: var(--ico) center / contain no-repeat }
+.caret.hot[data-label^="ico-"]::after { content: none }
+.caret[data-label="ico-ew"], .caret[data-label="ico-ns"] { --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Cpath fill='%23fff' stroke='%23000' d='M1 8l4-4v3h6V4l4 4-4 4V9H5v3z'/%3E%3C/svg%3E") }
+.caret[data-label="ico-nwse"], .caret[data-label="ico-nesw"] { --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Cpath fill='%23fff' stroke='%23000' d='M2 2h6L6 4l6 6 2-2v6H8l2-2-6-6-2 2z'/%3E%3C/svg%3E") }
+.caret[data-label="ico-move"] { --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Cpath fill='%23fff' stroke='%23000' d='M8 1l3 3H9v3h3V5l3 3-3 3V9H9v3h2l-3 3-3-3h2V9H4v2L1 8l3-3v2h3V4H5z'/%3E%3C/svg%3E") }
+.caret.hot[data-label="ico-ns"] { rotate: 90deg }
+.caret.hot[data-label="ico-nesw"] { scale: -1 1 }
+
+/* LOL: a second of static with something written in it */
+.scare { position: fixed; inset: 0; z-index: 9; display: grid; place-items: center; padding: 1rem; background: #000; cursor: none }
+.scare::before { content: ""; position: absolute; inset: 0; background: var(--noise); mix-blend-mode: screen; opacity: .75; animation: snow1 .18s steps(3) infinite }
+.scare b { position: relative; font: 400 clamp(3rem, 15vw, 15rem)/.9 var(--font-mono); letter-spacing: .04em; text-align: center; color: #fff; text-shadow: .04em 0 0 #888, -.04em 0 0 #444; animation: scare-jolt .14s steps(2) infinite }
+@keyframes scare-jolt { 50% { translate: .03em -.02em } }
+@media (prefers-reduced-motion: reduce) { .scare::before, .scare b, .board.ready .pane, .map-now::before { animation: none } .board.sliding .pane { transition: none } }
+
+@media (min-width: 700px) and (max-width: 1199px), (min-width: 700px) and (max-height: 799px) { .board { grid-template-columns: 1fr 1fr; align-items: start } }

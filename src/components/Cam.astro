@@ -1,0 +1,17 @@
+---
+// One "camera": a win95 window floating on the wall. Drag it by the bar, resize it from any edge,
+// its button (or its number key, or one of its rows) grows it into a big window over the wall.
+// `at` = where it starts, in % of the wall: [left, top, width, height?]. `n` = how many items it lists.
+// `slug` = its id (deep links: /#experience opens it). `heading` = the section's real title, set big: on the wall a camera
+// is a headline and a list of names; the detail is what you get by growing it.
+interface Props { u: { cGrow: string; ariaToggle: string; close: string; prev: string; next: string }; i: number; slug: string; title: string; heading?: string; at: number[]; n?: number; class?: string }
+const { u, i, slug, title, heading, at, n = 0, class: cls = '' } = Astro.props;
+const [x, y, w, h] = at;
+---
+<div class={`pane ${cls}`} id={slug} tabindex="-1" data-title={title} style={`--x:${x};--y:${y};--w:${w}${h ? `;--h:${h}` : ''}`}>
+  <div class="bar" data-cursor="ico-move"><span>CAM 0{i} · {title}</span><button type="button" data-max data-cursor={u.cGrow} aria-label={`${u.ariaToggle} ${title}`}></button></div>
+  {heading && <h2 class="ttl">{heading}</h2>}
+  <div class="pbody"><slot /></div>
+  <i class="scan" aria-hidden="true"></i>
+  {n > 1 && <div class="dnav"><button type="button" class="back" data-max>{u.close}</button><button type="button" data-step="-1">{u.prev}</button><span class="count"></span><button type="button" data-step="1">{u.next}</button></div>}
+</div>

@@ -1,0 +1,406 @@
+---
+// The home page: the whole site as a wall of monitors (FNAF cameras drawn as win95 windows).
+// Desktop: no page scroll and no grid: the cameras float and overlap. Drag one by its bar, resize it from any edge,
+// grow it with its button, its number key or by picking one of its rows: it becomes a big window over the wall and paints
+// the detail inside itself. Phones: no moving or resizing. The cameras stack and the page scrolls down; picking an item slides in
+// a full-screen page from the right with that item, and swiping sideways there goes through its siblings. The camera map
+// (bottom right, as in the game) folds into a label and jumps to any camera.
+import { Image } from 'astro:assets';
+import Cut from './Cut.astro';
+import Cam from './Cam.astro';
+import '../styles/proto.css';
+import { person, t, type Lang } from '../data/profile';
+import { ui } from '../data/tablero';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = t[lang], u = ui[lang], { names, afk } = u;
+const ext = { target: '_blank', rel: 'noopener' };
+const cams = ['whoami', 'afk', c.contact.cmd, c.exp.cmd, c.shipped.cmd, c.creds.cmd, u.liveBar, c.lab.cmd, c.faq.cmd];
+// each camera's [left, top, width, height?] in % of the wall. Left/top are only the no-JS fallback: on load the script deals one of its walls (deal()).
+const at = [[2, 3, 24], [5, 43, 25], [3, 84, 21], [31, 1, 27], [37, 44, 26], [27, 74, 26], [70, 6, 21, 36], [66, 55, 22], [58, 88, 29]];
+// phones stack the cameras in this order: who, the work, how to reach me, then the extras
+const phone = [0, 3, 4, 5, 2, 7, 8, 1, 6];
+// "about me" is short here: the first two sentences of the bio. The rest of it (job, past work, degree) is what the other cameras show.
+const intro = c.about.body.split('. ').slice(0, 2).join('. ') + '.';
+const slugs = ['whoami', 'afk', 'contact', 'experience', 'shipped', 'credentials', 'live', 'lab', 'faq'];
+const headings = [undefined, u.afkTitle, c.contact.title, c.exp.title, c.shipped.title, c.creds.title, u.liveTitle, c.lab.title, c.faq.title];
+// phones: the FNAF camera map. Each camera is a room [left, top, width, height] on a 100×80 plan; halls join two rooms.
+const rooms = [[36, 2, 28, 16], [6, 46, 20, 14], [36, 66, 28, 12], [6, 24, 26, 14], [38, 24, 24, 14], [30, 46, 22, 14], [56, 46, 18, 14], [68, 24, 26, 14], [78, 46, 16, 14]];
+const halls = [[0, 4], [3, 4], [4, 7], [3, 1], [4, 5], [4, 6], [7, 8], [5, 2], [6, 2]];
+const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i][3] / 2];
+---
+  <div class="proto-tablero" hidden></div>
+  <nav class="tmux" aria-label={u.ariaNav}>
+    <a class="session" href={lang === 'es' ? '/es/' : '/'}>alejololer</a>
+    <ol>{cams.map((_, i) => <li><a href={`#${slugs[i]}`} data-pane={i}>{i}:{names[i].toLowerCase()}</a></li>)}</ol>
+    <span class="pos"><span class="hint" aria-hidden="true">{u.keys}</span> <button type="button" data-reset data-cursor={u.cShuffle}>{u.shuffle}</button></span>
+    <a class="lang" href={c.nav.otherHref} hreflang={c.nav.other.toLowerCase()} lang={c.nav.other.toLowerCase()}>{c.nav.other}<span class="sr-only"> · {c.nav.otherLabel}</span></a>
+  </nav>
+
+  <main class="board" style={`--t-grow:"${u.grow}";--t-esc:"${u.esc}";--t-see:"${u.see}"`}>
+      <Cam u={u} i={0} slug={slugs[0]} heading={headings[0]} at={at[0]} title={cams[0]} class="who">
+        <div class="id">
+          <h1 data-cursor="[ ? ]"><span class="sr-only">{person.handle} · {person.short}, {u.role}</span><Cut silent text="Alejo" /><Cut silent text="loler" /></h1>
+          <p class="sub">{c.hero.lines.join(' ')}</p>
+          <p>{person.short} · {c.about.term[1][1]} · {c.about.term[3][1]}</p>
+          <button type="button" class="more-btn" data-max data-cursor="[ cat ]">{c.about.cmd}</button>
+          <p class="mono tip">{u.tip}</p>
+        </div>
+        <div class="more">
+          <button type="button" class="back" data-max>{u.close}</button>
+          <h3>{c.about.title}</h3>
+          <p>{intro}</p>
+          <dl class="term">{c.about.term.slice(0, 4).map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+          <p class="mono">&gt; {c.ikigai.cmd}</p>
+          <dl class="term">{c.ikigai.items.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+          {c.service && <><p class="mono">&gt; {c.service.cmd}</p><p>{c.service.lead}</p></>}
+        </div>
+      </Cam>
+      <Cam u={u} i={1} slug={slugs[1]} heading={headings[1]} at={at[1]} title={cams[1]}>
+        <dl class="term stack">{afk.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+      </Cam>
+      <Cam u={u} i={2} slug={slugs[2]} heading={headings[2]} at={at[2]} title={cams[2]}>
+        <div class="links">
+          <a href={`mailto:${person.email}`}>email</a>
+          <a href={person.linkedin} {...ext}>LinkedIn</a>
+          <a href={person.github} {...ext}>GitHub</a>
+          <a href={c.contact.cvHref} download={c.contact.cvFile} data-cursor="[ pdf ]">CV</a>
+        </div>
+      </Cam>
+
+      <Cam u={u} i={3} slug={slugs[3]} heading={headings[3]} at={at[3]} title={cams[3]} n={c.exp.items.length}>
+        <div class="list">{c.exp.items.map((e, i) => (
+          <button class="row" data-i={i} data-cursor={u.cView}><span class="k">{e.when.split(' — ')[0]}</span><b>{e.org}</b><small>{e.role}</small><small class="tall">{e.hook}</small></button>
+        ))}</div>
+        <div class="feed">{c.exp.items.map(e => (
+          <article>
+            <p class="mono">commit · {e.when}</p>
+            <h3>{e.org}</h3>
+            <p class="mono">{e.role}</p>
+            <p>{e.hook}</p>
+            <ul>{e.details.map(d => <li>{d}</li>)}</ul>
+          </article>
+        ))}</div>
+      </Cam>
+      <Cam u={u} i={4} slug={slugs[4]} heading={headings[4]} at={at[4]} title={cams[4]} n={c.shipped.items.length}>
+        <div class="list">{c.shipped.items.map((s, i) => (
+          <button class="row n" data-i={i} data-cursor={u.cView}><span class="k">0{i + 1}</span><b>{s.name}</b><small>{s.tag}</small><small class="tall">{c.shipped.friction}: {s.friction}</small></button>
+        ))}</div>
+        <div class="feed">{c.shipped.items.map(s => (
+          <article>
+            <div class="shot"><Image src={s.img} alt={s.alt} width={720} loading="lazy" /></div>
+            <p class="mono">{s.tag}</p>
+            <h3>{s.name}</h3>
+            <p class="mono">{c.shipped.friction}: {s.friction}</p>
+            <p>{s.hook}</p>
+            <p>{s.result}</p>
+            <a class="open" href={s.url} {...ext}>{c.shipped.open}</a>
+          </article>
+        ))}</div>
+      </Cam>
+      <Cam u={u} i={5} slug={slugs[5]} heading={headings[5]} at={at[5]} title={cams[5]}>
+        <dl class="term stack">{c.creds.items.map(i => <div><dt>{i.k}</dt><dd>{i.v}</dd></div>)}</dl>
+      </Cam>
+
+      <Cam u={u} i={6} slug={slugs[6]} heading={headings[6]} at={at[6]} title={cams[6]} class="live">
+        <p class="mono">{u.live}</p>
+      </Cam>
+      <Cam u={u} i={7} slug={slugs[7]} heading={headings[7]} at={at[7]} title={cams[7]} n={c.lab.items.length}>
+        <div class="list">{c.lab.items.map((l, i) => (
+          <button class="row n" data-i={i} data-cursor={u.cView}><span class="k">0{i + 1}</span><b>{l.name}</b><small class="tall">{c.shipped.friction}: {l.friction}</small></button>
+        ))}</div>
+        <div class="feed">{c.lab.items.map(l => (
+          <article>
+            <h3>{l.name}</h3>
+            <p class="mono">{c.shipped.friction}: {l.friction}</p>
+            <p>{l.desc}</p>
+            <a class="open" href={l.url} {...ext}>[ github ]</a>
+          </article>
+        ))}</div>
+      </Cam>
+      <Cam u={u} i={8} slug={slugs[8]} heading={headings[8]} at={at[8]} title={cams[8]} n={c.faq.items.length}>
+        <div class="list">{c.faq.items.map((f, i) => <button class="row n" data-i={i} data-cursor={u.cView}><span class="k">0{i + 1}</span><b>{f.q}</b></button>)}</div>
+        <div class="feed">{c.faq.items.map(f => (
+          <article>
+            <p class="mono">$ alejololer {f.flag}</p>
+            <h3>{f.q}</h3>
+            <p>{f.a}</p>
+          </article>
+        ))}</div>
+      </Cam>
+  </main>
+
+  <nav class="map" aria-label={u.ariaMap}>
+    <button type="button" class="map-now" aria-expanded="false">CAM 00 · {names[0]}</button>
+    <div class="map-rooms">
+      <svg viewBox="0 0 100 80" preserveAspectRatio="none" aria-hidden="true">
+        {halls.map(([a, b]) => <line x1={mid(a)[0]} y1={mid(a)[1]} x2={mid(b)[0]} y2={mid(b)[1]} />)}
+      </svg>
+      {rooms.map(([x, y, w, h], i) => <button type="button" data-cam={i} style={`--x:${x};--y:${y};--w:${w};--h:${h}`} aria-label={`CAM 0${i} · ${cams[i]}`}>0{i}</button>)}
+    </div>
+    <ol class="map-list">{phone.map(i => <li><button type="button" data-cam={i}><span>0{i}</span> {names[i]}</button></li>)}</ol>
+  </nav>
+  <div class="snow" aria-hidden="true"></div>
+
+<script type="application/json" id="egg" set:html={JSON.stringify(u.egg)} />
+
+<script>
+  const desk = matchMedia('(min-width: 1200px) and (min-height: 800px)');
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const board = document.querySelector<HTMLElement>('.board')!;
+  const panes = [...document.querySelectorAll<HTMLElement>('.pane')];
+  const tabs = [...document.querySelectorAll<HTMLAnchorElement>('.tmux a[data-pane]')];
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const maxed = () => document.querySelector<HTMLElement>('.pane.max');
+  let pushed = false, z = 20, cam = 0, opener: HTMLElement | null = null;
+
+  // the camera visibly grows / shrinks between its spot on the wall and the big window (View Transitions; instant where unsupported)
+  function morph(pane: HTMLElement, fn: () => void, then = () => {}) {
+    if (still || !desk.matches || !document.startViewTransition) { fn(); return then(); }
+    pane.style.setProperty('view-transition-name', 'cam');
+    document.startViewTransition(fn).finished.catch(() => {}).finally(() => { pane.style.removeProperty('view-transition-name'); then(); });
+  }
+
+  // the big window tunes in (.on, proto.css): it grows full of static, then a bright line runs down it loading the picture.
+  // Only inside that window; the small cameras never play it.
+  let tuned = 0;
+  function tune(pane: HTMLElement) {
+    if (still) return;
+    for (const p of panes) p.classList.toggle('on', p === pane);
+    clearTimeout(tuned);
+    tuned = window.setTimeout(() => pane.classList.remove('on'), 1000);
+  }
+
+  // CAM 06 is a hole onto the 3D scene: tell the scene where the hole is and the figure drifts after it (scene.ts, 'hero:pin')
+  const live = document.querySelector<HTMLElement>('.pane.live')!;
+  function pinHero() {
+    const r = live.getBoundingClientRect();
+    // phones: the figure comes to the middle of the screen while CAM 06 is the one showing, and roams otherwise
+    const at = desk.matches ? [Math.round(r.left + r.width / 2), Math.round(r.top + r.height / 2)] : cam === panes.indexOf(live) ? [Math.round(innerWidth / 2), Math.round(innerHeight * .42)] : null;
+    if (at) document.documentElement.dataset.heroPin = at.join(); else delete document.documentElement.dataset.heroPin;
+    dispatchEvent(new CustomEvent('hero:pin', { detail: at }));
+  }
+
+  // where the cameras start is not left to chance: people read left→right, top→bottom, so who-I-am sits top left and the
+  // work follows it. A wall = three columns (x and first y in % of the wall) and the cameras each one stacks, top to bottom;
+  // heights depend on the copy, so the stacking is measured. One wall is picked at random per visit, [barajar] steps to the next.
+  const WALLS = [
+    // (columns are balanced by height: the three sum to about the same, so none has to overlap on a 16:9 screen)
+    { x: [2, 35, 70], y: [2, 1, 3], cols: [[0, 4, 1], [3, 7, 5], [6, 8, 2]] },
+    { x: [3, 33, 68], y: [1, 3, 2], cols: [[0, 8], [3, 4, 5, 1], [6, 7, 2]] },
+    { x: [2, 36, 69], y: [3, 2, 1], cols: [[0, 4, 2], [3, 8, 5], [7, 6, 1]] },
+  ];
+  let wall = Math.floor(Math.random() * WALLS.length);
+  function deal(slide = false) {
+    if (!desk.matches) return;
+    const W = board.clientWidth, H = board.clientHeight, { x, y, cols } = WALLS[wall];
+    board.classList.toggle('sliding', slide);
+    cols.forEach((col, c) => {
+      const hs = col.map(i => panes[i].offsetHeight);
+      let top = y[c] / 100 * H;
+      // spare height becomes the gaps; with none to spare (small screens) the cameras overlap evenly, each one's bar still showing
+      const gap = Math.min(H * .05, (H - top - 8 - hs.reduce((a, b) => a + b, 0)) / (col.length - 1));
+      col.forEach((i, k) => {
+        const p = panes[i], left = Math.min(W - p.offsetWidth - 6, x[c] / 100 * W + (i * 37 + wall * 11) % 13 - 6);
+        Object.assign(p.style, { left: `${left}px`, top: `${top}px`, zIndex: String(10 + k), animationDelay: `${(k * 3 + c) * 70}ms` });
+        top += hs[k] + gap;
+      });
+    });
+    board.classList.add('ready');
+    pinHero();
+    if (slide) setTimeout(() => { board.classList.remove('sliding'); pinHero(); }, 450);
+  }
+
+  // --- phones: the cameras are a column and the page scrolls. The map (folded into its label) jumps to one ---
+  const rooms = [...document.querySelectorAll<HTMLElement>('.map-rooms [data-cam]')];
+  const map = document.querySelector<HTMLElement>('.map')!, now = map.querySelector<HTMLElement>('.map-now')!, snow = document.querySelector<HTMLElement>('.snow')!;
+  const fold = (open: boolean) => { map.classList.toggle('open', open); now.setAttribute('aria-expanded', String(open)); };
+  function setCam(i: number) {
+    cam = i;
+    rooms.forEach((r, k) => r.toggleAttribute('aria-current', k === i));
+    now.textContent = `CAM ${pad(i)} · ${map.querySelector(`.map-list [data-cam="${i}"]`)!.lastChild!.textContent!.trim()}`;
+    mark(panes[i]);
+    pinHero();
+  }
+  function goCam(i: number) {
+    if (!still) { snow.classList.add('on'); setTimeout(() => snow.classList.remove('on'), 240); }   // a cut, with static, instead of a long scroll
+    panes[i].scrollIntoView({ block: 'start', behavior: 'instant' });
+    setCam(i);
+    jumped = performance.now();
+  }
+  let jumped = 0;   // the last cameras cannot reach the top of the screen: right after a jump, the scroll does not get a say
+  // the camera "on air" is the last one whose top has passed the upper part of the screen
+  addEventListener('scroll', () => {
+    if (desk.matches || maxed() || performance.now() - jumped < 400) return;
+    let i = cam, low = -Infinity;      // (the stacking order is not the DOM order: take the lowest top that qualifies)
+    panes.forEach((p, k) => { const y = p.getBoundingClientRect().top; if (y < innerHeight * .4 && y > low) { low = y; i = k; } });
+    if (i !== cam) setCam(i);
+  }, { passive: true });
+  document.addEventListener('click', e => {
+    const el = e.target as Element, room = el.closest<HTMLElement>('.map [data-cam]');
+    if (room) { fold(false); goCam(Number(room.dataset.cam)); }
+    else if (el.closest('.map-now')) fold(!map.classList.contains('open'));
+    else if (!el.closest('.map')) fold(false);
+  });
+  // an item's page: swiping it sideways (native scroll-snap) goes through the camera's other items
+  for (const feed of document.querySelectorAll<HTMLElement>('.feed')) feed.addEventListener('scroll', () => {
+    const pane = feed.closest<HTMLElement>('.pane')!, i = Math.round(feed.scrollLeft / feed.clientWidth);
+    if (!desk.matches && pane.classList.contains('max') && i !== Number(pane.dataset.sel)) paint(pane, i);
+  }, { passive: true });
+  // crossing between the wall and the phone layout: drop what the other one set
+  desk.addEventListener('change', () => {
+    for (const p of panes) for (const k of ['left', 'top', 'width', 'height', 'max-height', 'z-index']) p.style.removeProperty(k);
+    if (desk.matches) deal(); else setCam(0);
+  });
+  if (!desk.matches) setCam(0);
+  deal();
+  // deep link: /#experience arrives with that camera open
+  const linked = panes.find(p => `#${p.id}` === location.hash);
+  if (linked) { if (desk.matches) open(linked); else goCam(panes.indexOf(linked)); }
+  addEventListener('resize', pinHero);
+
+  function mark(p: Element | null) { p = maxed() ?? p; if (p) for (const a of tabs) a.toggleAttribute('aria-current', panes[Number(a.dataset.pane)] === p); }
+
+  function select(pane: HTMLElement, i: number) {
+    const n = pane.querySelectorAll('.list [data-i]').length, feed = pane.querySelector<HTMLElement>('.feed');
+    if (!n) return;
+    i = (i + n) % n;
+    paint(pane, i);
+    if (!desk.matches && feed) feed.scrollTo({ left: i * feed.clientWidth, behavior: 'instant' });
+    pane.scrollTop = 0;
+  }
+  function paint(pane: HTMLElement, i: number) {
+    const rows = pane.querySelectorAll<HTMLElement>('.list [data-i]'), n = rows.length;
+    pane.dataset.sel = String(i);
+    rows.forEach((r, k) => r.classList.toggle('sel', k === i));
+    pane.querySelectorAll('.feed article').forEach((a, k) => a.classList.toggle('sel', k === i));
+    const count = pane.querySelector('.count');
+    if (count) count.textContent = `${pad(i + 1)}/${pad(n)}`;
+  }
+  function open(pane: HTMLElement, i?: number) {
+    const cur = maxed();
+    if (cur === pane) { if (i != null) select(pane, i); return; }
+    if (!desk.matches && !pane.querySelector('.feed, .more')) return goCam(panes.indexOf(pane));   // phones: nothing to open, it is all on the page
+    morph(pane, () => {
+      // one history entry per grown camera, so the phone's back button returns to the wall instead of leaving the page
+      // (the hash makes it a shareable deep link: /#experience)
+      if (!cur) { opener = document.activeElement as HTMLElement | null; history.pushState({ cam: true }, '', `#${pane.id}`); pushed = true; }
+      else history.replaceState({ cam: true }, '', `#${pane.id}`);
+      if (desk.matches) for (const p of panes) p.inert = p !== pane;      // keyboard and clicks stay in the big window
+      cur?.classList.remove('max');
+      pane.classList.add('max');
+      pane.style.zIndex = String(++z);
+      select(pane, i ?? Number(pane.dataset.sel ?? 0));
+      pane.focus({ preventScroll: true });
+      mark(pane);
+      tune(pane);
+    }, pinHero);
+    dispatchEvent(new Event('tv:on'));          // the 3D scene runs its refresh beam behind the wall
+  }
+  // back on the wall, keyboard focus returns to the row that opened the camera
+  const restore = () => { const cur = maxed(); if (cur) morph(cur, () => { cur.classList.remove('max', 'on'); for (const p of panes) p.inert = false; }, () => { pinHero(); opener?.focus({ preventScroll: true }); }); };
+  const close = () => { if (!maxed()) return; if (pushed) history.back(); else restore(); };
+  addEventListener('popstate', () => { pushed = false; restore(); });
+
+  document.addEventListener('click', e => {
+    const el = e.target as Element;
+    const tab = el.closest<HTMLAnchorElement>('a[data-pane]');
+    if (tab) { e.preventDefault(); return desk.matches ? open(panes[Number(tab.dataset.pane)]) : goCam(Number(tab.dataset.pane)); }
+    // a click anywhere outside the big window only closes it: it never opens what was underneath
+    const big = maxed();
+    if (big && desk.matches && !big.contains(el) && !el.closest('.tmux')) return close();
+    if (el.closest('[data-reset]')) { for (const p of panes) for (const k of ['width', 'height', 'max-height']) p.style.removeProperty(k); wall = (wall + 1) % WALLS.length; return deal(true); }
+    const pane = el.closest<HTMLElement>('.pane');
+    if (pane) {
+      if (el.closest('[data-max]')) return pane.classList.contains('max') ? close() : open(pane);
+      const step = el.closest<HTMLElement>('[data-step]');
+      if (step) return select(pane, Number(pane.dataset.sel ?? 0) + Number(step.dataset.step));
+      const row = el.closest<HTMLElement>('.list [data-i]');
+      if (row) return open(pane, Number(row.dataset.i));
+      // the whole face of a camera is the button (not the live one: its figure is clickable, nor the cut-out letters: the easter egg)
+      if (desk.matches && !pane.classList.contains('max') && pane !== live && el.closest('.pbody, .ttl') && !el.closest('a, button, .cut')) return open(pane);
+    }
+    if (!pane?.classList.contains('max') && !el.closest('.tmux, .map')) close();   // a click on the wall behind
+  });
+  document.addEventListener('dblclick', e => {
+    const bar = (e.target as Element).closest('.pane .bar');
+    if (bar && !(e.target as Element).closest('button')) bar.querySelector<HTMLElement>('[data-max]')!.click();
+  });
+
+  addEventListener('keydown', e => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (/^\d$/.test(e.key) && panes[Number(e.key)]) return open(panes[Number(e.key)]);
+    const cur = maxed();
+    if (!cur) return;
+    if (e.key === 'Escape') return close();
+    const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+    if (d) select(cur, Number(cur.dataset.sel ?? 0) + d);
+  });
+
+  // --- moving and resizing (desktop wall only) ---
+  // which edge(s) of a camera the pointer is on: '', or a mix of n/s + e/w ('se' = bottom-right corner)
+  const EDGE = 7, MIN_W = 180, MIN_H = 90;
+  function edgeOf(pane: HTMLElement, x: number, y: number) {
+    const r = pane.getBoundingClientRect();
+    return (y < r.top + EDGE ? 'n' : y > r.bottom - EDGE ? 's' : '') + (x < r.left + EDGE ? 'w' : x > r.right - EDGE ? 'e' : '');
+  }
+  // hover feedback: the caret (scene.ts) reads data-cursor; without it, the native resize cursors kick in via [data-edge]
+  const ICON: Record<string, string> = { n: 'ico-ns', s: 'ico-ns', e: 'ico-ew', w: 'ico-ew', nw: 'ico-nwse', se: 'ico-nwse', ne: 'ico-nesw', sw: 'ico-nesw' };
+  let hinted: HTMLElement | null = null;
+  document.addEventListener('pointermove', e => {
+    const pane = desk.matches && e.buttons === 0 ? (e.target as Element).closest<HTMLElement>('.pane:not(.max)') : null;
+    const edge = pane ? edgeOf(pane, e.clientX, e.clientY) : '';
+    if (hinted && (hinted !== pane || !edge)) { delete hinted.dataset.cursor; delete hinted.dataset.edge; hinted = null; }
+    if (pane && edge) { pane.dataset.cursor = ICON[edge]; pane.dataset.edge = edge; hinted = pane; }
+  });
+  document.addEventListener('pointerdown', e => {
+    const el = e.target as Element, pane = el.closest<HTMLElement>('.pane');
+    if (!pane || pane.classList.contains('max')) return;
+    pane.style.zIndex = String(++z);            // any press brings the camera to the front
+    if (!desk.matches || e.button) return;
+    const edge = edgeOf(pane, e.clientX, e.clientY);
+    if (!edge && (!el.closest('.bar') || el.closest('button'))) return;
+    e.preventDefault();
+    const l0 = pane.offsetLeft, t0 = pane.offsetTop, w0 = pane.offsetWidth, h0 = pane.offsetHeight, sx = e.clientX, sy = e.clientY;
+    pane.setPointerCapture(e.pointerId);
+    const move = (m: PointerEvent) => {
+      const dx = m.clientX - sx, dy = m.clientY - sy;
+      let l = l0, t = t0, w = w0, h = h0;
+      if (!edge) { l += dx; t += dy; }
+      if (edge.includes('e')) w = Math.max(MIN_W, w0 + dx);
+      if (edge.includes('s')) h = Math.max(MIN_H, h0 + dy);
+      if (edge.includes('w')) { w = Math.max(MIN_W, w0 - dx); l = l0 + w0 - w; }
+      if (edge.includes('n')) { h = Math.max(MIN_H, h0 - dy); t = t0 + h0 - h; }
+      // keep the title bar reachable
+      l = Math.min(board.clientWidth - 60, Math.max(60 - w, l));
+      t = Math.min(board.clientHeight - 24, Math.max(0, t));
+      Object.assign(pane.style, { left: `${l}px`, top: `${t}px`, width: `${w}px` });
+      if (/[ns]/.test(edge)) Object.assign(pane.style, { height: `${h}px`, maxHeight: 'none' });
+      if (pane === live) pinHero();
+    };
+    const up = () => { pane.removeEventListener('pointermove', move); pane.removeEventListener('pointerup', up); pane.removeEventListener('pointercancel', up); };
+    pane.addEventListener('pointermove', move);
+    pane.addEventListener('pointerup', up);
+    pane.addEventListener('pointercancel', up);
+  });
+
+  // tmux "active window" follows the grown camera, else keyboard focus / the mouse
+  document.addEventListener('focusin', e => mark((e.target as Element).closest('.pane')));
+  document.addEventListener('pointerover', e => mark((e.target as Element).closest('.pane')));
+
+  // easter egg: aleJO-LOL-er. Click tiles that spell L, O, L in a row → a second of static with something written in it
+  const LINES: string[] = JSON.parse(document.getElementById('egg')!.textContent!);
+  let seq = '', scaring = false;
+  document.addEventListener('cut:hit', e => {
+    seq = (seq + (e.target as Element).textContent).toUpperCase().slice(-3);
+    if (seq !== 'LOL' || scaring) return;
+    seq = ''; scaring = true;
+    const el = Object.assign(document.createElement('div'), { className: 'scare' }), b = el.appendChild(document.createElement('b'));
+    b.textContent = 'LOL';
+    document.body.append(el);
+    navigator.vibrate?.(60);
+    setTimeout(() => { b.textContent = LINES[Math.floor(Math.random() * LINES.length)]; }, 500);
+    setTimeout(() => { el.remove(); scaring = false; }, 1700);
+  });
+</script>
