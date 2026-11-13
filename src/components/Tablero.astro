@@ -8,7 +8,7 @@
 import { Image } from 'astro:assets';
 import Cut from './Cut.astro';
 import Cam from './Cam.astro';
-import '../styles/proto.css';
+import '../styles/tablero.css';
 import { person, t, type Lang } from '../data/profile';
 import { ui } from '../data/tablero';
 
@@ -30,11 +30,13 @@ const rooms = [[36, 2, 28, 16], [6, 46, 20, 14], [36, 66, 28, 12], [6, 24, 26, 1
 const halls = [[0, 4], [3, 4], [4, 7], [3, 1], [4, 5], [4, 6], [7, 8], [5, 2], [6, 2]];
 const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i][3] / 2];
 ---
-  <div class="proto-tablero" hidden></div>
+  <div class="tablero" hidden></div>
   <nav class="tmux" aria-label={u.ariaNav}>
-    <a class="session" href={lang === 'es' ? '/es/' : '/'}>alejololer</a>
+    <a class="session" href={lang === 'es' ? '/es/' : '/'}>
+      <svg class="logo" viewBox="-1.25 -1.25 2.5 2.5" aria-hidden="true"><circle r="1.08" fill="none" stroke="currentColor" stroke-width=".16" /><path fill="currentColor" transform="scale(.66)" d="M-.75-1H-.35L.8 1H.4L-.037.24-.45 1H-.85L-.2325-.1Z" /></svg>alejololer
+    </a>
     <ol>{cams.map((_, i) => <li><a href={`#${slugs[i]}`} data-pane={i}>{i}:{names[i].toLowerCase()}</a></li>)}</ol>
-    <span class="pos"><span class="hint" aria-hidden="true">{u.keys}</span> <button type="button" data-reset data-cursor={u.cShuffle}>{u.shuffle}</button></span>
+    <span class="pos"><span class="hint" aria-hidden="true">{u.keys}</span></span>
     <a class="lang" href={c.nav.otherHref} hreflang={c.nav.other.toLowerCase()} lang={c.nav.other.toLowerCase()}>{c.nav.other}<span class="sr-only"> · {c.nav.otherLabel}</span></a>
   </nav>
 
@@ -162,7 +164,7 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
     document.startViewTransition(fn).finished.catch(() => {}).finally(() => { pane.style.removeProperty('view-transition-name'); then(); });
   }
 
-  // the big window tunes in (.on, proto.css): it grows full of static, then a bright line runs down it loading the picture.
+  // the big window tunes in (.on, tablero.css): it grows full of static, then a bright line runs down it loading the picture.
   // Only inside that window; the small cameras never play it.
   let tuned = 0;
   function tune(pane: HTMLElement) {
@@ -184,18 +186,17 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
 
   // where the cameras start is not left to chance: people read left→right, top→bottom, so who-I-am sits top left and the
   // work follows it. A wall = three columns (x and first y in % of the wall) and the cameras each one stacks, top to bottom;
-  // heights depend on the copy, so the stacking is measured. One wall is picked at random per visit, [barajar] steps to the next.
+  // heights depend on the copy, so the stacking is measured. One wall is picked at random per visit.
   const WALLS = [
     // (columns are balanced by height: the three sum to about the same, so none has to overlap on a 16:9 screen)
     { x: [2, 35, 70], y: [2, 1, 3], cols: [[0, 4, 1], [3, 7, 5], [6, 8, 2]] },
     { x: [3, 33, 68], y: [1, 3, 2], cols: [[0, 8], [3, 4, 5, 1], [6, 7, 2]] },
     { x: [2, 36, 69], y: [3, 2, 1], cols: [[0, 4, 2], [3, 8, 5], [7, 6, 1]] },
   ];
-  let wall = Math.floor(Math.random() * WALLS.length);
-  function deal(slide = false) {
+  const wall = Math.floor(Math.random() * WALLS.length);
+  function deal() {
     if (!desk.matches) return;
     const W = board.clientWidth, H = board.clientHeight, { x, y, cols } = WALLS[wall];
-    board.classList.toggle('sliding', slide);
     cols.forEach((col, c) => {
       const hs = col.map(i => panes[i].offsetHeight);
       let top = y[c] / 100 * H;
@@ -209,7 +210,6 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
     });
     board.classList.add('ready');
     pinHero();
-    if (slide) setTimeout(() => { board.classList.remove('sliding'); pinHero(); }, 450);
   }
 
   // --- phones: the cameras are a column and the page scrolls. The map (folded into its label) jumps to one ---
@@ -310,7 +310,6 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
     // a click anywhere outside the big window only closes it: it never opens what was underneath
     const big = maxed();
     if (big && desk.matches && !big.contains(el) && !el.closest('.tmux')) return close();
-    if (el.closest('[data-reset]')) { for (const p of panes) for (const k of ['width', 'height', 'max-height']) p.style.removeProperty(k); wall = (wall + 1) % WALLS.length; return deal(true); }
     const pane = el.closest<HTMLElement>('.pane');
     if (pane) {
       if (el.closest('[data-max]')) return pane.classList.contains('max') ? close() : open(pane);

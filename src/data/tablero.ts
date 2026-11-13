@@ -5,7 +5,7 @@ import type { Lang } from './profile';
 export const ui: Record<Lang, {
   names: string[]; afkTitle: string; liveTitle: string; liveBar: string; afk: string[][];
   tip: string; live: string; grow: string; esc: string; close: string; see: string; prev: string; next: string;
-  shuffle: string; keys: string; cView: string; cGrow: string; cShuffle: string;
+  keys: string; cView: string; cGrow: string;
   ariaNav: string; ariaMap: string; ariaToggle: string; role: string; egg: string[];
 }> = {
   es: {
@@ -23,7 +23,7 @@ export const ui: Record<Lang, {
     tip: 'clic en una cámara para ampliarla · arrástrala por su barra',
     live: 'señal en vivo · la figura sigue a esta ventana: muévela',
     grow: '[ ampliar ]', esc: '[x] esc', close: '[x] cerrar', see: 'ver →', prev: '← ant', next: 'sig →',
-    shuffle: '[barajar]', keys: '0-8 cámara · esc muro', cView: '[ ver ]', cGrow: '[ ampliar ]', cShuffle: '[ barajar ]',
+    keys: '0-8 cámara · esc muro', cView: '[ ver ]', cGrow: '[ ampliar ]',
     ariaNav: 'Cámaras', ariaMap: 'Mapa de cámaras', ariaToggle: 'Ampliar o cerrar', role: 'ingeniero de software',
     egg: ['ES UN FEATURE', 'EN MI MÁQUINA FUNCIONA', 'NO ERA UN BUG', 'DEPLOY EN VIERNES'],
   },
@@ -40,7 +40,7 @@ export const ui: Record<Lang, {
     tip: 'click a camera to enlarge it · drag it by its title bar',
     live: 'live feed · the shape follows this window: move it',
     grow: '[ enlarge ]', esc: '[x] esc', close: '[x] close', see: 'view →', prev: '← prev', next: 'next →',
-    shuffle: '[shuffle]', keys: '0-8 camera · esc wall', cView: '[ view ]', cGrow: '[ enlarge ]', cShuffle: '[ shuffle ]',
+    keys: '0-8 camera · esc wall', cView: '[ view ]', cGrow: '[ enlarge ]',
     ariaNav: 'Cameras', ariaMap: 'Camera map', ariaToggle: 'Enlarge or close', role: 'software engineer',
     egg: ["IT'S A FEATURE", 'WORKS ON MY MACHINE', "IT WASN'T A BUG", 'FRIDAY DEPLOY'],
   },
