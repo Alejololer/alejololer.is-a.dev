@@ -4,18 +4,21 @@ import { addFx } from './fx';
 
 // Port of prototypes/3-terminal-dream.html. Rule: everything slow, nothing dizzying.
 export function start(canvas: HTMLCanvasElement) {
-  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const coarse = matchMedia('(pointer: coarse)').matches;
+  // cheap up-front guess (phones, <=4 cores, <=4GB): no MSAA, 1x pixels, half the geometry. The frame loop below
+  // measures the real thing and steps quality down further if the machine still can't keep up.
+  const low = coarse || (navigator.hardwareConcurrency ?? 8) <= 4 || ((navigator as { deviceMemory?: number }).deviceMemory ?? 8) <= 4;
 
-  const r = new THREE.WebGLRenderer({ canvas, antialias: !coarse, powerPreference: 'low-power' });
-  r.setPixelRatio(coarse ? 1 : Math.min(devicePixelRatio, 1.5));
+  const r = new THREE.WebGLRenderer({ canvas, antialias: !low, powerPreference: 'low-power' });
+  r.setPixelRatio(low ? 1 : Math.min(devicePixelRatio, 1.5));
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x000000, .045);
   const cam = new THREE.PerspectiveCamera(55, 1, .1, 150);
 
   // low-poly terrain: flat-shaded grey + white edges, valley in the middle; heights periodic over D so two tiles leapfrog seamlessly
   const W = 60, D = 120;
-  const g = new THREE.PlaneGeometry(W, D, coarse ? 20 : 40, coarse ? 40 : 80);
+  const g = new THREE.PlaneGeometry(W, D, low ? 20 : 40, low ? 40 : 80);
   g.rotateX(-Math.PI / 2);
   const pa = g.attributes.position;
   for (let i = 0; i < pa.count; i++) {
@@ -25,6 +28,7 @@ export function start(canvas: HTMLCanvasElement) {
   }
   g.computeVertexNormals();
   const land = new THREE.Group();
+  // stays Standard on purpose: Lambert is cheaper but loses the grazing-angle sheen that makes the faces read as grey
   land.add(new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: 0x1a1a1a, flatShading: true, roughness: 1 })));
   land.add(new THREE.LineSegments(new THREE.EdgesGeometry(g, 1), new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: .4 })));
   const land2 = land.clone();
@@ -33,7 +37,7 @@ export function start(canvas: HTMLCanvasElement) {
   // torus knot that wobbles while you scroll and settles back to a clean knot when you stop
   const ku = { uV: { value: 0 }, uT: { value: 0 } };
   const tk = new THREE.Mesh(
-    new THREE.TorusKnotGeometry(2, .5, coarse ? 140 : 220, coarse ? 12 : 18),
+    new THREE.TorusKnotGeometry(2, .5, low ? 140 : 220, low ? 12 : 18),
     new THREE.MeshStandardMaterial({ color: 0xdddddd, flatShading: true, metalness: .2, roughness: .4, fog: false }),
   );
   tk.material.onBeforeCompile = sh => {
@@ -77,7 +81,7 @@ export function start(canvas: HTMLCanvasElement) {
     layer.add(sun, key);
     fgKey = key;   // fg goes last: the figure's own key light
   }
-  const fx = addFx({ land, heroMats: [tk.material, lamMat], key: fgKey, px: r.getPixelRatio() });
+  const fx = addFx({ land, heroMats: [tk.material, lamMat], key: fgKey });
   r.autoClear = false;
 
   // the knot roams the free space as you scroll: a slow Lissajous path in screen space (NDC),
@@ -89,7 +93,7 @@ export function start(canvas: HTMLCanvasElement) {
   // or null to let it roam again. data-hero-pin on <html> covers a pin set before this module loaded.
   const pin0 = document.documentElement.dataset.heroPin?.split(',').map(Number);
   let pin: number[] | null = pin0 && pin0.length >= 2 ? pin0 : null;
-  addEventListener('hero:pin', e => { pin = (e as CustomEvent<number[] | null>).detail; vel = Math.max(vel, .45); });   // it shudders while it is chased
+  addEventListener('hero:pin', e => { pin = (e as CustomEvent<number[] | null>).detail; if (still) render(); else vel = Math.max(vel, .45); });   // it shudders while it is chased (a frozen scene just redraws it there)
   function knotTarget(p: number, t: number) {
     if (pin) return aim.set(pin[0] / innerWidth * 2 - 1, 1 - pin[1] / innerHeight * 2, .5).unproject(cam).sub(cam.position).normalize().multiplyScalar(30).add(cam.position);
     const nx = narrow ? .45 * Math.sin(p * Math.PI * 3) : .62 + .16 * Math.sin(p * Math.PI * 3 + .6);
@@ -177,15 +181,35 @@ export function start(canvas: HTMLCanvasElement) {
     // then a gentle sway, no tumbling
     look.subVectors(cam.position, hero.position).normalize();
     lam.rotation.set(-Math.asin(look.y) - s.y * .3, Math.atan2(look.x, look.z) + Math.sin(t * .2) * .3 + s.x * .4, 0);
-    fx(t, pk, r.domElement.height, narrow);
+    fx(t, pk, r.domElement.height, narrow, r.getPixelRatio());
     r.clear(); r.render(scene, cam);
     r.clearDepth(); r.render(fg, cam);
   }
 
   // calibration: the approved prototype stepped per frame on a ~300Hz monitor, so k = "300Hz frames elapsed"
   const HZ = 300;
+  // frame cap: nothing here moves fast enough to need more than ~60fps, and uncapped the scene pins the GPU on
+  // 144-300Hz monitors. A frame is skipped only when it comes well early (<75% of the step), so a 60Hz screen never
+  // drops one and faster screens land on an even 60-80. Calibration knob: ?fps=30, ?fps=144, ?fps=999 (uncapped).
+  let cap = Number(new URLSearchParams(location.search).get('fps')) || 60, slow = 0;
+  const born = last;
+  // ponytail: one-way ladder, it never climbs back up. Add recovery if a fast machine gets stranded by a busy start.
+  function degrade() {
+    const px = r.getPixelRatio();
+    if (px > 1) r.setPixelRatio(1);
+    else if (cap > 30) cap = 30;
+    else if (px > .5) { r.setPixelRatio(.5); canvas.style.imageRendering = 'pixelated'; }   // chunky, but on purpose
+    else { still = true; vel = 0; trail.forEach(g => g.el.remove()); }   // can't even hold ~19fps at half res: freeze the frame, give the CPU back to the page
+  }
   function frame(now = performance.now()) {
-    const dt = Math.min(.1, (now - last) / 1000), k = dt * HZ;
+    if (still) return;
+    requestAnimationFrame(frame);
+    const gap = now - last;
+    if (gap < 750 / cap) return;
+    // ~1.5s of frames arriving 60% late (after a 2s warm-up: shader compiles, page load) = this machine needs less work
+    if (now - born > 2000) slow = Math.max(0, slow + (gap > 1600 / Math.min(cap, 60) ? 1 : -1));
+    if (slow > 45) { slow = 0; degrade(); }
+    const dt = Math.min(.1, gap / 1000), k = dt * HZ;
     last = now;
     const prevY = sy; sy += (scrollY - sy) * ease(.05, k);
     pk += (progress() - pk) * ease(.004, k);                             // knot path follows scroll with a slow (~1s) glide
@@ -201,7 +225,6 @@ export function start(canvas: HTMLCanvasElement) {
       g.el.style.translate = snap(g.x, g.y);
     });
     render(ease(pin ? .006 : .02, k));                                   // pinned: it trails behind its window (~0.5s) instead of snapping to it
-    requestAnimationFrame(frame);
   }
 
   addEventListener('resize', size);

@@ -5,18 +5,18 @@ import * as THREE from 'three';
 // orbit: the figure's key light circles it as you scroll, so the lit patches travel across it
 // beam: as the scene powers on and on every channel change, a refresh beam sweeps the screen top → bottom,
 //       lighting what it crosses, with a phosphor tail that fades behind it
-type Ctx = { land: THREE.Group; heroMats: THREE.Material[]; key: THREE.DirectionalLight; px: number };
+type Ctx = { land: THREE.Group; heroMats: THREE.Material[]; key: THREE.DirectionalLight };
 
 // screen-space beam: sharp leading edge, exponential phosphor decay behind it (uBeam = progress 0..1, <0 idle)
-const BEAM = `uniform float uBeam, uRes, uGain, uCap;
+const BEAM = `uniform float uBeam, uRes, uGain, uCap, uCell;
 float beamAt(){
   if (uBeam < 0.) return 0.;
   float d = uBeam - (1. - gl_FragCoord.y / uRes);
   return (d < 0. ? smoothstep(.012, 0., -d) : exp(-d * 14.)) * (1. - smoothstep(.85, 1.25, uBeam));
 }\n`;
 
-export function addFx({ land, heroMats, key, px }: Ctx) {
-  const u ={ uBeam: { value: -1 }, uRes: { value: 1 }, uGain: { value: 1 }, uCap: { value: 1 } };
+export function addFx({ land, heroMats, key }: Ctx) {
+  const u = { uBeam: { value: -1 }, uRes: { value: 1 }, uGain: { value: 1 }, uCap: { value: 1 }, uCell: { value: 2 } };
 
   for (const o of land.children as THREE.Mesh[]) {
     const lines = o instanceof THREE.LineSegments;
@@ -29,8 +29,8 @@ export function addFx({ land, heroMats, key, px }: Ctx) {
     };
   }
 
-  // the 4×4 Bayer cell is 2 CSS px, so it sits under the 3px CRT scanlines instead of beating against them
-  const cell = (2 * px).toFixed(1);
+  // the 4×4 Bayer cell is 2 CSS px (uCell = 2 × pixel ratio, which scene.ts may lower on slow machines),
+  // so it sits under the 3px CRT scanlines instead of beating against them
   for (const m of heroMats) {
     const prev = m.onBeforeCompile;
     m.onBeforeCompile = (sh, r) => {
@@ -44,7 +44,7 @@ export function addFx({ land, heroMats, key, px }: Ctx) {
         // (light is linear here: gamma it first, or every midtone reads as shadow)
         // on phones scene.ts dims the figure for the copy: undo that, and cap it at ~50% dots instead (never solid)
         float L = min(smoothstep(.15, .85, pow(dot(outgoingLight, vec3(.299, .587, .114)), .4545) * uGain), uCap);
-        outgoingLight = vec3(step(bayer4(gl_FragCoord.xy / ${cell}) + .02, L));
+        outgoingLight = vec3(step(bayer4(gl_FragCoord.xy / uCell) + .02, L));
         #include <opaque_fragment>`);
     };
     // the wrappers share source text, and three caches programs by it: keep knot and lambda apart
@@ -56,7 +56,8 @@ export function addFx({ land, heroMats, key, px }: Ctx) {
   let start = -3;
   addEventListener('tv:on', () => { start = -2; });
 
-  return (t: number, pk: number, height: number, narrow: boolean) => {
+  return (t: number, pk: number, height: number, narrow: boolean, px: number) => {
+    u.uCell.value = 2 * px;
     u.uGain.value = narrow ? 2.6 : 1;   // 0xdd / 0x55
     u.uCap.value = narrow ? .5 : 1;
     u.uRes.value = height;
