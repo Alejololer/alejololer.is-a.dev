@@ -55,7 +55,6 @@
 @keyframes cam-open { to { height: 0 } }
 @keyframes scan-x { from { transform: scaleX(0) } }
 @keyframes scan-out { to { opacity: 0 } }
-.pane.on .feed article.sel { animation: none }
 .board h1 { font-size: clamp(2.3rem, 4.3vw, 6rem); letter-spacing: 0; width: fit-content }
 .board .mono, .board .sub { font-size: 1.2rem }
 .who .id { display: grid; gap: .5rem; align-content: start }
@@ -91,7 +90,8 @@
 /* the feed: what a camera shows once it is blown up. Always in the HTML, only painted while maximised */
 .feed, .dnav { display: none }
 .feed article { display: none; gap: .7rem; align-content: start; max-width: 70ch }
-.feed article.sel { display: grid; animation: tvon .3s cubic-bezier(.2, .8, .3, 1) }
+.feed article.sel { display: grid }
+.pane.cut .feed article.sel { animation: tvon .3s cubic-bezier(.2, .8, .3, 1) }
 .feed h3, .who .more h3 { font: 700 clamp(1.6rem, 3vw, 2.6rem)/1 var(--font-sans); letter-spacing: -.03em; text-transform: uppercase }
 .feed ul, .who .more ul { display: grid; gap: .4rem; padding-left: 1.1rem; color: #ccc; font-size: 1rem }
 .feed .shot { border: 2px solid var(--hi); aspect-ratio: 16 / 9; overflow: hidden }
@@ -199,7 +199,7 @@ html:has(.pane.max) { overflow: hidden }
   .map button:focus-visible { outline: 2px solid var(--hi); outline-offset: 2px }
 }
 
-@media (prefers-reduced-motion: reduce) { .feed article.sel, .cut b:hover, .cut b.zap { animation: none } }
+@media (prefers-reduced-motion: reduce) { .pane.cut .feed article.sel, .cut b:hover, .cut b.zap { animation: none } }
 
 /* ============ tablero extras ============ */
 /* first deal: the cameras stay dark until the script has placed them (1.2s fallback if it never runs), then switch on one by one */

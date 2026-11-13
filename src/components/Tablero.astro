@@ -287,7 +287,9 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
 
   function mark(p: Element | null) { p = maxed() ?? p; if (p) for (const a of tabs) a.toggleAttribute('aria-current', panes[Number(a.dataset.pane)] === p); }
 
-  function select(pane: HTMLElement, i: number) {
+  // cut: the item flicks on (tvon). Not when the window itself is opening: the tune-in is the effect there
+  function select(pane: HTMLElement, i: number, cut = true) {
+    pane.classList.toggle('cut', cut);
     const n = pane.querySelectorAll('.list [data-i]').length, feed = pane.querySelector<HTMLElement>('.feed');
     if (!n) return;
     i = (i + n) % n;
@@ -316,7 +318,7 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
       cur?.classList.remove('max');
       pane.classList.add('max');
       pane.style.zIndex = String(++z);
-      select(pane, i ?? Number(pane.dataset.sel ?? 0));
+      select(pane, i ?? Number(pane.dataset.sel ?? 0), false);
       pane.focus({ preventScroll: true });
       mark(pane);
       tune(pane);
