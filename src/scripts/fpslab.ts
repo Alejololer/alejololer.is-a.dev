@@ -32,6 +32,7 @@ export function lab(r: WebGLRenderer, setEvery: (n: number) => void) {
   const rows: string[] = [], seen: number[][] = [];
   let table = '';
   function step(n: number) {
+    if (n === 1) seen.length = 0;                           // readings from before the run started
     if (seen.length) {
       const avg = (k: number) => seen.reduce((a, w) => a + w[k], 0) / seen.length, [fps, c, g] = [avg(0), avg(1), avg(2)];
       rows.push(`1/${n - 1}  ${fps.toFixed(0).padStart(4)} fps   CPU ${(c * fps / 10).toFixed(1).padStart(5)}%   GPU ${g < 0 ? '  n/d' : (g * fps / 10).toFixed(1).padStart(5) + '%'}   (${c.toFixed(2)} / ${g < 0 ? 'n/d' : g.toFixed(2)} ms por frame)`);
