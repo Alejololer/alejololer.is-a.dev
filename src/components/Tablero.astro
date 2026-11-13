@@ -198,11 +198,22 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
   function pinHero() {
     const r = live.getBoundingClientRect();
     // phones: the figure comes to the live camera while that camera is on screen, and roams otherwise
-    const at = desk.matches || (r.bottom > 80 && r.top < innerHeight - 80) ? [Math.round(r.left + r.width / 2), Math.round(r.top + r.height / 2)] : null;
+    const at = desk.matches || (r.bottom > 80 && r.top < innerHeight - 80) ? [Math.round(r.left + r.width / 2), Math.round(r.top + r.height / 2), Math.round(Math.min(r.width, r.height))] : null;   // x, y, and the side the figure is sized to
     if (String(at) === pinned) return;
     pinned = String(at);
     if (at) document.documentElement.dataset.heroPin = at.join(); else delete document.documentElement.dataset.heroPin;
     dispatchEvent(new CustomEvent('hero:pin', { detail: at }));
+  }
+
+  // the open live camera is a window onto the scene: the cameras left on the wall are cut away where it covers them,
+  // so the figure is in front of them instead of behind
+  function hole() {
+    const m = desk.matches && live.classList.contains('max') ? live.getBoundingClientRect() : null;
+    for (const p of panes) if (p !== live) {
+      if (!m) { p.style.clipPath = ''; continue; }
+      const b = p.getBoundingClientRect(), x1 = m.left - b.left, y1 = m.top - b.top, x2 = m.right - b.left, y2 = m.bottom - b.top, o = 'calc(100% + 99px)';
+      p.style.clipPath = `polygon(evenodd, -99px -99px, ${o} -99px, ${o} ${o}, -99px ${o}, -99px -99px, ${x1}px ${y1}px, ${x2}px ${y1}px, ${x2}px ${y2}px, ${x1}px ${y2}px, ${x1}px ${y1}px)`;
+    }
   }
 
   // where the cameras start is not left to chance: people read left→right, top→bottom, so who-I-am sits top left and the
@@ -283,7 +294,7 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
   // deep link: /#experience arrives with that camera open
   const linked = panes.find(p => `#${p.id}` === location.hash);
   if (linked) { if (desk.matches) open(linked); else goCam(panes.indexOf(linked)); }
-  addEventListener('resize', pinHero);
+  addEventListener('resize', () => { pinHero(); hole(); });
 
   function mark(p: Element | null) { p = maxed() ?? p; if (p) for (const a of tabs) a.toggleAttribute('aria-current', panes[Number(a.dataset.pane)] === p); }
 
@@ -322,11 +333,12 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
       pane.focus({ preventScroll: true });
       mark(pane);
       tune(pane);
+      hole();
     }, pinHero);
     dispatchEvent(new Event('tv:on'));          // the 3D scene runs its refresh beam behind the wall
   }
   // back on the wall, keyboard focus returns to the row that opened the camera
-  const restore = () => { const cur = maxed(); if (cur) morph(cur, () => { cur.classList.remove('max', 'on'); for (const p of panes) p.inert = false; }, () => { pinHero(); opener?.focus({ preventScroll: true }); }); };
+  const restore = () => { const cur = maxed(); if (cur) morph(cur, () => { cur.classList.remove('max', 'on'); for (const p of panes) p.inert = false; hole(); }, () => { pinHero(); opener?.focus({ preventScroll: true }); }); };
   const close = () => { if (!maxed()) return; if (pushed) history.back(); else restore(); };
   addEventListener('popstate', () => { pushed = false; restore(); });
 

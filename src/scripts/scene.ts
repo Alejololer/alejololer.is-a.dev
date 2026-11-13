@@ -84,10 +84,11 @@ export function start(canvas: HTMLCanvasElement) {
   // right of the copy on wide screens, across the top on narrow ones; placed at a fixed distance along that view ray
   let narrow = false;
   const aim = new THREE.Vector3();
-  // a page can pin the figure to a point on screen instead (the tablero's live camera): 'hero:pin' with detail [x, y] in CSS px,
+  // a page can pin the figure to a point on screen instead (the tablero's live camera): 'hero:pin' with detail [x, y, side] in CSS px
+  // (side: the figure is sized to fit a box that wide),
   // or null to let it roam again. data-hero-pin on <html> covers a pin set before this module loaded.
   const pin0 = document.documentElement.dataset.heroPin?.split(',').map(Number);
-  let pin: number[] | null = pin0?.length === 2 ? pin0 : null;
+  let pin: number[] | null = pin0 && pin0.length >= 2 ? pin0 : null;
   addEventListener('hero:pin', e => { pin = (e as CustomEvent<number[] | null>).detail; vel = Math.max(vel, .45); });   // it shudders while it is chased
   function knotTarget(p: number, t: number) {
     if (pin) return aim.set(pin[0] / innerWidth * 2 - 1, 1 - pin[1] / innerHeight * 2, .5).unproject(cam).sub(cam.position).normalize().multiplyScalar(30).add(cam.position);
@@ -100,7 +101,6 @@ export function start(canvas: HTMLCanvasElement) {
     r.setSize(innerWidth, innerHeight, false);
     cam.aspect = innerWidth / innerHeight; cam.updateProjectionMatrix();
     narrow = cam.aspect < 1;
-    hero.scale.setScalar(narrow ? .7 : 1);
     for (const mat of [tk.material, lamMat]) mat.color.set(narrow ? 0x555555 : 0xdddddd);   // on phones copy runs over the knot: dim it so white text keeps contrast
     if (still) render();
   }
@@ -169,6 +169,9 @@ export function start(canvas: HTMLCanvasElement) {
     tk.visible = e < .999; lam.visible = e > .001;
     hero.rotation.y = Math.sin(mo * Math.PI) * 2.4;                          // a spin through the swap
     knotTarget(pk, t);
+    // pinned with a side: the figure (radius ~2.7, 30 away) fills ~70% of that box; otherwise its usual size
+    const fit = pin?.[2] ? Math.min(2.4, Math.max(.3, .7 * pin[2] * 30 * Math.tan(cam.fov * Math.PI / 360) / (2.7 * innerHeight))) : narrow ? .7 : 1;
+    hero.scale.setScalar(hero.scale.x + (fit - hero.scale.x) * (placed ? glide : 1));
     hero.position.lerp(aim, placed ? glide : 1); placed = true;
     // lambda stays readable: it turns to face the camera wherever it roams (off-center, perspective made it look away),
     // then a gentle sway, no tumbling
