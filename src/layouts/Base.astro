@@ -90,7 +90,7 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': grap
     const go = () => {
       if (started) return;
       started = true;
-      import('../scripts/scene').then(m => { m.start(canvas); canvas.classList.add('on'); });
+      import('../scripts/scene').then(m => m.start(canvas)).then(() => canvas.classList.add('on'));
     };
     if (matchMedia('(pointer: coarse)').matches) {
       for (const ev of ['scroll', 'touchstart', 'pointerdown']) addEventListener(ev, go, { once: true, passive: true });

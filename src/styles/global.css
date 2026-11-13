@@ -4,7 +4,6 @@
   --hi: #fff;
   --dim: #8c8c8c;
   --line: #ffffff40;
-  --accent: #fff;
   --gutter: clamp(16px, 6vw, 10rem);
   --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   color-scheme: dark;
@@ -28,10 +27,8 @@ img { max-width: 100%; height: auto; display: block }
 @keyframes flick { 0%, 97%, 100% { opacity: 1 } 98% { opacity: .85 } }
 
 /* --- layout --- */
-main, footer { position: relative; z-index: 1 }
+main { position: relative; z-index: 1 }
 section { min-height: 100vh; min-height: 100svh; padding: 14vh var(--gutter); display: grid; grid-template-columns: minmax(0, 1fr); align-content: center; gap: 1.5rem }
-section.short { min-height: 70vh }
-section:focus-visible { outline: none }   /* sections only take focus as a jump target (sections.ts) */
 
 .mono { font: 1.25rem/1.2 var(--font-mono); letter-spacing: .08em; color: var(--dim) }
 .mono.cmd::before { content: "> " }
@@ -49,11 +46,7 @@ p.lead { max-width: 62ch; color: #cfcfcf; font-size: 1.15rem }
 .glitch::after { color: var(--dim); animation: g2 2.4s infinite steps(1); clip-path: inset(55% 0 0 0) }
 @keyframes g1 { 0%, 92% { opacity: 0 } 93% { opacity: 1; transform: translate(-6px, 1px) } 96% { opacity: 1; transform: translate(4px, -2px) } 97% { opacity: 0 } }
 @keyframes g2 { 0%, 88% { opacity: 0 } 90% { opacity: 1; transform: translate(5px, 0) } 94% { opacity: 1; transform: translate(-3px, 1px) } 95% { opacity: 0 } }
-.caret-text { font-size: clamp(12px, 3.6vw, 1.25rem); white-space: nowrap }
-.caret-text::after { content: "█"; animation: blink 1s steps(1) infinite; margin-left: 4px }
 @keyframes blink { 50% { opacity: 0 } }
-.scroll-hint { position: absolute; bottom: 5vh; left: var(--gutter) }
-#hero { position: relative }
 
 /* --- terminal block --- */
 .term { border: 1px solid var(--line); padding: 1.25rem; font: 1.25rem/1.45 var(--font-mono); max-width: 46rem; background: #000b }
@@ -61,99 +54,19 @@ p.lead { max-width: 62ch; color: #cfcfcf; font-size: 1.15rem }
 .term div { display: block }
 .term.stack dt, .term.stack dd { display: block } .term.stack dd { color: var(--dim) } .term.stack dd::before { content: none }
 .term.stack div + div { margin-top: .875rem }
-
-/* --- git log timeline --- */
-.log { display: grid; gap: 0; max-width: 60rem; border-left: 1px solid var(--line) }
-.log details { padding: 1.1rem 0 1.1rem 1.5rem; position: relative; background: #000a }
-.log details::before { content: "●"; position: absolute; left: -.45rem; top: 1.4rem; font-size: .75rem; color: var(--hi) }
-.log summary { cursor: pointer; list-style: none; display: grid; gap: 4px }
-.log summary::-webkit-details-marker { display: none }
-.log .when { font: 1.125rem var(--font-mono); color: var(--dim) }
-.log .when::before { content: "commit · " }
-.log .hook { color: #cfcfcf }
-.log summary h3::after { content: " +"; font: 1.25rem var(--font-mono); color: var(--dim) }
-.log details[open] summary h3::after { content: " −" }
-.log ul { margin: .75rem 0 0; padding-left: 1.1rem; color: #bbb; font-size: .95rem; display: grid; gap: .4rem; max-width: 70ch }
-
-/* --- win95 windows --- */
-.wins { display: grid; gap: 1.75rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)) }
-.win { background: #000; border: 2px solid var(--hi); box-shadow: 6px 6px 0 var(--hi); transition: transform .2s, box-shadow .2s; display: flex; flex-direction: column }
-.win:hover, .win:focus-within { transform: translate(-3px, -3px); box-shadow: 9px 9px 0 var(--hi) }
+/* --- title bar (cameras) and the 404's button --- */
 .bar { background: var(--hi); color: #000; display: flex; justify-content: space-between; padding: 2px .5rem; font: 1.125rem var(--font-mono) }
-.bar i { font-style: normal; letter-spacing: 4px }
-.win .body { padding: 1.1rem; display: grid; gap: .5rem; flex: 1; align-content: start }
-.win .shot { border-bottom: 2px solid var(--hi); aspect-ratio: 16 / 10; overflow: hidden }
-.win .shot img { width: 100%; height: 100%; object-fit: cover; object-position: top; filter: grayscale(1) contrast(1.1); transition: filter .4s }
-.win:hover .shot img, .win:focus-within .shot img { filter: none }
-.win .tag { font: 1rem var(--font-mono); color: var(--dim); text-transform: uppercase; letter-spacing: .1em }
-.win p { color: #bbb; font-size: .95rem }
-.win .result { color: var(--hi) }
-.win .friction { font-family: var(--font-mono); color: var(--dim) }
-.win .open { font: 1.25rem var(--font-mono); text-decoration: none; margin-top: 6px; justify-self: start }
-.win .open:hover { background: var(--hi); color: #000 }
-.wins.small { grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)) }
-.wins.small .win { box-shadow: 4px 4px 0 var(--hi) }
-
-/* --- service (es) --- */
-.includes { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); max-width: 70rem }
-.includes div { background: #000d; padding: 1.25rem }
-.includes b { display: block; font-weight: 500; color: var(--hi); margin-bottom: 6px }
-.includes span { color: #bbb; font-size: .95rem }
-.steps { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; font: 1.375rem var(--font-mono) }
-.steps li { counter-increment: s } .steps li::before { content: counter(s) ") "; color: var(--dim) }
-.steps li:not(:last-child)::after { content: "  →"; color: var(--dim) }
 .btn { display: inline-block; justify-self: start; font: 1.5rem var(--font-mono); padding: .4rem 1.1rem; background: var(--hi); color: #000; text-decoration: none; border: 2px solid var(--hi); box-shadow: 5px 5px 0 #888; transition: transform .15s, box-shadow .15s }
 .btn:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 #888 }
-.btn.ghost { background: transparent; color: var(--hi) }
 
-/* --- faq --- */
-/* a man page: each question is a flag. Opening one "runs" it: the command types itself, the output panel
-   powers on like a CRT (bright line → open, through a burst of static) and the answer prints line by line.
-   Closing collapses it back to a line. The answer is plain text in the DOM the whole time (SEO, screen readers). */
-.man { max-width: 54rem; font: 1.25rem/1.45 var(--font-mono); background: #000b; border: 1px solid var(--line); padding: 1rem 1.25rem 1.25rem }
-.man-head { display: flex; justify-content: space-between; gap: 1rem; color: var(--dim); margin-bottom: 1rem }
-.man-sec { color: var(--hi); letter-spacing: .08em; margin-bottom: .25rem }
-.man summary { cursor: pointer; list-style: none; display: grid; grid-template-columns: 11ch 1fr auto; grid-auto-flow: dense; gap: .1rem 1rem; align-items: baseline; padding: .3rem .6rem; margin: 0 -.6rem }
-.man summary::-webkit-details-marker { display: none }
-.man summary code { font: inherit; color: var(--hi) }
-.man summary span { font: 500 1.125rem/1.35 var(--font-sans); color: var(--fg) }
-.man summary::after { content: "[RET]"; color: var(--dim) }
-.man details[open] summary::after { content: "[q]" }
-.man summary:hover, .man details[open] summary { background: var(--hi) }
-.man summary:hover *, .man summary:hover::after, .man details[open] summary *, .man details[open] summary::after { color: #000 }
-.out { position: relative; margin: .5rem 0 .9rem 2ch; padding: .5rem 1rem .7rem; border-left: 2px solid var(--hi); overflow: hidden }
-.out::before { content: ""; position: absolute; inset: 0; background: var(--noise); mix-blend-mode: screen; opacity: 0; pointer-events: none }
-.run { color: var(--dim); white-space: nowrap; overflow: hidden; width: calc(var(--n) * 1ch); max-width: 100% }
-.ans { margin-top: .3rem; color: #ccc; max-width: 70ch; mask: linear-gradient(#000 0 0) no-repeat }
-.ans::after { content: "█"; font-family: var(--font-mono); color: var(--hi); margin-left: 3px; animation: blink 1s steps(1) infinite }
-.man details[open] .out { animation: tvon .3s cubic-bezier(.2, .8, .3, 1) }
-.man details[open] .out::before { animation: hiss .5s ease-out, snow1 .18s steps(3) infinite }
-.man details[open] .run { animation: type .3s steps(var(--n)) .12s backwards }
-.man details[open] .ans { animation: print .42s steps(6) .45s backwards }
-.man details.closing .out { animation: tvoff .18s ease-in forwards }
+/* --- shared CRT keyframes (tablero.css): a picture flicking on, and static --- */
 @keyframes tvon { 0% { transform: scaleY(.03); filter: brightness(4) } 60% { transform: none; filter: brightness(1.8) } }
-@keyframes tvoff { to { transform: scaleY(.03); filter: brightness(4); opacity: 0 } }
-@keyframes hiss { from { opacity: .55 } to { opacity: 0 } }
 @keyframes snow1 { 33% { background-position: -60px 40px } 66% { background-position: 50px -70px } }
-@keyframes print { from { mask-size: 100% 0 } to { mask-size: 100% 6lh } }   /* steps(6): one line per step */
-@media (max-width: 640px) {
-  .man { padding: .8rem .9rem 1rem }
-  .man-head span:last-child { display: none }
-  .man summary { grid-template-columns: 1fr auto }
-  .man summary span { grid-column: 1 / -1 }
-}
 
 /* --- contact --- */
 .links { display: flex; flex-wrap: wrap; gap: .875rem 1.75rem; font: 1.5rem var(--font-mono) }
 .links a { text-decoration: none; border-bottom: 1px solid var(--dim) }
 .links a:hover { color: #000; background: var(--hi) }
-
-footer { padding: 6vh var(--gutter); font: 1.125rem var(--font-mono); color: var(--dim); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px }
-footer a { text-decoration: none }
-
-/* --- reveal: types itself in as it enters the viewport --- */
-.reveal { animation: type linear both; animation-timeline: view(); animation-range: entry 0% entry 50% }
-@keyframes type { from { clip-path: inset(0 100% 0 0) } }
 
 /* --- cursor: blinking block caret + phosphor trail --- */
 .caret, .trail { position: fixed; left: 0; top: 0; z-index: 5; pointer-events: none; width: 10px; height: 18px; margin: -9px 0 0 -5px; background: var(--hi) }
@@ -162,7 +75,7 @@ footer a { text-decoration: none }
 .caret.hot::after { content: attr(data-label) }
 .trail { background: #bbb }
 .caret.hot ~ .trail { display: none }
-@media (pointer: fine) { html.js, html.js a, html.js summary, html.js .win { cursor: none } }
+@media (pointer: fine) { html.js, html.js a { cursor: none } }
 @media (pointer: coarse) { .caret, .trail { display: none } }
 
 /* --- tmux status bar (top) --- */
@@ -177,47 +90,12 @@ footer a { text-decoration: none }
 .tmux a[aria-current]::after { content: "*" }
 .tmux .hint { color: #00000099 }
 @media (pointer: coarse), (max-width: 1500px) { .tmux .hint { display: none } }   /* the hint is the first thing to go when the section list needs the room */
-.tmux .ch, .remote { display: none }
 
-/* --- phones: compact top bar + a TV remote within thumb reach --- */
+/* --- phones: compact top bar --- */
 @media (max-width: 640px) {
   .tmux { gap: .5rem }
   .tmux ol, .tmux .pos { display: none }
-  .tmux .ch { display: block; margin-left: auto }
-  footer { padding-bottom: 9rem }
-  .remote { display: grid; position: fixed; z-index: 3; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); width: 7.25rem;
-    background: var(--hi); color: #000; border: 2px solid var(--hi); box-shadow: 4px 4px 0 #888; font-family: var(--font-mono) }
-  .remote button { all: unset; display: grid; place-items: center; min-height: 44px; cursor: pointer; text-align: center; -webkit-tap-highlight-color: transparent }
-  .remote button:focus-visible { outline: 2px solid #000; outline-offset: -4px }
-  .remote button:active { background: #000; color: var(--hi) }
-  .remote .up, .remote .down { font-size: 1.1rem }
-  .remote .up { border-bottom: 1px solid #00000033 } .remote .down { border-top: 1px solid #00000033 }
-  .remote .now { padding: .35rem .4rem; line-height: 1.05; gap: .1rem }
-  .remote .now b { font-size: 1.6rem; font-weight: 400 }
-  .remote .now span { font-size: 1rem; max-width: 6.5rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
-  .remote-list { position: absolute; right: -2px; bottom: calc(100% + 12px); list-style: none; padding: .35rem 0; margin: 0; min-width: 13.5rem;
-    background: #000; border: 2px solid var(--hi); box-shadow: 4px 4px 0 #888 }
-  .remote-list a { display: block; padding: .6rem .9rem; color: var(--hi); text-decoration: none; font: 1.3rem var(--font-mono) }
-  .remote-list a[aria-current] { background: var(--hi); color: #000 }
-  .remote-list a[aria-current]::after { content: "*" }
 }
-
-/* --- CRT "channel change": screen collapses into a bright line, then opens back up --- */
-.tv { position: fixed; inset: 0; z-index: 6; pointer-events: none }
-.tv::before, .tv::after { content: ""; position: absolute; z-index: 1; left: 0; right: 0; height: 0; background: #000; transition: height .17s cubic-bezier(.7, 0, .3, 1) }
-.tv::before { top: 0 } .tv::after { bottom: 0 }
-.tv i { position: absolute; z-index: 2; left: 0; right: 0; top: 50%; height: 2px; margin-top: -1px; background: #fff; box-shadow: 0 0 14px 3px #fff; opacity: 0; transform: scaleX(0); transition: transform .2s ease-in, opacity .2s }
-.tv.off::before, .tv.off::after { height: 50% }
-.tv.off i { opacity: 1; transform: scaleX(1); transition: transform .12s ease-out, opacity .05s }
-/* static: grainy snow + a rolling bright band. Only while reopening, and *under* the black shutters,
-   so it only shows on the slice of the site being revealed; then it fades out */
-.tv u { position: absolute; inset: 0; z-index: 0; opacity: 0; transition: opacity .45s ease-out; mix-blend-mode: screen;
-  background: linear-gradient(#0000 0 46%, #ffffff30 50%, #0000 54%) 0 0 / 100% 300%,
-    var(--noise);
-  animation: snow .18s steps(3) infinite, roll .5s linear infinite }
-.tv.static u { opacity: .6; transition: opacity .06s }
-@keyframes snow { 33% { background-position: 0 0, -60px 40px } 66% { background-position: 0 0, 50px -70px } }
-@keyframes roll { to { background-position: 0 100%, 0 0 } }
 
 /* --- konami: full vaporwave for 10s --- */
 html.vapor { --hi: #ff71ce; --dim: #01cdfe; --line: #b967ff80 }
@@ -225,7 +103,6 @@ html.vapor #scene { filter: sepia(1) hue-rotate(250deg) saturate(4) }
 html.vapor h1, html.vapor h2 { color: #fffb96; text-shadow: 3px 3px 0 #ff71ce, -3px -3px 0 #01cdfe }
 
 @media (prefers-reduced-motion: reduce) {
-  .crt, .glitch::before, .glitch::after, .reveal, .caret-text::after, .caret { animation: none }
+  .crt, .glitch::before, .glitch::after, .caret { animation: none }
   .trail { display: none }
-  .man .out, .man .out::before, .man .run, .man .ans, .ans::after { animation: none !important }
 }

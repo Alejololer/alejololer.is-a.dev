@@ -3,7 +3,8 @@ import { TessellateModifier } from 'three/addons/modifiers/TessellateModifier.js
 import { addFx } from './fx';
 
 // Port of prototypes/3-terminal-dream.html. Rule: everything slow, nothing dizzying.
-export function start(canvas: HTMLCanvasElement) {
+// Resolves once the first frame is on the canvas (the caller fades it in then).
+export async function start(canvas: HTMLCanvasElement) {
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const coarse = matchMedia('(pointer: coarse)').matches;
 
@@ -119,7 +120,7 @@ export function start(canvas: HTMLCanvasElement) {
     const el = document.createElement('div');
     el.className = 'trail'; el.style.opacity = String(.45 - i * .07);
     document.body.append(el);
-    return { el, x: -50, y: -50 };
+    return { el, x: -50, y: -50, at: '' };
   }) : [];
   const m = { x: 0, y: 0 }, s = { x: 0, y: 0 }, cur = { x: -50, y: -50 };
 
@@ -183,7 +184,7 @@ export function start(canvas: HTMLCanvasElement) {
   }
 
   // calibration: the approved prototype stepped per frame on a ~300Hz monitor, so k = "300Hz frames elapsed"
-  const HZ = 300;
+  const HZ = 300, root = document.documentElement;
   function frame(now = performance.now()) {
     const dt = Math.min(.1, (now - last) / 1000), k = dt * HZ;
     last = now;
@@ -198,13 +199,19 @@ export function start(canvas: HTMLCanvasElement) {
     trail.forEach((g, i) => {
       const lead = i ? trail[i - 1] : cur;
       g.x += (lead.x - g.x) * ease(.35, Math.min(k, 5)); g.y += (lead.y - g.y) * ease(.35, Math.min(k, 5));
-      g.el.style.translate = snap(g.x, g.y);
+      const at = snap(g.x, g.y);
+      if (at !== g.at) g.el.style.translate = g.at = at;                // at rest the ghosts cost no style work
     });
-    render(ease(pin ? .006 : .02, k));                                   // pinned: it trails behind its window (~0.5s) instead of snapping to it
+    // nothing to draw while a full-screen page covers the canvas (phones: an open item, see cover() in Tablero.astro)
+    if (!root.hasAttribute('data-covered')) render(ease(pin ? .006 : .02, k));   // pinned: it trails behind its window (~0.5s) instead of snapping to it
     requestAnimationFrame(frame);
   }
 
   addEventListener('resize', size);
   size();
+  // shaders compile off the main thread where the browser can (KHR_parallel_shader_compile): the page stays responsive
+  // while they do, instead of freezing on the first frame
+  await Promise.all([r.compileAsync(scene, cam), r.compileAsync(fg, cam)]).catch(() => {});
+  last = performance.now();
   if (still) render(); else frame();
 }

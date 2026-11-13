@@ -79,9 +79,7 @@
 .row small { grid-column: 2; font-size: .95rem; color: #ccc }
 .row .tall { display: none; font-family: var(--font-mono); font-size: 1.15rem; color: #a8a8a8 }   /* the brand lines: only where the screen has the room */
 @media (max-width: 1199px), (max-height: 799px) { .row .tall { display: block } }
-.list.chips { display: flex; flex-wrap: wrap; gap: .4rem }
-.chip { all: unset; padding: .05rem .5rem; border: 1px solid var(--line); font: 1.1rem var(--font-mono); color: var(--hi) }
-:is(.row, .chip):is(:hover, :focus-visible), .max :is(.row, .chip).sel { background: var(--hi); color: #000; outline: none }
+.row:is(:hover, :focus-visible), .max .row.sel { background: var(--hi); color: #000; outline: none }
 .row:is(:hover, :focus-visible) *, .row:is(:hover, :focus-visible)::after, .max .row.sel *, .max .row.sel::after { color: #000 }
 .board .term { padding: 0; border: 0; background: none; font-size: 1.2rem; line-height: 1.2 }
 .board .term.stack div + div { margin-top: .4rem }
@@ -109,7 +107,6 @@ html:has(.pane.max) { overflow: hidden }
 .max .pbody { flex: 1; gap: 1rem 2rem; padding: 1.25rem clamp(1rem, 2vw, 2rem) }
 .max .pbody:has(.feed) { grid-template-columns: minmax(13rem, 1fr) minmax(0, 2.4fr); align-items: start }
 .max .feed { display: block }
-.max .list.chips { flex-direction: column; align-items: start }
 .max.who .pbody { grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) }
 .max.who .more { display: grid; gap: .7rem; align-content: start; max-width: 70ch }
 .max .term { font-size: 1.25rem; line-height: 1.35 }
@@ -190,7 +187,6 @@ html:has(.pane.max) { overflow: hidden }
   .map-now::after { content: " ▴" }
   .map.open .map-now::after { content: " ▾" }
   .map-rooms { position: relative; aspect-ratio: 100 / 80; margin-top: .25rem }
-  .map-tip { padding-top: .3rem; color: var(--dim); font-size: 1rem; text-align: center }
   .map svg { position: absolute; inset: 0; width: 100%; height: 100% }
   .map line { stroke: var(--dim); stroke-width: 2; vector-effect: non-scaling-stroke }
   .map-rooms [data-cam] { all: unset; box-sizing: border-box; position: absolute; left: calc(var(--x) * 1%); top: calc(var(--y) * 1.25%); width: calc(var(--w) * 1%); height: calc(var(--h) * 1.25%);

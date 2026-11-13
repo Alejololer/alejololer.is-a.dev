@@ -217,6 +217,9 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
     }
   }
 
+  // phones: an open item's page covers the whole screen, so the 3D scene behind it stops drawing (scene.ts reads data-covered)
+  const cover = () => document.documentElement.toggleAttribute('data-covered', !desk.matches && !!maxed());
+
   // where the cameras start is not left to chance: people read left→right, top→bottom, so who-I-am sits top left and the
   // work follows it. A wall = three columns (x and first y in % of the wall) and the cameras each one stacks, top to bottom;
   // heights depend on the copy, so the stacking is measured. One wall is picked at random per visit.
@@ -289,6 +292,7 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
   desk.addEventListener('change', () => {
     for (const p of panes) for (const k of ['left', 'top', 'width', 'height', 'max-height', 'z-index']) p.style.removeProperty(k);
     if (desk.matches) deal(); else setCam(0);
+    cover();
   });
   if (!desk.matches) setCam(0);
   deal();
@@ -335,11 +339,12 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
       mark(pane);
       tune(pane);
       hole();
+      cover();
     }, pinHero);
     dispatchEvent(new Event('tv:on'));          // the 3D scene runs its refresh beam behind the wall
   }
   // back on the wall, keyboard focus returns to the row that opened the camera
-  const restore = () => { const cur = maxed(); if (cur) morph(cur, () => { cur.classList.remove('max', 'on'); for (const p of panes) p.inert = false; hole(); }, () => { pinHero(); opener?.focus({ preventScroll: true }); }); };
+  const restore = () => { const cur = maxed(); if (cur) morph(cur, () => { cur.classList.remove('max', 'on'); for (const p of panes) p.inert = false; hole(); cover(); }, () => { pinHero(); opener?.focus({ preventScroll: true }); }); };
   const close = () => { if (!maxed()) return; if (pushed) history.back(); else restore(); };
   addEventListener('popstate', () => { pushed = false; restore(); });
 
