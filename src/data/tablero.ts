@@ -9,8 +9,8 @@ export const ui: Record<Lang, {
   ariaNav: string; ariaMap: string; ariaToggle: string; role: string; egg: string[];
 }> = {
   es: {
-    // plain names: the top bar and the phone's camera list say these; the terminal commands stay as decoration on each camera's bar
-    names: ['Inicio', 'Fuera del teclado', 'Contacto', 'Experiencia', 'Proyectos', 'Credenciales', 'En vivo', 'Lab', 'Preguntas'],
+    // plain names, in camera order: the top bar and the phone's camera list say these; the terminal commands stay as decoration on each camera's bar
+    names: ['Inicio', 'Experiencia', 'Proyectos', 'Credenciales', 'Contacto', 'Lab', 'Preguntas', 'Fuera del teclado', 'En vivo'],
     afkTitle: 'Fuera del teclado', liveBar: 'en vivo',
     // dictated by the user (2026-11-12)
     afk: [
@@ -27,7 +27,7 @@ export const ui: Record<Lang, {
     egg: ['ES UN FEATURE', 'EN MI MÁQUINA FUNCIONA', 'NO ERA UN BUG', 'DEPLOY EN VIERNES'],
   },
   en: {
-    names: ['Home', 'Away from keyboard', 'Contact', 'Experience', 'Projects', 'Credentials', 'Live', 'Lab', 'FAQ'],
+    names: ['Home', 'Experience', 'Projects', 'Credentials', 'Contact', 'Lab', 'FAQ', 'Away from keyboard', 'Live'],
     afkTitle: 'Away from keyboard', liveBar: 'live',
     afk: [
       ['games', 'PC and Switch 2. Open worlds and deep stories; my favorite is Breath of the Wild.'],

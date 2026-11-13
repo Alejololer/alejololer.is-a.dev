@@ -147,9 +147,8 @@ html:has(.pane.max) { overflow: hidden }
 .map, .snow, .back { display: none }
 @media (max-width: 1199px), (max-height: 799px) {
   .board { padding-bottom: 5rem }
-  #whoami { order: 0 } #experience { order: 1 } #shipped { order: 2 } #credentials { order: 3 } #contact { order: 4 } #lab { order: 5 } #faq { order: 6 } #afk { order: 7 } #live { order: 8 }
   .pane { scroll-margin-top: 2.6rem }
-  .pane.live { height: 40svh }
+  .pane.live { height: 55svh }
   .board .tip, .bar [data-max] { display: none }
   .max .more-btn { display: block }
   /* .max here only means "one of my items is open": the camera stays where it is in the page (so nothing jumps), under the item's page */
@@ -164,12 +163,14 @@ html:has(.pane.max) { overflow: hidden }
   .max.who .more { padding-bottom: 5rem }
   .max.who .back { position: fixed; z-index: 5; left: 0; right: 0; bottom: 0; padding: .7rem 1rem calc(.7rem + env(safe-area-inset-bottom)); border: 0; border-top: 1px solid var(--line); background: #000 }
   .max .feed { display: flex; position: fixed; inset: 2rem 0 0; z-index: 4; background: #000; overflow: auto hidden; scroll-snap-type: x mandatory; overscroll-behavior: contain; scrollbar-width: none }
-  /* the item's page tunes in like the big window does, over the whole screen */
-  .pane { --wait: .12s }
-  .pane.on::before, .pane.on::after, .pane.on .scan { position: fixed; z-index: 6 }
-  .pane.on::before, .pane.on::after { height: calc(50% - 1rem) }
-  .pane.on::before { top: 2rem }
-  .pane.on .scan { top: calc(50% + 1rem) }
+  /* every camera tunes in inside its own frame the first time it scrolls into view (.on without .max, the rules at the top);
+     an item's page tunes in the same way over the whole screen, and holds the static a little longer so it is seen */
+  .pane { --wait: .22s }
+  .pane.max { --wait: .34s }
+  .pane.max.on::before, .pane.max.on::after, .pane.max.on .scan { position: fixed; z-index: 6 }
+  .pane.max.on::before, .pane.max.on::after { height: calc(50% - 1rem) }
+  .pane.max.on::before { top: 2rem }
+  .pane.max.on .scan { top: calc(50% + 1rem); z-index: 7 }
   .max .feed article { display: grid; flex: 0 0 100%; max-width: none; scroll-snap-align: start; scroll-snap-stop: always; overflow-y: auto; padding: 1.25rem 1rem 5rem; animation: none }
   .max .dnav { position: fixed; z-index: 5; left: 0; right: 0; bottom: 0; padding-bottom: calc(.4rem + env(safe-area-inset-bottom)) }
   .back { display: block }

@@ -2,9 +2,11 @@
 // The home page: the whole site as a wall of monitors (FNAF cameras drawn as win95 windows).
 // Desktop: no page scroll and no grid: the cameras float and overlap. Drag one by its bar, resize it from any edge,
 // grow it with its button, its number key or by picking one of its rows: it becomes a big window over the wall and paints
-// the detail inside itself. Phones: no moving or resizing. The cameras stack and the page scrolls down; picking an item slides in
-// a full-screen page from the right with that item, and swiping sideways there goes through its siblings. The camera map
-// (bottom right, as in the game) folds into a label and jumps to any camera.
+// the detail inside itself. Phones: no moving or resizing, nothing random. The cameras stack in their numbered order and the page scrolls down;
+// each one tunes in through static the first time it comes on screen. Picking an item opens a full-screen page that tunes in the
+// same way, and swiping sideways there goes through its siblings. The camera map (bottom right, as in the game) folds into a label
+// and jumps to any camera.
+// The cameras are numbered in reading order: who I am, the work, how to reach me, then the extras.
 import { Image } from 'astro:assets';
 import Cut from './Cut.astro';
 import Cam from './Cam.astro';
@@ -16,18 +18,17 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 const c = t[lang], u = ui[lang], { names, afk } = u;
 const ext = { target: '_blank', rel: 'noopener' };
-const cams = ['whoami', 'afk', c.contact.cmd, c.exp.cmd, c.shipped.cmd, c.creds.cmd, u.liveBar, c.lab.cmd, c.faq.cmd];
+const cams = ['whoami', c.exp.cmd, c.shipped.cmd, c.creds.cmd, c.contact.cmd, c.lab.cmd, c.faq.cmd, 'afk', u.liveBar];
 // each camera's [left, top, width, height?] in % of the wall. Left/top are only the no-JS fallback: on load the script deals one of its walls (deal()).
-const at = [[2, 3, 24], [5, 43, 25], [3, 84, 21], [31, 1, 27], [37, 44, 26], [27, 74, 26], [70, 6, 21, 36], [66, 55, 22], [58, 88, 29]];
-// phones stack the cameras in this order: who, the work, how to reach me, then the extras
-const phone = [0, 3, 4, 5, 2, 7, 8, 1, 6];
+const at = [[2, 3, 24], [31, 1, 27], [37, 44, 26], [27, 74, 26], [3, 84, 21], [66, 55, 22], [58, 88, 29], [5, 43, 25], [70, 6, 21, 36]];
 // "about me" is short here: the first two sentences of the bio. The rest of it (job, past work, degree) is what the other cameras show.
 const intro = c.about.body.split('. ').slice(0, 2).join('. ') + '.';
-const slugs = ['whoami', 'afk', 'contact', 'experience', 'shipped', 'credentials', 'live', 'lab', 'faq'];
-const headings = [undefined, u.afkTitle, c.contact.title, c.exp.title, c.shipped.title, c.creds.title, undefined, c.lab.title, c.faq.title];
+const slugs = ['whoami', 'experience', 'shipped', 'credentials', 'contact', 'lab', 'faq', 'afk', 'live'];
+const headings = [undefined, c.exp.title, c.shipped.title, c.creds.title, c.contact.title, c.lab.title, c.faq.title, u.afkTitle, undefined];
 // phones: the FNAF camera map. Each camera is a room [left, top, width, height] on a 100×80 plan; halls join two rooms.
-const rooms = [[36, 2, 28, 16], [6, 46, 20, 14], [36, 66, 28, 12], [6, 24, 26, 14], [38, 24, 24, 14], [30, 46, 22, 14], [56, 46, 18, 14], [68, 24, 26, 14], [78, 46, 16, 14]];
-const halls = [[0, 4], [3, 4], [4, 7], [3, 1], [4, 5], [4, 6], [7, 8], [5, 2], [6, 2]];
+// The rooms read like the page does: 00 on top, then left to right, row by row.
+const rooms = [[36, 2, 28, 14], [4, 24, 28, 14], [36, 24, 28, 14], [68, 24, 28, 14], [4, 46, 28, 14], [36, 46, 28, 14], [68, 46, 28, 14], [20, 66, 26, 12], [54, 66, 26, 12]];
+const halls = [[0, 2], [1, 2], [2, 3], [1, 4], [2, 5], [3, 6], [4, 5], [5, 6], [4, 7], [6, 8], [7, 8]];
 const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i][3] / 2];
 ---
   <div class="tablero" hidden></div>
@@ -59,19 +60,7 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
           {c.service && <><p class="mono">&gt; {c.service.cmd}</p><p>{c.service.lead}</p></>}
         </div>
       </Cam>
-      <Cam u={u} i={1} slug={slugs[1]} heading={headings[1]} at={at[1]} title={cams[1]}>
-        <dl class="term stack">{afk.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
-      </Cam>
-      <Cam u={u} i={2} slug={slugs[2]} heading={headings[2]} at={at[2]} title={cams[2]}>
-        <div class="links">
-          <a href={`mailto:${person.email}`}>email</a>
-          <a href={person.linkedin} {...ext}>LinkedIn</a>
-          <a href={person.github} {...ext}>GitHub</a>
-          <a href={c.contact.cvHref} download={c.contact.cvFile} data-cursor="[ pdf ]">CV</a>
-        </div>
-      </Cam>
-
-      <Cam u={u} i={3} slug={slugs[3]} heading={headings[3]} at={at[3]} title={cams[3]} n={c.exp.items.length}>
+      <Cam u={u} i={1} slug={slugs[1]} heading={headings[1]} at={at[1]} title={cams[1]} n={c.exp.items.length}>
         <div class="list">{c.exp.items.map((e, i) => (
           <button class="row" data-i={i} data-cursor={u.cView}><span class="k">{e.when.split(' — ')[0]}</span><b>{e.org}</b><small>{e.role}</small><small class="tall">{e.hook}</small></button>
         ))}</div>
@@ -85,7 +74,7 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
           </article>
         ))}</div>
       </Cam>
-      <Cam u={u} i={4} slug={slugs[4]} heading={headings[4]} at={at[4]} title={cams[4]} n={c.shipped.items.length}>
+      <Cam u={u} i={2} slug={slugs[2]} heading={headings[2]} at={at[2]} title={cams[2]} n={c.shipped.items.length}>
         <div class="list">{c.shipped.items.map((s, i) => (
           <button class="row n" data-i={i} data-cursor={u.cView}><span class="k">0{i + 1}</span><b>{s.name}</b><small>{s.tag}</small><small class="tall">{c.shipped.friction}: {s.friction}</small></button>
         ))}</div>
@@ -101,13 +90,18 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
           </article>
         ))}</div>
       </Cam>
-      <Cam u={u} i={5} slug={slugs[5]} heading={headings[5]} at={at[5]} title={cams[5]}>
+      <Cam u={u} i={3} slug={slugs[3]} heading={headings[3]} at={at[3]} title={cams[3]}>
         <dl class="term stack">{c.creds.items.map(i => <div><dt>{i.k}</dt><dd>{i.v}</dd></div>)}</dl>
       </Cam>
-
-      <Cam u={u} i={6} slug={slugs[6]} heading={headings[6]} at={at[6]} title={cams[6]} class="live">
+      <Cam u={u} i={4} slug={slugs[4]} heading={headings[4]} at={at[4]} title={cams[4]}>
+        <div class="links">
+          <a href={`mailto:${person.email}`}>email</a>
+          <a href={person.linkedin} {...ext}>LinkedIn</a>
+          <a href={person.github} {...ext}>GitHub</a>
+          <a href={c.contact.cvHref} download={c.contact.cvFile} data-cursor="[ pdf ]">CV</a>
+        </div>
       </Cam>
-      <Cam u={u} i={7} slug={slugs[7]} heading={headings[7]} at={at[7]} title={cams[7]} n={c.lab.items.length}>
+      <Cam u={u} i={5} slug={slugs[5]} heading={headings[5]} at={at[5]} title={cams[5]} n={c.lab.items.length}>
         <div class="list">{c.lab.items.map((l, i) => (
           <button class="row n" data-i={i} data-cursor={u.cView}><span class="k">0{i + 1}</span><b>{l.name}</b><small class="tall">{c.shipped.friction}: {l.friction}</small></button>
         ))}</div>
@@ -120,7 +114,7 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
           </article>
         ))}</div>
       </Cam>
-      <Cam u={u} i={8} slug={slugs[8]} heading={headings[8]} at={at[8]} title={cams[8]} n={c.faq.items.length}>
+      <Cam u={u} i={6} slug={slugs[6]} heading={headings[6]} at={at[6]} title={cams[6]} n={c.faq.items.length}>
         <div class="list">{c.faq.items.map((f, i) => <button class="row n" data-i={i} data-cursor={u.cView}><span class="k">0{i + 1}</span><b>{f.q}</b></button>)}</div>
         <div class="feed">{c.faq.items.map(f => (
           <article>
@@ -129,6 +123,11 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
             <p>{f.a}</p>
           </article>
         ))}</div>
+      </Cam>
+      <Cam u={u} i={7} slug={slugs[7]} heading={headings[7]} at={at[7]} title={cams[7]}>
+        <dl class="term stack">{afk.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+      </Cam>
+      <Cam u={u} i={8} slug={slugs[8]} heading={headings[8]} at={at[8]} title={cams[8]} class="live">
       </Cam>
   </main>
 
@@ -140,7 +139,7 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
       </svg>
       {rooms.map(([x, y, w, h], i) => <button type="button" data-cam={i} style={`--x:${x};--y:${y};--w:${w};--h:${h}`} aria-label={`CAM 0${i} · ${cams[i]}`}>0{i}</button>)}
     </div>
-    <ol class="map-list">{phone.map(i => <li><button type="button" data-cam={i}><span>0{i}</span> {names[i]}</button></li>)}</ol>
+    <ol class="map-list">{names.map((n, i) => <li><button type="button" data-cam={i}><span>0{i}</span> {n}</button></li>)}</ol>
   </nav>
   <div class="snow" aria-hidden="true"></div>
 
@@ -160,25 +159,43 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
   function morph(pane: HTMLElement, fn: () => void, then = () => {}) {
     if (still || !desk.matches || !document.startViewTransition) { fn(); return then(); }
     pane.style.setProperty('view-transition-name', 'cam');
-    document.startViewTransition(fn).finished.catch(() => {}).finally(() => { pane.style.removeProperty('view-transition-name'); then(); });
+    const vt = document.startViewTransition(fn);
+    vt.ready.catch(() => {});      // a second click mid-growth skips the first transition: not an error
+    vt.finished.catch(() => {}).finally(() => { pane.style.removeProperty('view-transition-name'); then(); });
   }
 
-  // the big window tunes in (.on, tablero.css): it grows full of static, then a bright line runs down it loading the picture.
-  // Only inside that window; the small cameras never play it.
+  // a camera tunes in (.on, tablero.css): its picture is static shut on a bright line, which then opens from the middle.
+  // Desktop: the big window, as it grows. Phones: an item's page as it opens (full screen), and every camera the first time
+  // it scrolls into view (inside its own frame).
   let tuned = 0;
   function tune(pane: HTMLElement) {
     if (still) return;
     for (const p of panes) p.classList.toggle('on', p === pane);
     clearTimeout(tuned);
-    tuned = window.setTimeout(() => pane.classList.remove('on'), 1000);
+    tuned = window.setTimeout(() => pane.classList.remove('on'), 1200);
+  }
+  if (!still) {
+    const seen = new IntersectionObserver(es => {
+      for (const e of es) if (e.isIntersecting && !desk.matches) {
+        const p = e.target as HTMLElement;
+        seen.unobserve(p);
+        if (maxed()) continue;
+        p.classList.add('on');
+        setTimeout(() => { if (!p.classList.contains('max')) p.classList.remove('on'); }, 900);
+      }
+    }, { threshold: .15 });
+    for (const p of panes) seen.observe(p);
   }
 
-  // CAM 06 is a hole onto the 3D scene: tell the scene where the hole is and the figure drifts after it (scene.ts, 'hero:pin')
+  // the live camera is a hole onto the 3D scene: tell the scene where the hole is and the figure drifts after it (scene.ts, 'hero:pin')
   const live = document.querySelector<HTMLElement>('.pane.live')!;
+  let pinned = '';
   function pinHero() {
     const r = live.getBoundingClientRect();
-    // phones: the figure comes to the middle of the screen while CAM 06 is the one showing, and roams otherwise
-    const at = desk.matches ? [Math.round(r.left + r.width / 2), Math.round(r.top + r.height / 2)] : cam === panes.indexOf(live) ? [Math.round(innerWidth / 2), Math.round(innerHeight * .42)] : null;
+    // phones: the figure comes to the live camera while that camera is on screen, and roams otherwise
+    const at = desk.matches || (r.bottom > 80 && r.top < innerHeight - 80) ? [Math.round(r.left + r.width / 2), Math.round(r.top + r.height / 2)] : null;
+    if (String(at) === pinned) return;
+    pinned = String(at);
     if (at) document.documentElement.dataset.heroPin = at.join(); else delete document.documentElement.dataset.heroPin;
     dispatchEvent(new CustomEvent('hero:pin', { detail: at }));
   }
@@ -188,9 +205,9 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
   // heights depend on the copy, so the stacking is measured. One wall is picked at random per visit.
   const WALLS = [
     // (columns are balanced by height: the three sum to about the same, so none has to overlap on a 16:9 screen)
-    { x: [2, 35, 70], y: [2, 1, 3], cols: [[0, 4, 1], [3, 7, 5], [6, 8, 2]] },
-    { x: [3, 33, 68], y: [1, 3, 2], cols: [[0, 8], [3, 4, 5, 1], [6, 7, 2]] },
-    { x: [2, 36, 69], y: [3, 2, 1], cols: [[0, 4, 2], [3, 8, 5], [7, 6, 1]] },
+    { x: [2, 35, 70], y: [2, 1, 3], cols: [[0, 2, 7], [1, 5, 3], [8, 6, 4]] },
+    { x: [3, 33, 68], y: [1, 3, 2], cols: [[0, 6], [1, 2, 3, 7], [8, 5, 4]] },
+    { x: [2, 36, 69], y: [3, 2, 1], cols: [[0, 2, 4], [1, 6, 3], [5, 8, 7]] },
   ];
   const wall = Math.floor(Math.random() * WALLS.length);
   function deal() {
@@ -229,11 +246,14 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
     jumped = performance.now();
   }
   let jumped = 0;   // the last cameras cannot reach the top of the screen: right after a jump, the scroll does not get a say
-  // the camera "on air" is the last one whose top has passed the upper part of the screen
+  // the camera "on air" is the last one whose top has passed the upper part of the screen (the very last one, at the end of the page)
   addEventListener('scroll', () => {
-    if (desk.matches || maxed() || performance.now() - jumped < 400) return;
-    let i = cam, low = -Infinity;      // (the stacking order is not the DOM order: take the lowest top that qualifies)
-    panes.forEach((p, k) => { const y = p.getBoundingClientRect().top; if (y < innerHeight * .4 && y > low) { low = y; i = k; } });
+    if (desk.matches || maxed()) return;
+    pinHero();
+    if (performance.now() - jumped < 400) return;
+    let i = 0;
+    panes.forEach((p, k) => { if (p.getBoundingClientRect().top < innerHeight * .4) i = k; });
+    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) i = panes.length - 1;
     if (i !== cam) setCam(i);
   }, { passive: true });
   document.addEventListener('click', e => {
