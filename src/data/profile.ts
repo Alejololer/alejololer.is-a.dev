@@ -72,7 +72,7 @@ export const t = {
       ],
     },
     creds: {
-      title: 'Education & certifications',
+      title: 'Credentials',
       items: [
         { k: 'B.Eng. Software Engineering', v: 'Escuela Politécnica Nacional · 2021–2026 · grade 28/30' },
         { k: 'Azure Administrator Associate (AZ-104)', v: 'Microsoft Certified · Oct 2026' },
@@ -170,7 +170,7 @@ export const t = {
       ],
     },
     creds: {
-      title: 'Formación y certificaciones',
+      title: 'Credenciales',
       items: [
         { k: 'Ingeniería de Software', v: 'Escuela Politécnica Nacional · 2021–2026 · nota 28/30' },
         { k: 'Azure Administrator Associate (AZ-104)', v: 'Microsoft Certified · Oct 2026' },

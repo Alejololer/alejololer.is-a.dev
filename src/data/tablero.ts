@@ -10,7 +10,7 @@ export const ui: Record<Lang, {
 }> = {
   es: {
     // plain names, in window order: every label a visitor reads (top bar, window bars, phone list) says these. No terminal commands: recruiters read this too
-    names: ['Inicio', 'Experiencia', 'Sitios web', 'Formación', 'Contacto', 'Proyectos', 'Preguntas', 'Fuera del teclado', 'En vivo'],
+    names: ['Inicio', 'Experiencia', 'Sitios web', 'Credenciales', 'Contacto', 'Proyectos', 'Preguntas', 'Fuera del teclado', 'En vivo'],
     about: 'sobre mí →',
     // dictated by the user (2026-11-12)
     afk: [
@@ -27,7 +27,7 @@ export const ui: Record<Lang, {
     egg: ['ES UN FEATURE', 'EN MI MÁQUINA FUNCIONA', 'NO ERA UN BUG', 'DEPLOY EN VIERNES'],
   },
   en: {
-    names: ['Home', 'Experience', 'Websites', 'Education', 'Contact', 'Side projects', 'FAQ', 'Away from keyboard', 'Live'],
+    names: ['Home', 'Experience', 'Websites', 'Credentials', 'Contact', 'Side projects', 'FAQ', 'Away from keyboard', 'Live'],
     about: 'about me →',
     afk: [
       ['games', 'PC and Switch 2. Open worlds and deep stories; my favorite is Breath of the Wild.'],
