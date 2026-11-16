@@ -18,13 +18,12 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 const c = t[lang], u = ui[lang], { names, afk } = u;
 const ext = { target: '_blank', rel: 'noopener' };
-const cams = ['whoami', c.exp.cmd, c.shipped.cmd, c.creds.cmd, c.contact.cmd, c.lab.cmd, c.faq.cmd, 'afk', u.liveBar];
 // each camera's [left, top, width, height?] in % of the wall. Left/top are only the no-JS fallback: on load the script deals one of its walls (deal()).
 const at = [[2, 3, 24], [31, 1, 27], [37, 44, 26], [27, 74, 26], [3, 84, 21], [66, 55, 22], [58, 88, 29], [5, 43, 25], [70, 6, 21, 36]];
 // "about me" is short here: the first two sentences of the bio. The rest of it (job, past work, degree) is what the other cameras show.
 const intro = c.about.body.split('. ').slice(0, 2).join('. ') + '.';
 const slugs = ['whoami', 'experience', 'shipped', 'credentials', 'contact', 'lab', 'faq', 'afk', 'live'];
-const headings = [undefined, c.exp.title, c.shipped.title, c.creds.title, c.contact.title, c.lab.title, c.faq.title, u.afkTitle, undefined];
+const headings = [undefined, c.exp.title, c.shipped.title, c.creds.title, c.contact.title, c.lab.title, c.faq.title, names[7], undefined];
 // phones: the FNAF camera map. Each camera is a room [left, top, width, height] on a 100×80 plan; halls join two rooms.
 // The rooms read like the page does: 00 on top, then left to right, row by row.
 const rooms = [[36, 2, 28, 14], [4, 24, 28, 14], [36, 24, 28, 14], [68, 24, 28, 14], [4, 46, 28, 14], [36, 46, 28, 14], [68, 46, 28, 14], [20, 66, 26, 12], [54, 66, 26, 12]];
@@ -36,18 +35,18 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
     <a class="session" href={lang === 'es' ? '/es/' : '/'}>
       <svg class="logo" viewBox="-1.25 -1.25 2.5 2.5" aria-hidden="true"><circle r="1.08" fill="none" stroke="currentColor" stroke-width=".16" /><path fill="currentColor" transform="scale(.66)" d="M-.75-1H-.35L.8 1H.4L-.037.24-.45 1H-.85L-.2325-.1Z" /></svg>alejololer
     </a>
-    <ol>{cams.map((_, i) => <li><a href={`#${slugs[i]}`} data-pane={i}>{i}:{names[i].toLowerCase()}</a></li>)}</ol>
+    <ol>{names.map((_, i) => <li><a href={`#${slugs[i]}`} data-pane={i}>{i}:{names[i].toLowerCase()}</a></li>)}</ol>
     <span class="pos"><span class="hint" aria-hidden="true">{u.keys}</span></span>
     <a class="lang" href={c.nav.otherHref} hreflang={c.nav.other.toLowerCase()} lang={c.nav.other.toLowerCase()}>{c.nav.other}<span class="sr-only"> · {c.nav.otherLabel}</span></a>
   </nav>
 
   <main class="board" style={`--t-grow:"${u.grow}";--t-esc:"${u.esc}";--t-see:"${u.see}"`}>
-      <Cam u={u} i={0} slug={slugs[0]} heading={headings[0]} at={at[0]} title={cams[0]} class="who">
+      <Cam u={u} i={0} slug={slugs[0]} heading={headings[0]} at={at[0]} title={names[0]} class="who">
         <div class="id">
           <h1 data-cursor="[ ? ]"><span class="sr-only">{person.handle} · {person.short}, {u.role}</span><Cut silent text="Alejo" /><Cut silent text="loler" /></h1>
           <p class="sub">{c.hero.lines.join(' ')}</p>
           <p>{person.short} · {c.about.term[1][1]} · {c.about.term[3][1]}</p>
-          <button type="button" class="more-btn" data-max data-cursor="[ cat ]">{c.about.cmd}</button>
+          <button type="button" class="more-btn" data-max data-cursor={u.cView}>{u.about}</button>
           <p class="mono tip">{u.tip}</p>
         </div>
         <div class="more">
@@ -55,18 +54,18 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
           <h3>{c.about.title}</h3>
           <p>{intro}</p>
           <dl class="term">{c.about.term.slice(0, 4).map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
-          <p class="mono">&gt; {c.ikigai.cmd}</p>
+          <p class="mono">{c.ikigai.title}</p>
           <dl class="term">{c.ikigai.items.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
-          {c.service && <><p class="mono">&gt; {c.service.cmd}</p><p>{c.service.lead}</p></>}
+          {c.service && <><p class="mono">{c.service.title}</p><p>{c.service.lead}</p></>}
         </div>
       </Cam>
-      <Cam u={u} i={1} slug={slugs[1]} heading={headings[1]} at={at[1]} title={cams[1]} n={c.exp.items.length}>
+      <Cam u={u} i={1} slug={slugs[1]} heading={headings[1]} at={at[1]} title={names[1]} n={c.exp.items.length}>
         <div class="list">{c.exp.items.map((e, i) => (
           <button class="row" data-i={i} data-cursor={u.cView}><span class="k">{e.when.split(' — ')[0]}</span><b>{e.org}</b><small>{e.role}</small><small class="tall">{e.hook}</small></button>
         ))}</div>
         <div class="feed">{c.exp.items.map(e => (
           <article>
-            <p class="mono">commit · {e.when}</p>
+            <p class="mono">{e.when}</p>
             <h3>{e.org}</h3>
             <p class="mono">{e.role}</p>
             <p>{e.hook}</p>
@@ -74,7 +73,7 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
           </article>
         ))}</div>
       </Cam>
-      <Cam u={u} i={2} slug={slugs[2]} heading={headings[2]} at={at[2]} title={cams[2]} n={c.shipped.items.length}>
+      <Cam u={u} i={2} slug={slugs[2]} heading={headings[2]} at={at[2]} title={names[2]} n={c.shipped.items.length}>
         <div class="list">{c.shipped.items.map((s, i) => (
           <button class="row n" data-i={i} data-cursor={u.cView}><span class="k">0{i + 1}</span><b>{s.name}</b><small>{s.tag}</small><small class="tall">{c.shipped.friction}: {s.friction}</small></button>
         ))}</div>
@@ -90,10 +89,11 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
           </article>
         ))}</div>
       </Cam>
-      <Cam u={u} i={3} slug={slugs[3]} heading={headings[3]} at={at[3]} title={cams[3]}>
+      <Cam u={u} i={3} slug={slugs[3]} heading={headings[3]} at={at[3]} title={names[3]}>
         <dl class="term stack">{c.creds.items.map(i => <div><dt>{i.k}</dt><dd>{i.v}</dd></div>)}</dl>
       </Cam>
-      <Cam u={u} i={4} slug={slugs[4]} heading={headings[4]} at={at[4]} title={cams[4]}>
+      <Cam u={u} i={4} slug={slugs[4]} heading={headings[4]} at={at[4]} title={names[4]}>
+        <p>{c.contact.ask}</p>
         <div class="links">
           <a href={`mailto:${person.email}`}>email</a>
           <a href={person.linkedin} {...ext}>LinkedIn</a>
@@ -101,7 +101,7 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
           <a href={c.contact.cvHref} download={c.contact.cvFile} data-cursor="[ pdf ]">CV</a>
         </div>
       </Cam>
-      <Cam u={u} i={5} slug={slugs[5]} heading={headings[5]} at={at[5]} title={cams[5]} n={c.lab.items.length}>
+      <Cam u={u} i={5} slug={slugs[5]} heading={headings[5]} at={at[5]} title={names[5]} n={c.lab.items.length}>
         <div class="list">{c.lab.items.map((l, i) => (
           <button class="row n" data-i={i} data-cursor={u.cView}><span class="k">0{i + 1}</span><b>{l.name}</b><small class="tall">{c.shipped.friction}: {l.friction}</small></button>
         ))}</div>
@@ -114,30 +114,29 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
           </article>
         ))}</div>
       </Cam>
-      <Cam u={u} i={6} slug={slugs[6]} heading={headings[6]} at={at[6]} title={cams[6]} n={c.faq.items.length}>
+      <Cam u={u} i={6} slug={slugs[6]} heading={headings[6]} at={at[6]} title={names[6]} n={c.faq.items.length}>
         <div class="list">{c.faq.items.map((f, i) => <button class="row n" data-i={i} data-cursor={u.cView}><span class="k">0{i + 1}</span><b>{f.q}</b></button>)}</div>
         <div class="feed">{c.faq.items.map(f => (
           <article>
-            <p class="mono">$ alejololer {f.flag}</p>
             <h3>{f.q}</h3>
             <p>{f.a}</p>
           </article>
         ))}</div>
       </Cam>
-      <Cam u={u} i={7} slug={slugs[7]} heading={headings[7]} at={at[7]} title={cams[7]}>
+      <Cam u={u} i={7} slug={slugs[7]} heading={headings[7]} at={at[7]} title={names[7]}>
         <dl class="term stack">{afk.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
       </Cam>
-      <Cam u={u} i={8} slug={slugs[8]} heading={headings[8]} at={at[8]} title={cams[8]} class="live">
+      <Cam u={u} i={8} slug={slugs[8]} heading={headings[8]} at={at[8]} title={names[8]} class="live">
       </Cam>
   </main>
 
   <nav class="map" aria-label={u.ariaMap}>
-    <button type="button" class="map-now" aria-expanded="false">CAM 00 · {names[0]}</button>
+    <button type="button" class="map-now" aria-expanded="false">00 · {names[0]}</button>
     <div class="map-rooms">
       <svg viewBox="0 0 100 80" preserveAspectRatio="none" aria-hidden="true">
         {halls.map(([a, b]) => <line x1={mid(a)[0]} y1={mid(a)[1]} x2={mid(b)[0]} y2={mid(b)[1]} />)}
       </svg>
-      {rooms.map(([x, y, w, h], i) => <button type="button" data-cam={i} style={`--x:${x};--y:${y};--w:${w};--h:${h}`} aria-label={`CAM 0${i} · ${cams[i]}`}>0{i}</button>)}
+      {rooms.map(([x, y, w, h], i) => <button type="button" data-cam={i} style={`--x:${x};--y:${y};--w:${w};--h:${h}`} aria-label={`0${i} · ${names[i]}`}>0{i}</button>)}
     </div>
     <ol class="map-list">{names.map((n, i) => <li><button type="button" data-cam={i}><span>0{i}</span> {n}</button></li>)}</ol>
   </nav>
@@ -252,7 +251,7 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
   function setCam(i: number) {
     cam = i;
     rooms.forEach((r, k) => r.toggleAttribute('aria-current', k === i));
-    now.textContent = `CAM ${pad(i)} · ${map.querySelector(`.map-list [data-cam="${i}"]`)!.lastChild!.textContent!.trim()}`;
+    now.textContent = `${pad(i)} · ${map.querySelector(`.map-list [data-cam="${i}"]`)!.lastChild!.textContent!.trim()}`;
     mark(panes[i]);
     pinHero();
   }

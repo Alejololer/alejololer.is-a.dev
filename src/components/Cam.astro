@@ -9,7 +9,7 @@ const { u, i, slug, title, heading, at, n = 0, class: cls = '' } = Astro.props;
 const [x, y, w, h] = at;
 ---
 <div class={`pane ${cls}`} id={slug} tabindex="-1" data-title={title} style={`--x:${x};--y:${y};--w:${w}${h ? `;--h:${h}` : ''}`}>
-  <div class="bar" data-cursor="ico-move"><span>CAM 0{i} · {title}</span><button type="button" data-max data-cursor={u.cGrow} aria-label={`${u.ariaToggle} ${title}`}></button></div>
+  <div class="bar" data-cursor="ico-move"><span>0{i} · {title}</span><button type="button" data-max data-cursor={u.cGrow} aria-label={`${u.ariaToggle} ${title}`}></button></div>
   {heading && <h2 class="ttl">{heading}</h2>}
   <div class="pbody"><slot /></div>
   <i class="scan" aria-hidden="true"></i>

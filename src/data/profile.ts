@@ -31,26 +31,22 @@ export const t = {
       description: 'Software Engineer in Quito, Ecuador. I fix what everyone learned to live with, shipping production web products with Django, Next.js, Astro and LLMs.',
     },
     nav: {
-      other: 'ES', otherHref: '/es/', otherLabel: 'Leer en español', label: 'Sections', hint: '0-8 jump',
+      other: 'ES', otherHref: '/es/', otherLabel: 'Leer en español', label: 'Sections',
       prev: 'Previous section', next: 'Next section', list: 'All sections',
-      sections: [['hero', 'whoami'], ['about', 'cat about'], ['ikigai', 'cat ikigai'], ['experience', 'git log'], ['credentials', 'cat creds'], ['shipped', 'ls shipped'], ['lab', 'ls lab'], ['faq', 'man'], ['contact', './contact']],
     },
-    hero: { cmd: 'whoami', lines: ['I fix what', 'everyone', 'learned', 'to live with.'], scroll: "scroll ↓ (it's worth it)" },
+    hero: { lines: ['I fix what', 'everyone', 'learned', 'to live with.'], scroll: "scroll ↓ (it's worth it)" },
     about: {
-      cmd: 'cat about.txt',
       title: 'I go looking for the friction people stopped noticing, and make it simple.',
       sub: 'Days into hours. Mostly with LLMs.',
       body: "I'm Carlos Alejandro Alemán, better known as Alejololer. I like getting to the root of a problem, fixing it without over-engineering, and making the fix look as good as it works. I'm a Software Engineer at Upstart 13, where I own auth, the data model and the frontend architecture of an AI platform built on the Claude Agent SDK. Before that I built LLM features that turned messy client documents into structured data and cut drafting time from days to hours. On the side I design and ship websites for small businesses that actually get found, which mostly means turning tech-speak into plain language. I graduated from Escuela Politécnica Nacional. I'm Azure AZ-104 certified and a Claude Certified Developer.",
-      term: [['name', 'Carlos Alejandro Alemán'], ['role', 'Junior Software Engineer @ Upstart 13'], ['stack', 'TypeScript · React · Django · LLMs · Azure'], ['based', 'Quito, Ecuador'], ['status', "just chillin'"]],
+      term: [['name', 'Carlos Alejandro Alemán'], ['role', 'Junior Software Engineer @ Upstart 13'], ['stack', 'TypeScript · React · Django · LLMs · Azure'], ['location', 'Quito, Ecuador'], ['status', "just chillin'"]],
     },
     ikigai: {
-      cmd: 'cat ikigai.txt',
       title: 'Why I do this.',
       sub: 'Everyday things should take less effort: making sense of your spending, having a website of your own, finding a lawyer in time.',
       items: [['passion', 'fixes that look the part'], ['mission', 'spotting what everyone else tunes out'], ['vocation', 'products people actually use'], ['profession', 'engineering with good judgment']],
     },
     exp: {
-      cmd: 'git log --career',
       title: 'Experience',
       items: [
         { when: 'Oct 2025 — now', role: 'Junior Software Engineer', org: 'Upstart 13', hook: 'Owns auth, the data model and the frontend architecture of an AI platform built on the Claude Agent SDK.', details: [
@@ -76,8 +72,7 @@ export const t = {
       ],
     },
     creds: {
-      cmd: 'cat credentials',
-      title: 'Credentials',
+      title: 'Education & certifications',
       items: [
         { k: 'B.Eng. Software Engineering', v: 'Escuela Politécnica Nacional · 2021–2026 · grade 28/30' },
         { k: 'Azure Administrator Associate (AZ-104)', v: 'Microsoft Certified · Oct 2026' },
@@ -86,7 +81,6 @@ export const t = {
     },
     service: null,
     shipped: {
-      cmd: 'ls ./shipped',
       title: "Sites I've built",
       sub: 'Built to last. Designed to be noticed.',
       friction: 'friction',
@@ -98,33 +92,29 @@ export const t = {
       ],
     },
     lab: {
-      cmd: 'ls ~/lab',
-      title: 'Lab',
+      title: 'Side projects',
       items: [
         { name: 'usdx-autochart', url: gh('usdx-autochart'), desc: 'Generates singable UltraStar Deluxe karaoke charts from audio.', friction: 'charting every song by hand.' },
-        { name: 'RAG_Presidentes', url: gh('RAG_Presidentes'), desc: 'Retrieval-augmented generation over presidential data.', friction: 'digging through pages for one fact.' },
+        { name: 'RAG_Presidentes', url: gh('RAG_Presidentes'), desc: 'AI answers that look things up in presidential data first (RAG).', friction: 'digging through pages for one fact.' },
         { name: 'TripTikBot', url: gh('TripTikBot'), desc: 'AI agent that finds travel experiences.', friction: 'planning a trip across twenty open tabs.' },
         { name: 'shop-base', url: gh('shop-base'), desc: 'Reusable storefront + CMS template. Astro, Neon, WhatsApp checkout.', friction: 'starting every shop from scratch.' },
         { name: 'ez-finance', url: gh('ez-finance-showcase'), desc: 'Personal finance with automatic expense capture: bank notices → Claude → inbox. Public anonymized copy; the live implementation is private.', friction: 'not knowing where your money went.' },
       ],
     },
     faq: {
-      cmd: 'man alejololer',
       title: 'FAQ',
-      manual: 'User Commands',
-      options: 'OPTIONS',
       items: [
-        { flag: '--why', q: 'What drives you?', a: 'The friction people stopped noticing. I like tracking it down to the root cause and swapping it for something simple that looks good and actually gets used.' },
-        { flag: '--whoami', q: 'Who is Alejololer?', a: 'Carlos Alejandro Alemán Osorio, a Software Engineer in Quito, Ecuador, working with Django, Next.js, Astro and LLMs.' },
-        { flag: '--freelance', q: 'Are you available for freelance work?', a: 'Yes. I build websites for small businesses, with SEO, GEO and AEO included.' },
-        { flag: '--stack', q: "What's your stack?", a: 'TypeScript/React/Next.js, Python/Django, Astro, Prisma, PostgreSQL, Azure and Vercel, plus LLM work with the Claude Agent SDK and the OpenAI API (RAG, structured extraction).' },
-        { flag: '--location', q: 'Where are you based?', a: 'Quito, Ecuador. I work remotely with clients anywhere.' },
-        { flag: '--username', q: 'Why the username?', a: 'I needed one, this one showed up, and it never left. Like most good decisions.' },
+        { q: 'What drives you?', a: 'The friction people stopped noticing. I like tracking it down to the root cause and swapping it for something simple that looks good and actually gets used.' },
+        { q: 'Who is Alejololer?', a: 'Carlos Alejandro Alemán Osorio, a Software Engineer in Quito, Ecuador, working with Django, Next.js, Astro and LLMs.' },
+        { q: 'Are you available for freelance work?', a: 'Yes. I build websites for small businesses, with SEO, GEO and AEO included.' },
+        { q: "What's your stack?", a: 'TypeScript/React/Next.js, Python/Django, Astro, Prisma, PostgreSQL, Azure and Vercel, plus LLM work with the Claude Agent SDK and the OpenAI API (RAG, structured extraction).' },
+        { q: 'Where are you based?', a: 'Quito, Ecuador. I work remotely with clients anywhere.' },
+        { q: 'Why the username?', a: 'I needed one, this one showed up, and it never left. Like most good decisions.' },
       ],
     },
     contact: {
-      cmd: './contact.sh',
-      title: 'What are you putting up with?',
+      title: 'Contact',
+      ask: 'What are you putting up with?',
       cv: 'Download CV (PDF)',
       cvHref: '/cv.pdf',
       cvFile: 'Carlos_Aleman_CV.pdf',
@@ -139,26 +129,22 @@ export const t = {
       description: 'Ingeniero de software en Quito, Ecuador. Elimino la fricción que todos aceptan como normal: productos web con Django, Next.js, Astro y LLMs, y sitios para negocios locales con SEO, GEO y AEO.',
     },
     nav: {
-      other: 'EN', otherHref: '/', otherLabel: 'Read in English', label: 'Secciones', hint: '0-9 saltar',
+      other: 'EN', otherHref: '/', otherLabel: 'Read in English', label: 'Secciones',
       prev: 'Sección anterior', next: 'Sección siguiente', list: 'Todas las secciones',
-      sections: [['hero', 'whoami'], ['about', 'cat sobre-mí'], ['ikigai', 'cat ikigai'], ['experience', 'git log'], ['credentials', 'cat creds'], ['freelance', 'cat freelance'], ['shipped', 'ls proyectos'], ['lab', 'ls lab'], ['faq', 'man'], ['contact', './contacto']],
     },
     hero: { cmd: 'whoami', lines: ['Elimino la', 'fricción que', 'todos aceptan', 'como normal.'], scroll: 'scroll ↓ (vale la pena)' },
     about: {
-      cmd: 'cat sobre-mi.txt',
       title: 'Encuentro las fricciones que la gente ya aprendió a ignorar y las convierto en soluciones simples.',
       sub: 'Convierto días en horas. Casi siempre con LLMs.',
       body: 'Soy Carlos Alejandro Alemán, aunque en internet me conocen como Alejololer. Me gusta llegar a la raíz de un problema, resolverlo sin sobreingeniería y que la solución se vea tan bien como funciona. Trabajo como ingeniero de software en Upstart 13, en una plataforma de IA hecha con el Claude Agent SDK; ahí me toca la autenticación, el modelo de datos y cómo está armado el frontend. Antes hice funciones con LLMs que leen documentos de clientes y sacan lo importante, así que un borrador que tomaba días ahora sale en horas. Aparte diseño sitios web para negocios locales que de verdad aparecen cuando alguien los busca, y ahí me toca traducir lo técnico a un idioma que cualquiera entienda. Me gradué de la Politécnica Nacional y tengo dos certificaciones: Azure AZ-104 y Claude Certified Developer.',
-      term: [['nombre', 'Carlos Alejandro Alemán'], ['rol', 'Junior Software Engineer @ Upstart 13'], ['stack', 'TypeScript · React · Django · LLMs · Azure'], ['base', 'Quito, Ecuador'], ['estado', "just chillin'"]],
+      term: [['nombre', 'Carlos Alejandro Alemán'], ['rol', 'Junior Software Engineer @ Upstart 13'], ['stack', 'TypeScript · React · Django · LLMs · Azure'], ['ubicación', 'Quito, Ecuador'], ['estado', "just chillin'"]],
     },
     ikigai: {
-      cmd: 'cat ikigai.txt',
       title: 'Por qué hago esto.',
       sub: 'Lo cotidiano debería costar menos: entender tus gastos, tener una web propia, hallar un abogado a tiempo.',
       items: [['pasión', 'soluciones que se ven bien'], ['misión', 'ver lo que otros ya ignoran'], ['vocación', 'productos que la gente sí usa'], ['profesión', 'ingeniería con criterio']],
     },
     exp: {
-      cmd: 'git log --carrera',
       title: 'Experiencia',
       items: [
         { when: 'Oct 2025 — hoy', role: 'Junior Software Engineer', org: 'Upstart 13', hook: 'La autenticación, los datos y el frontend de una plataforma de IA hecha con el Claude Agent SDK pasan por mí.', details: [
@@ -184,8 +170,7 @@ export const t = {
       ],
     },
     creds: {
-      cmd: 'cat credenciales',
-      title: 'Credenciales',
+      title: 'Formación y certificaciones',
       items: [
         { k: 'Ingeniería de Software', v: 'Escuela Politécnica Nacional · 2021–2026 · nota 28/30' },
         { k: 'Azure Administrator Associate (AZ-104)', v: 'Microsoft Certified · Oct 2026' },
@@ -194,7 +179,6 @@ export const t = {
     },
     // ponytail: portfolio tone on purpose — is-a.dev only accepts non-commercial sites, so this describes the work, it doesn't sell it
     service: {
-      cmd: 'cat freelance.md',
       title: 'Sitios para negocios locales.',
       lead: 'Además de mi trabajo en Upstart 13, diseño y construyo sitios para negocios en Ecuador. Me enfoco en que carguen rápido y en que se encuentren: en Google y también en asistentes de IA como ChatGPT, Gemini o Perplexity.',
       includes: [
@@ -208,7 +192,6 @@ export const t = {
       proof: 'Resultado: Virtus apareció en Google para 106 búsquedas distintas en sus primeros dos meses (Search Console).',
     },
     shipped: {
-      cmd: 'ls ./proyectos',
       title: 'Sitios que he construido',
       sub: 'Hechos para durar. Diseñados para que te vean.',
       friction: 'fricción',
@@ -220,33 +203,29 @@ export const t = {
       ],
     },
     lab: {
-      cmd: 'ls ~/lab',
-      title: 'Lab',
+      title: 'Proyectos personales',
       items: [
         { name: 'usdx-autochart', url: gh('usdx-autochart'), desc: 'Genera canciones de karaoke UltraStar Deluxe a partir de audio.', friction: 'armar a mano la partitura de cada canción.' },
-        { name: 'RAG_Presidentes', url: gh('RAG_Presidentes'), desc: 'Generación aumentada por recuperación sobre datos de presidentes.', friction: 'buscar un dato entre páginas y páginas.' },
+        { name: 'RAG_Presidentes', url: gh('RAG_Presidentes'), desc: 'Respuestas de IA que primero buscan en datos de presidentes (RAG).', friction: 'buscar un dato entre páginas y páginas.' },
         { name: 'TripTikBot', url: gh('TripTikBot'), desc: 'Agente de IA para encontrar experiencias de viaje.', friction: 'planear un viaje con veinte pestañas abiertas.' },
         { name: 'shop-base', url: gh('shop-base'), desc: 'Plantilla reutilizable de tienda + CMS. Astro, Neon, checkout por WhatsApp.', friction: 'empezar cada tienda desde cero.' },
         { name: 'ez-finance', url: gh('ez-finance-showcase'), desc: 'Finanzas personales con captura automática de gastos: avisos del banco → Claude → bandeja. Copia pública anonimizada; la implementación en uso es privada.', friction: 'no saber a dónde se fue tu plata.' },
       ],
     },
     faq: {
-      cmd: 'man alejololer',
       title: 'Preguntas frecuentes',
-      manual: 'Manual de usuario',
-      options: 'OPCIONES',
       items: [
-        { flag: '--negocios', q: '¿Haces páginas web para negocios?', a: 'Sí, como freelance. Los construyo con SEO, GEO y AEO para que se encuentren en Google y en asistentes de IA.' },
-        { flag: '--tiempo', q: '¿Cuánto tarda un sitio?', a: 'De días a semanas, según el nivel de detalle.' },
-        { flag: '--geo-aeo', q: '¿Qué es GEO y AEO?', a: 'GEO es optimizar para que los asistentes de IA (ChatGPT, Gemini) mencionen tu negocio. AEO es estructurar tu contenido para dar respuestas directas a lo que pregunta la gente.' },
-        { flag: '--remoto', q: '¿Trabajas fuera de Quito?', a: 'Sí. Trabajo de forma remota con negocios de todo Ecuador.' },
-        { flag: '--porque', q: '¿Qué te mueve?', a: 'Las fricciones que la gente ya aprendió a ignorar. Me gusta encontrarlas, llegar a la causa raíz y cambiarlas por algo simple, que se vea bien y que la gente sí use.' },
-        { flag: '--whoami', q: '¿Quién es Alejololer?', a: 'Carlos Alejandro Alemán Osorio, ingeniero de software en Quito, Ecuador, que trabaja con Django, Next.js, Astro y LLMs.' },
+        { q: '¿Haces páginas web para negocios?', a: 'Sí, como freelance. Los construyo con SEO, GEO y AEO para que se encuentren en Google y en asistentes de IA.' },
+        { q: '¿Cuánto tarda un sitio?', a: 'De días a semanas, según el nivel de detalle.' },
+        { q: '¿Qué es GEO y AEO?', a: 'GEO es optimizar para que los asistentes de IA (ChatGPT, Gemini) mencionen tu negocio. AEO es estructurar tu contenido para dar respuestas directas a lo que pregunta la gente.' },
+        { q: '¿Trabajas fuera de Quito?', a: 'Sí. Trabajo de forma remota con negocios de todo Ecuador.' },
+        { q: '¿Qué te mueve?', a: 'Las fricciones que la gente ya aprendió a ignorar. Me gusta encontrarlas, llegar a la causa raíz y cambiarlas por algo simple, que se vea bien y que la gente sí use.' },
+        { q: '¿Quién es Alejololer?', a: 'Carlos Alejandro Alemán Osorio, ingeniero de software en Quito, Ecuador, que trabaja con Django, Next.js, Astro y LLMs.' },
       ],
     },
     contact: {
-      cmd: './contacto.sh',
-      title: '¿Qué fricción ya dejaste de notar?',
+      title: 'Contacto',
+      ask: '¿Qué fricción ya dejaste de notar?',
       cv: 'Descargar CV (PDF)',
       cvHref: '/cv-es.pdf',
       cvFile: 'Carlos_Aleman_CV_ES.pdf',
