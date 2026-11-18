@@ -3,6 +3,7 @@
 /* --- ransom-note letters (Cut.astro): monochrome tiles, one "magazine" per font --- */
 .cut { display: flex; flex-wrap: wrap; gap: .14em .4em; line-height: 1; padding: .08em 0 }
 .cut .w { display: flex; gap: .05em }
+.cut b[data-ch]::before { content: attr(data-ch) }
 .cut b { display: grid; place-items: center; min-width: .74em; padding: .05em .1em .08em; font: 700 1em/1 var(--font-sans); letter-spacing: 0; text-transform: uppercase;
   background: var(--hi); color: #000; rotate: var(--r); translate: 0 var(--y); box-shadow: .04em .05em 0 #0009 }
 .cut .c1 { background: #000; color: var(--hi); outline: 2px solid var(--hi); outline-offset: -2px }
@@ -98,6 +99,7 @@
 .feed .shot img { width: 100%; height: 100%; object-fit: cover; object-position: top }
 .feed .open { justify-self: start; font: 1.25rem var(--font-mono); text-decoration: none }
 .feed .open:hover { background: var(--hi); color: #000 }
+.feed h3 .cut, .more h3 .cut { display: none }   /* the ransom-note page: phones only (below) */
 
 html:has(.pane.max) { overflow: hidden }
 /* blown up = a bigger window in the middle of the wall. The other cameras stay where they are, dimmed, and a click on them (or on the wall) switches or closes */
@@ -176,6 +178,21 @@ html:has(.pane.max) { overflow: hidden }
   .max .feed article { display: grid; flex: 0 0 100%; max-width: none; scroll-snap-align: start; scroll-snap-stop: always; overflow-y: auto; padding: 1.25rem 1rem 5rem; animation: none }
   .max .dnav { position: fixed; z-index: 5; left: 0; right: 0; bottom: 0; padding-bottom: calc(.4rem + env(safe-area-inset-bottom)) }
   .back { display: block }
+  /* an item's page (and "about me") is a ransom note: the title cut out like the logo, the role or friction on a strip of tape,
+     a big faint word down the edge (it swipes with its item) and a stamp at the foot */
+  .max .feed article, .max.who .more { display: flex; flex-direction: column; padding-right: 3.6rem }
+  .max .feed article { position: relative; z-index: 0 }
+  /* the edge word and the stamp come from data-side / data-stamp: drawn, not text */
+  :is(.feed, .more) h3 .plain { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap }
+  :is(.feed, .more) h3 .cut { display: flex; font-size: 1.9rem; margin: .3rem 0 .4rem }
+  .more h3 .cut { font-size: 1.3rem }   /* "about me" is titled with a whole sentence: smaller tiles, or it fills the screen */
+  .tape { align-self: flex-start; max-width: 100%; rotate: -1.5deg; padding: .2rem .5rem; background: #e8e8e8; color: #000; box-shadow: 2px 2px 0 #0008 }
+  :is(.max .feed article, .max.who .more)::before { content: attr(data-side); position: absolute; z-index: -1; top: .6rem; right: .2rem; bottom: 4rem; writing-mode: vertical-rl; overflow: hidden; white-space: nowrap; pointer-events: none;
+    font: 700 6.5rem/.8 var(--font-sans); letter-spacing: -.04em; text-transform: uppercase; color: #ffffff1c }
+  :is(.max .feed article, .max.who .more)::after { content: attr(data-stamp); margin-top: auto; align-self: flex-start; padding: .1rem .6rem; border: 3px double var(--hi); rotate: -6deg; opacity: .85; font: 400 1.6rem var(--font-mono) }
+  /* closing it: the picture folds into a bright line, the line into a dot, and the wall is underneath (.off, set by restore() in Tablero.astro) */
+  .pane.off :is(.feed, .more) { animation: crt-off .42s cubic-bezier(.6, 0, .4, 1) forwards }
+  .pane.off :is(.dnav, .back) { visibility: hidden }
 
   .map { display: block; position: fixed; z-index: 3; right: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); max-width: min(15rem, 62vw); padding: .3rem .35rem; background: #000e; border: 1px solid var(--hi); box-shadow: 4px 4px 0 #ffffff40; font: 1.1rem var(--font-mono) }
   .map.open { width: min(17rem, 80vw); max-width: none }
@@ -208,6 +225,7 @@ html:has(.pane.max) { overflow: hidden }
   .board.ready .pane { animation: tvon .3s cubic-bezier(.2, .8, .3, 1) backwards }
 }
 @keyframes cam-show { to { opacity: 1 } }
+@keyframes crt-off { 45% { transform: scale(1, .004); filter: brightness(6) } 80% { transform: scale(.02, .004); filter: brightness(8); opacity: 1 } 100% { transform: scale(0); opacity: 0 } }
 
 /* pixel cursors: the caret turns into a 16×16 icon (drawn at 2×, hard edges) over title bars and window edges */
 .caret.hot[data-label^="ico-"] { width: 32px; height: 32px; padding: 0; margin: -16px 0 0 -16px; background: var(--ico) center / contain no-repeat }

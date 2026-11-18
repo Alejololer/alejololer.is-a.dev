@@ -3,12 +3,15 @@
 // cycle on co-prime periods, so it looks random but renders the same on every build.
 // Hover glitches a tile; clicking re-cuts it from another "magazine" (next font + ink) and fires 'cut:hit' on it.
 // `silent`: no screen-reader copy of the text (the caller provides its own, e.g. one name for a heading split in two lines).
-interface Props { text: string; silent?: boolean }
-const { text, silent = false } = Astro.props;
+// `deco`: silent, and the letters are not text at all (CSS draws data-ch): for a title that is already written out next to it,
+// so crawlers and answer engines do not read it twice.
+interface Props { text: string; silent?: boolean; deco?: boolean }
+const { text, deco = false } = Astro.props;
+const silent = deco || Astro.props.silent;
 let i = text.length * 3;
 const tile = () => { i++; return { cls: `f${i % 5} c${i % 3}`, style: `--r:${(i * 37) % 9 - 4}deg;--y:${((i * 53) % 7 - 3) / 50}em` }; };
 ---
-<span class="cut">{!silent && <span class="sr-only">{text} </span>}{text.split(' ').map(w => <span class="w" aria-hidden="true">{[...w].map(ch => { const t = tile(); return <b class={t.cls} style={t.style}>{ch}</b>; })}</span>)}</span>
+<span class="cut">{!silent && <span class="sr-only">{text} </span>}{text.split(' ').map((w, k) => <>{k > 0 && ' '}<span class="w" aria-hidden="true">{[...w].map(ch => { const t = tile(); return deco ? <b class={t.cls} style={t.style} data-ch={ch}></b> : <b class={t.cls} style={t.style}>{ch}</b>; })}</span></>)}</span>
 
 <script>
   document.addEventListener('click', e => {

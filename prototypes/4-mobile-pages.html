@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>P4 · Mobile item pages</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=VT323&display=swap" rel="stylesheet">
+<style>
+  /* the site's tokens (global.css) */
+  :root { --bg:#000; --fg:#e8e8e8; --hi:#fff; --dim:#8c8c8c; --line:#ffffff40; --sans:'Space Grotesk',system-ui,sans-serif; --mono:'VT323',monospace;
+    --noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); color-scheme:dark }
+  * { box-sizing:border-box; margin:0 }
+  body { background:#111; color:var(--fg); font:300 16px/1.35 var(--sans); padding:2rem 16px 4rem }
+  h1.top { font:700 2rem/1 var(--sans); letter-spacing:-.03em; text-transform:uppercase }
+  .intro { max-width:70ch; color:#bbb; margin:.6rem 0 2rem }
+  h2.grp { font:1.6rem var(--mono); color:var(--hi); margin:2.5rem 0 .3rem }
+  .grp + p { color:#aaa; max-width:75ch; margin-bottom:1.2rem }
+  .row-of { display:flex; flex-wrap:wrap; gap:2rem 1.5rem }
+  figure { display:grid; gap:.5rem; width:min(375px,100%) }
+  figcaption b { font:1.5rem var(--mono); color:var(--hi) }
+  figcaption p { color:#aaa; font-size:.92rem }
+  figcaption button { all:unset; cursor:pointer; font:1.15rem var(--mono); border:1px solid var(--line); padding:0 .5rem; margin-top:.3rem }
+  figcaption button:hover { background:var(--hi); color:#000 }
+
+  /* --- a phone: tmux bar on top, the item page, the dnav bar at the bottom --- */
+  .phone { position:relative; width:100%; height:740px; overflow:hidden; border:1px solid #333; border-radius:14px; background:#000; isolation:isolate }
+  /* the 3D scene behind everything (a stand-in: a dim glow and a figure-ish blob) */
+  .phone::before { content:""; position:absolute; inset:0; z-index:0; background:radial-gradient(ellipse 40% 26% at 62% 58%, #ffffff30, #0000 70%), radial-gradient(circle at 60% 40%, #ffffff18 0 9%, #0000 10%), var(--noise); opacity:.9 }
+  .tmux { position:absolute; inset:0 0 auto; height:2rem; z-index:5; display:flex; align-items:center; gap:.8rem; padding:0 .8rem; background:linear-gradient(#cfcfcf,#8a8a8a); color:#000; font:1.2rem var(--mono) }
+  .feed { position:absolute; inset:2rem 0 0; z-index:1; display:flex; overflow:auto hidden; scroll-snap-type:x mandatory; scrollbar-width:none }
+  .feed article { position:relative; flex:0 0 100%; scroll-snap-align:start; overflow-y:auto; display:flex; flex-direction:column; gap:.7rem; padding:1.25rem 1rem 4.5rem; scrollbar-width:none }
+  .dnav { position:absolute; inset:auto 0 0; z-index:5; display:flex; justify-content:space-between; padding:.55rem 1rem; border-top:1px solid var(--line); background:#000; font:1.15rem var(--mono); color:var(--dim) }
+  .dnav b { font-weight:400; color:var(--hi) }
+  .mono { font:1.2rem/1.2 var(--mono); letter-spacing:.08em; color:var(--dim) }
+  h3 { font:700 1.9rem/1 var(--sans); letter-spacing:-.03em; text-transform:uppercase }
+  .lead { color:#ddd; font-size:1.05rem }
+  ul { display:grid; gap:.4rem; padding-left:1.1rem; color:#ccc; font-size:.98rem }
+  .open { font:1.25rem var(--mono); color:var(--hi) }
+
+  /* static tune-in (tablero.css .on) */
+  .on::before, .on::after { content:""; position:absolute; left:0; right:0; height:50%; z-index:6; pointer-events:none; background:#000 var(--noise); animation:cam-open .34s .3s cubic-bezier(.7,0,.3,1) both, snow1 .18s steps(3) infinite }
+  .on::before { top:0 } .on::after { bottom:0 }
+  @keyframes cam-open { to { height:0 } }
+  @keyframes snow1 { 33% { background-position:-60px 40px } 66% { background-position:50px -70px } }
+  @keyframes tvon { 0% { transform:scaleY(.03); filter:brightness(4) } 60% { transform:none; filter:brightness(1.8) } }
+  @keyframes blink { 50% { opacity:0 } }
+
+  /* ===== A1 · CCTV feed: the page is the camera's picture. Viewfinder brackets, REC + clock, the scene shows through, the item number huge at the foot ===== */
+  .a1 article { background:#000b; padding:2.6rem 1.4rem 5rem }
+  .a1 .hud { position:sticky; top:-2.6rem; margin:-2.6rem -1.4rem 0; padding:.9rem 1.5rem .6rem; background:linear-gradient(#000 60%,#0000); z-index:2; display:flex; justify-content:space-between; font:1.15rem var(--mono); color:var(--hi); text-shadow:0 0 6px #fff8 }
+  .a1 .hud i { font-style:normal; color:#fff; animation:blink 1s steps(1) infinite }
+  /* the viewfinder and scanlines are the same on every item: one overlay on the screen, not per item */
+  .a1 .vf { position:absolute; z-index:4; inset:2.6rem .6rem 3.6rem; pointer-events:none; background:
+      linear-gradient(#fff,#fff) 0 0/22px 2px, linear-gradient(#fff,#fff) 0 0/2px 22px,
+      linear-gradient(#fff,#fff) 100% 0/22px 2px, linear-gradient(#fff,#fff) 100% 0/2px 22px,
+      linear-gradient(#fff,#fff) 0 100%/22px 2px, linear-gradient(#fff,#fff) 0 100%/2px 22px,
+      linear-gradient(#fff,#fff) 100% 100%/22px 2px, linear-gradient(#fff,#fff) 100% 100%/2px 22px; background-repeat:no-repeat }
+  .a1 .ghost { margin-top:auto; align-self:flex-end; font:400 11rem/.75 var(--mono); color:transparent; -webkit-text-stroke:1px #ffffff70; letter-spacing:-.04em }
+  .a1 .ghost small { font-size:.25em; -webkit-text-stroke:0; color:var(--dim) }
+  .a1 .scanline { position:absolute; z-index:4; inset:2rem 0 0; pointer-events:none; background:repeating-linear-gradient(#0000 0 2px,#0000004d 2px 3px) }
+
+  /* ===== A2 · Ransom note: the title cut out of magazines, a strip of tape for the friction, the flag huge down the edge ===== */
+  .a2 article { background:#000e; padding-right:3.6rem }
+  .a2 .cut { display:flex; flex-wrap:wrap; gap:.2em .45em; font-size:1.9rem; line-height:1; margin:.3rem 0 .4rem }
+  .a2 .cut .w { display:flex; gap:.05em }
+  .a2 .cut b { display:grid; place-items:center; min-width:.74em; padding:.05em .1em .08em; font:700 1em/1 var(--sans); text-transform:uppercase; background:var(--hi); color:#000; rotate:var(--r); translate:0 var(--y); box-shadow:.04em .05em 0 #0009 }
+  .a2 .cut .c1 { background:#000; color:var(--hi); outline:2px solid var(--hi); outline-offset:-2px } .a2 .cut .c2 { background:#9a9a9a }
+  .a2 .cut .f1 { font-family:var(--mono); font-weight:400; font-size:1.12em } .a2 .cut .f2 { font-family:Georgia,serif; font-style:italic; text-transform:none }
+  .a2 .cut .f3 { font-family:'Courier New',monospace } .a2 .cut .f4 { font-family:Impact,'Arial Black',sans-serif; font-weight:400 }
+  .a2 .tape { align-self:flex-start; rotate:-1.5deg; background:#e8e8e8; color:#000; font:1.2rem/1.1 var(--mono); padding:.2rem .5rem; box-shadow:2px 2px 0 #0008; max-width:100% }
+  .a2 .side { position:absolute; top:.6rem; right:.2rem; bottom:4rem; writing-mode:vertical-rl; font:700 6.5rem/.8 var(--sans); letter-spacing:-.04em; text-transform:uppercase; color:#ffffff1c; white-space:nowrap; overflow:hidden; pointer-events:none }
+  .a2 .stamp { margin-top:auto; align-self:flex-start; border:3px double var(--hi); padding:.1rem .6rem; font:1.6rem var(--mono); rotate:-6deg; opacity:.85 }
+
+  /* ===== A3 · man page: the answer is a manual entry, typed out once. Header and footer rule the page; the cursor waits at the end ===== */
+  .a3 article { background:#000; font:1.2rem/1.3 var(--mono); color:#d8d8d8; gap:.9rem }
+  .a3 .mh { display:flex; justify-content:space-between; color:var(--dim); border-bottom:1px dashed #ffffff40; padding-bottom:.3rem }
+  .a3 dt { color:var(--hi); font-weight:400; letter-spacing:.06em }
+  .a3 dd { margin:0 0 0 1.6rem }
+  .a3 dd b { font-weight:400; color:var(--hi) }
+  .a3 dd ul { font:inherit; padding-left:1rem; color:#cfcfcf }
+  .a3 .cur::after { content:"█"; animation:blink 1s steps(1) infinite; margin-left:2px }
+  .a3 .mf { margin-top:auto; display:flex; justify-content:space-between; color:var(--dim); border-top:1px dashed #ffffff40; padding-top:.3rem }
+  .a3 .prompt { color:var(--hi) }
+
+  /* ===== A4 · Poster: the title as big as the screen allows, the answer under it, the count as a giant numeral and a tape of the items ===== */
+  .a4 article { background:linear-gradient(#000 55%,#000c); gap:1rem }
+  .a4 .tag { font:1.2rem var(--mono); color:var(--hi); border:1px solid var(--hi); align-self:flex-start; padding:0 .4rem }
+  .a4 h3 { font-size:var(--fs); line-height:.86; letter-spacing:-.05em; overflow-wrap:anywhere }
+  .a4 .lead { font-size:1.2rem; line-height:1.3 }
+  .a4 .foot { margin-top:auto; display:flex; align-items:flex-end; gap:.8rem; border-top:2px solid var(--hi); padding-top:.5rem }
+  .a4 .num { font:700 6.5rem/.78 var(--sans); letter-spacing:-.06em }
+  .a4 .segs { flex:1; display:grid; gap:.3rem; padding-bottom:.3rem }
+  .a4 .segs div { display:flex; gap:3px } .a4 .segs i { flex:1; height:10px; border:1px solid var(--hi) } .a4 .segs i.y { background:var(--hi) }
+  .a4 .segs span { font:1.1rem var(--mono); color:var(--dim) }
+
+  /* entrance per style, replayable */
+  .play article { animation:tvon .3s cubic-bezier(.2,.8,.3,1) }
+
+  /* ===== B · back to the wall ===== */
+  .wall { position:absolute; inset:2rem 0 0; z-index:1; overflow:auto; padding:.6rem .6rem 3rem; display:grid; gap:.6rem; align-content:start; scrollbar-width:none }
+  .cam { position:relative; border:1px solid var(--line); background:#000d; overflow:hidden }
+  .cam .bar { background:var(--dim); color:#000; font:1.15rem var(--mono); padding:0 .4rem }
+  .cam.hot .bar { background:var(--hi) }
+  .cam h4 { font:700 1.6rem/1 var(--sans); text-transform:uppercase; letter-spacing:-.03em; padding:.6rem .7rem .2rem }
+  .cam button { all:unset; cursor:pointer; display:grid; grid-template-columns:2.5ch 1fr auto; gap:.6rem; width:100%; box-sizing:border-box; padding:.35rem .7rem; border-bottom:1px solid #ffffff1f; font-size:1rem }
+  .cam button span { font:1.1rem var(--mono); color:var(--dim) } .cam button::after { content:"view →"; font:1.05rem var(--mono); color:var(--dim) }
+  .cam button.sel { background:var(--hi); color:#000 } .cam button.sel * , .cam button.sel::after { color:#000 }
+  .page { position:absolute; inset:2rem 0 0; z-index:3; background:#000; display:flex; flex-direction:column; gap:.7rem; padding:1.25rem 1rem 4.5rem }
+  .page[hidden] { display:none }
+  .page .dnav button { all:unset; cursor:pointer; color:var(--hi) }
+  /* B1 · CRT power-off: the picture folds to a bright line, the line to a dot, the dot fades; the wall is under it */
+  .out-crt { animation:crt-off .42s cubic-bezier(.6,0,.4,1) forwards; transform-origin:50% 50% }
+  @keyframes crt-off { 0% { transform:none; filter:brightness(1) } 45% { transform:scale(1,.004); filter:brightness(6) } 80% { transform:scale(.02,.004); filter:brightness(8); opacity:1 } 100% { transform:scale(0,0); opacity:0 } }
+  /* B2 · slide out to the right: the mirror of how it came in */
+  .out-slide { animation:slide-out .3s cubic-bezier(.5,0,.75,0) forwards }
+  @keyframes slide-out { to { transform:translateX(100%) } }
+  .wall.under { animation:under .3s ease-out }
+  @keyframes under { from { transform:translateX(-18%); filter:brightness(.4) } }
+  /* B3 · cut back, and the camera you came from tunes in again: you see where you landed */
+  .cam.on::before, .cam.on::after { z-index:2 }
+  .cam.on::before, .cam.on::after { animation-delay:.12s }
+
+  @media (prefers-reduced-motion: reduce) { .out-crt, .out-slide, .wall.under, .play article, .on::before, .on::after { animation:none !important } }
+</style>
+</head>
+<body>
+<h1 class="top">Mobile item pages</h1>
+<p class="intro">Two picks: one page style (A1–A4) and one way back to the wall (B1–B3). They mix. Every phone is live: swipe sideways through three items (a short FAQ answer, the long Upstart 13 entry, a lab project). The "about me" page would take the same style as the one you pick.</p>
+
+<h2 class="grp">A · the item page</h2>
+<p>Today: black page, text at the top, empty below. Each style fills the screen with structure, not more copy, and every bit of decoration lives inside the item so it swipes with it.</p>
+<div class="row-of" id="styles"></div>
+
+<h2 class="grp">B · back to the wall</h2>
+<p>Today: closing (the [x], the phone's back button or back gesture) snaps straight to the wall. Tap a row to open an item, then [x] close. The real one hooks on <code>popstate</code>, so the back button gets it too.</p>
+<div class="row-of" id="backs"></div>
+
+<script>
+  const items = [
+    { kind:'faq', n:1, of:6, cam:'06', tag:'$ alejololer --why', flag:'--why', title:'What drives you?', lead:'The friction people stopped noticing. I like tracking it down to the root cause and swapping it for something simple that looks good and actually gets used.' },
+    { kind:'exp', n:1, of:4, cam:'01', tag:'commit · Oct 2025 — now', flag:'2025', title:'Upstart 13', sub:'Junior Software Engineer', lead:'Owns auth, the data model and the frontend architecture of an AI platform built on the Claude Agent SDK.', list:[
+      'Own core areas of the AI platform: authentication and permissions, data model and APIs, and frontend architecture (TypeScript, React, Next.js, Prisma, PostgreSQL).',
+      'Drive tickets from design to delivery with minimal oversight on a 5-person team, proposing technical solutions and reporting directly to product owners.',
+      'Helped bring formal architecture design and clear product ownership into the team’s development process.',
+      'Built LLM features on the OpenAI API (Django, Next.js), extracting structured data from client documents and cutting drafting from days to hours; piloted with 2 clients.',
+      'Stabilized failing Azure dev/test environments (env variables, logging), unblocking QA and team builds.',
+      'Trained the incoming intern through structured shadowing and handed off the onboarding platforms.' ] },
+    { kind:'lab', n:1, of:5, cam:'05', tag:'ls ~/lab', flag:'lab', title:'usdx-autochart', sub:'friction: charting every song by hand.', lead:'Generates singable UltraStar Deluxe karaoke charts from audio.', link:'[ github ]' },
+  ];
+  const pad = n => String(n).padStart(2, '0');
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const list = it => it.list ? `<ul>${it.list.map(l => `<li>${esc(l)}</li>`).join('')}</ul>` : '';
+  // Cut.astro's tiles: font, ink and tilt cycle on co-prime periods
+  function cut(text) {
+    let i = text.length * 3;
+    return `<span class="cut">${text.split(' ').map(w => `<span class="w">${[...w].map(ch => { i++; return `<b class="f${i % 5} c${i % 3}" style="--r:${(i * 37) % 9 - 4}deg;--y:${((i * 53) % 7 - 3) / 50}em">${esc(ch)}</b>`; }).join('')}</span>`).join('')}</span>`;
+  }
+  const clock = () => new Date().toTimeString().slice(0, 8);
+
+  const STYLES = {
+    a1: { name:'A1 · CCTV feed', note:'The page is the camera’s picture: viewfinder corners, ● REC and a live clock, scanlines, the 3D scene faintly behind. The item number fills the empty foot.',
+      art: it => `<div class="hud"><span><i>●</i> REC</span><span>CAM ${it.cam} · <time>${clock()}</time></span></div>
+        <p class="mono">${esc(it.tag)}</p><h3>${esc(it.title)}</h3>${it.sub ? `<p class="mono">${esc(it.sub)}</p>` : ''}<p class="lead">${esc(it.lead)}</p>${list(it)}${it.link ? `<a class="open">${it.link}</a>` : ''}
+        <b class="ghost">${pad(it.n)}<small>/${pad(it.of)}</small></b>` },
+    a2: { name:'A2 · Ransom note', note:'The title is cut out like the logo, the friction or role is a strip of tape, the flag runs huge down the edge and a stamp closes the page.',
+      art: it => `<b class="side" aria-hidden="true">${esc(it.flag)}</b><p class="mono">${esc(it.tag)}</p>${cut(it.title)}${it.sub ? `<p class="tape">${esc(it.sub)}</p>` : ''}<p class="lead">${esc(it.lead)}</p>${list(it)}${it.link ? `<a class="open">${it.link}</a>` : ''}
+        <b class="stamp">${it.kind === 'faq' ? 'ANSWERED' : it.kind === 'exp' ? 'ON RECORD' : 'IN THE LAB'}</b>` },
+    a3: { name:'A3 · man page', note:'Every item is a manual entry, typed out once when it comes on screen (fast: ~0.6s). Header and footer rule the page; the cursor blinks where the text ends.',
+      art: it => `<div class="mh"><span>ALEJOLOLER(1)</span><span>${it.kind === 'faq' ? 'FAQ' : it.kind === 'exp' ? 'CAREER' : 'LAB'}</span><span>(1)</span></div>
+        <dl><dt>NAME</dt><dd class="ty">${esc(it.title)}${it.sub ? ' — ' + esc(it.sub) : ''}</dd></dl>
+        <dl><dt>SYNOPSIS</dt><dd><b class="ty">${esc(it.tag)}</b></dd></dl>
+        <dl><dt>DESCRIPTION</dt><dd><span class="ty">${esc(it.lead)}</span>${list(it)}</dd></dl>
+        ${it.link ? `<dl><dt>SEE ALSO</dt><dd><a class="open">${it.link}</a></dd></dl>` : ''}
+        <p class="prompt cur">$ </p>
+        <div class="mf"><span>alejololer 1.0</span><span>Nov 2026</span><span>${pad(it.n)}/${pad(it.of)}</span></div>` },
+    a4: { name:'A4 · Poster', note:'The title as big as the width allows (shrinks for long ones), the answer under it, and a foot made of a giant numeral and a tape of the camera’s items.',
+      art: it => `<span class="tag">${esc(it.tag)}</span><h3 style="--fs:${Math.min(4.6, 30 / Math.max(...it.title.split(' ').map(w => w.length)) )}rem">${esc(it.title)}</h3>${it.sub ? `<p class="mono">${esc(it.sub)}</p>` : ''}<p class="lead">${esc(it.lead)}</p>${list(it)}${it.link ? `<a class="open">${it.link}</a>` : ''}
+        <div class="foot"><b class="num">${pad(it.n)}</b><div class="segs"><div>${Array.from({ length: it.of }, (_, k) => `<i class="${k < it.n ? 'y' : ''}"></i>`).join('')}</div><span>of ${pad(it.of)} · swipe →</span></div></div>` },
+  };
+
+  const phone = (cls, inner) => `<div class="phone ${cls}"><div class="tmux"><b>λ</b> alejololer <span style="margin-left:auto">ES</span></div>${inner}</div>`;
+  const dnav = it => `<div class="dnav"><span>[x] close</span><span>← prev</span><b>${pad(it.n)}/${pad(it.of)}</b><span>next →</span></div>`;
+
+  // --- A: one phone per style, three items to swipe through ---
+  document.getElementById('styles').innerHTML = Object.entries(STYLES).map(([k, s]) => `<figure>
+      <figcaption><b>${s.name}</b><p>${s.note}</p><button data-replay>↻ replay entrance</button></figcaption>
+      ${phone(k, `<div class="feed">${items.map(it => `<article>${s.art(it)}</article>`).join('')}</div>${k === 'a1' ? '<i class="vf"></i><i class="scanline"></i>' : ''}${dnav(items[0])}`)}
+    </figure>`).join('');
+
+  // the dnav count follows the swipe
+  for (const feed of document.querySelectorAll('#styles .feed')) feed.addEventListener('scroll', () => {
+    const it = items[Math.round(feed.scrollLeft / feed.clientWidth)];
+    feed.parentElement.querySelector('.dnav b').textContent = `${pad(it.n)}/${pad(it.of)}`;
+  }, { passive: true });
+
+  // A3 types its text out once per showing
+  function type(root) {
+    for (const el of root.querySelectorAll('.ty')) {
+      const full = el.dataset.full ??= el.textContent, t0 = performance.now();
+      const step = now => { const k = Math.min(1, (now - t0) / 600); el.textContent = full.slice(0, Math.ceil(full.length * k)); if (k < 1) requestAnimationFrame(step); };
+      requestAnimationFrame(step);
+    }
+  }
+  function play(ph) {
+    ph.classList.remove('play', 'on'); void ph.offsetWidth; ph.classList.add('play', 'on');
+    if (ph.classList.contains('a3')) type(ph);
+    setTimeout(() => ph.classList.remove('on'), 900);
+  }
+  document.addEventListener('click', e => { const b = e.target.closest('[data-replay]'); if (b) play(b.closest('figure').querySelector('.phone')); });
+  // A1's clock ticks
+  setInterval(() => { for (const t of document.querySelectorAll('.a1 time')) t.textContent = clock(); }, 1000);
+
+  // --- B: a mini wall; a row opens the item page (tuning in, as today), [x] closes it the chosen way ---
+  const BACKS = {
+    crt: { name:'B1 · CRT power-off', note:'The page folds into a bright line, then a dot, then it’s gone, and the wall is underneath. The tune-in played backwards. ~0.4s. (On iOS the edge-swipe back already slides the page; this would play after it.)' },
+    slide: { name:'B2 · Slide out', note:'The page slides off to the right while the wall slides in from a little to the left, the mirror of opening. ~0.3s. Doubles up with the iOS edge-swipe, which already does this.' },
+    cut: { name:'B3 · Cut + re-tune', note:'Back is still instant, but the camera you came from tunes in again with a burst of static and its row stays lit, so your eye lands on it. Cheapest: the real site already has this effect (boot()), it just isn’t called on close.' },
+  };
+  const cams = [['01', 'git log --career', 'Experience', ['Upstart 13', 'Upstart 13', 'Independent', 'Sagat Farm']], ['05', 'ls ~/lab', 'Lab', ['usdx-autochart', 'RAG_Presidentes', 'TripTikBot']], ['06', 'man alejololer', 'FAQ', ['What drives you?', 'Who is Alejololer?', 'Freelance?']]];
+  const wall = `<div class="wall">${cams.map(([n, bar, h, rows]) => `<div class="cam" data-cam="${n}"><div class="bar">CAM ${n} · ${bar}</div><h4>${h}</h4>${rows.map((r, i) => `<button data-row="${i}"><span>0${i + 1}</span><b>${r}</b></button>`).join('')}</div>`).join('')}</div>`;
+  document.getElementById('backs').innerHTML = Object.entries(BACKS).map(([k, s]) => `<figure>
+      <figcaption><b>${s.name}</b><p>${s.note}</p></figcaption>
+      ${phone('', `${wall}<div class="page" data-out="${k}" hidden></div>`)}
+    </figure>`).join('');
+
+  document.getElementById('backs').addEventListener('click', e => {
+    const ph = e.target.closest('.phone'), page = ph?.querySelector('.page');
+    const row = e.target.closest('[data-row]');
+    if (row) {
+      const cam = row.closest('.cam'), it = items.find(x => x.cam === cam.dataset.cam) ?? items[0];
+      ph.querySelectorAll('.cam button').forEach(b => b.classList.toggle('sel', b === row));
+      ph.querySelectorAll('.cam').forEach(c => c.classList.toggle('hot', c === cam));
+      page.innerHTML = `<p class="mono">${esc(it.tag)}</p><h3>${esc(row.textContent.slice(2))}</h3><p class="lead">${esc(it.lead)}</p>${list(it)}<div class="dnav"><button data-close>[x] close</button><span>← prev</span><b>${pad(+row.dataset.row + 1)}/${pad(cam.querySelectorAll('button').length)}</b><span>next →</span></div>`;
+      page.hidden = false; page.className = 'page'; ph._from = cam;
+      ph.classList.remove('on'); void ph.offsetWidth; ph.classList.add('on'); setTimeout(() => ph.classList.remove('on'), 800);
+      return;
+    }
+    if (!e.target.closest('[data-close]')) return;
+    const how = page.dataset.out, w = ph.querySelector('.wall'), from = ph._from;
+    const done = () => { page.hidden = true; page.className = 'page'; };
+    if (how === 'crt') { page.classList.add('out-crt'); page.addEventListener('animationend', done, { once: true }); }
+    if (how === 'slide') { page.classList.add('out-slide'); w.classList.remove('under'); void w.offsetWidth; w.classList.add('under'); page.addEventListener('animationend', done, { once: true }); }
+    if (how === 'cut') { done(); from.classList.remove('on'); void from.offsetWidth; from.classList.add('on'); setTimeout(() => from.classList.remove('on'), 800); }
+  });
+</script>
+</body>
+</html>
