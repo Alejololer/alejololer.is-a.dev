@@ -7,6 +7,8 @@ export const ui: Record<Lang, {
   tip: string; grow: string; esc: string; close: string; see: string; prev: string; next: string;
   keys: string; cView: string; cGrow: string;
   ariaNav: string; ariaMap: string; ariaToggle: string; role: string; egg: string[];
+  // phones: the stamp at the foot of an item's page, per camera (about, experience, shipped, lab, faq)
+  stamps: string[];
 }> = {
   es: {
     // plain names, in window order: every label a visitor reads (top bar, window bars, phone list) says these. No terminal commands: recruiters read this too
@@ -24,6 +26,7 @@ export const ui: Record<Lang, {
     grow: '[ ampliar ]', esc: '[x] esc', close: '[x] cerrar', see: 'ver →', prev: '← ant', next: 'sig →',
     keys: '0-8 abrir · esc cerrar', cView: '[ ver ]', cGrow: '[ ampliar ]',
     ariaNav: 'Secciones', ariaMap: 'Mapa de secciones', ariaToggle: 'Ampliar o cerrar', role: 'ingeniero de software',
+    stamps: ['FICHADO', 'EN REGISTRO', 'ENTREGADO', 'PROYECTO PROPIO', 'RESPONDIDO'],
     egg: ['ES UN FEATURE', 'EN MI MÁQUINA FUNCIONA', 'NO ERA UN BUG', 'DEPLOY EN VIERNES'],
   },
   en: {
@@ -40,6 +43,7 @@ export const ui: Record<Lang, {
     grow: '[ expand ]', esc: '[x] esc', close: '[x] close', see: 'view →', prev: '← prev', next: 'next →',
     keys: '0-8 open · esc close', cView: '[ view ]', cGrow: '[ expand ]',
     ariaNav: 'Sections', ariaMap: 'Section map', ariaToggle: 'Expand or close', role: 'software engineer',
+    stamps: ['ON FILE', 'ON RECORD', 'SHIPPED', 'SIDE PROJECT', 'ANSWERED'],
     egg: ["IT'S A FEATURE", 'WORKS ON MY MACHINE', "IT WASN'T A BUG", 'FRIDAY DEPLOY'],
   },
 };
