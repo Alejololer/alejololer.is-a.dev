@@ -30,6 +30,9 @@ const headings = [undefined, c.exp.title, c.shipped.title, c.creds.title, c.cont
 const rooms = [[36, 2, 28, 14], [4, 24, 28, 14], [36, 24, 28, 14], [68, 24, 28, 14], [4, 46, 28, 14], [36, 46, 28, 14], [68, 46, 28, 14], [20, 66, 26, 12], [54, 66, 26, 12]];
 const halls = [[0, 2], [1, 2], [2, 3], [1, 4], [2, 5], [3, 6], [4, 5], [5, 6], [4, 7], [6, 8], [7, 8]];
 const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i][3] / 2];
+// phones: an item's page is a ransom note. Its title is cut out like the logo, a big faint word runs down the edge and a stamp closes it.
+// Both titles are in the HTML: the plain one on the desktop window (and for screen readers), the tiles on phones (tablero.css).
+const year = (when: string) => when.split(' — ')[0].split(' ').pop();
 ---
   <div class="tablero" hidden></div>
   <nav class="tmux" aria-label={u.ariaNav}>
@@ -52,12 +55,14 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
         </div>
         <div class="more">
           <button type="button" class="back" data-max>{u.close}</button>
-          <h3>{c.about.title}</h3>
+          <b class="side" aria-hidden="true">whoami</b>
+          <h3><span class="plain">{c.about.title}</span><Cut silent text={c.about.title} /></h3>
           <p>{intro}</p>
           <dl class="term">{c.about.term.slice(0, 4).map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
           <p class="mono">&gt; {c.ikigai.cmd}</p>
           <dl class="term">{c.ikigai.items.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
           {c.service && <><p class="mono">&gt; {c.service.cmd}</p><p>{c.service.lead}</p></>}
+          <b class="stamp" aria-hidden="true">{u.stamps[0]}</b>
         </div>
       </Cam>
       <Cam u={u} i={1} slug={slugs[1]} heading={headings[1]} at={at[1]} title={cams[1]} n={c.exp.items.length}>
@@ -66,11 +71,13 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
         ))}</div>
         <div class="feed">{c.exp.items.map(e => (
           <article>
+            <b class="side" aria-hidden="true">{year(e.when)}</b>
             <p class="mono">commit · {e.when}</p>
-            <h3>{e.org}</h3>
-            <p class="mono">{e.role}</p>
+            <h3><span class="plain">{e.org}</span><Cut silent text={e.org} /></h3>
+            <p class="mono tape">{e.role}</p>
             <p>{e.hook}</p>
             <ul>{e.details.map(d => <li>{d}</li>)}</ul>
+            <b class="stamp" aria-hidden="true">{u.stamps[1]}</b>
           </article>
         ))}</div>
       </Cam>
@@ -81,12 +88,14 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
         <div class="feed">{c.shipped.items.map(s => (
           <article>
             <div class="shot"><Image src={s.img} alt={s.alt} width={720} loading="lazy" /></div>
+            <b class="side" aria-hidden="true">{names[2]}</b>
             <p class="mono">{s.tag}</p>
-            <h3>{s.name}</h3>
-            <p class="mono">{c.shipped.friction}: {s.friction}</p>
+            <h3><span class="plain">{s.name}</span><Cut silent text={s.name} /></h3>
+            <p class="mono tape">{c.shipped.friction}: {s.friction}</p>
             <p>{s.hook}</p>
             <p>{s.result}</p>
             <a class="open" href={s.url} {...ext}>{c.shipped.open}</a>
+            <b class="stamp" aria-hidden="true">{u.stamps[2]}</b>
           </article>
         ))}</div>
       </Cam>
@@ -107,10 +116,12 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
         ))}</div>
         <div class="feed">{c.lab.items.map(l => (
           <article>
-            <h3>{l.name}</h3>
-            <p class="mono">{c.shipped.friction}: {l.friction}</p>
+            <b class="side" aria-hidden="true">{names[5]}</b>
+            <h3><span class="plain">{l.name}</span><Cut silent text={l.name} /></h3>
+            <p class="mono tape">{c.shipped.friction}: {l.friction}</p>
             <p>{l.desc}</p>
             <a class="open" href={l.url} {...ext}>[ github ]</a>
+            <b class="stamp" aria-hidden="true">{u.stamps[3]}</b>
           </article>
         ))}</div>
       </Cam>
@@ -118,9 +129,11 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
         <div class="list">{c.faq.items.map((f, i) => <button class="row n" data-i={i} data-cursor={u.cView}><span class="k">0{i + 1}</span><b>{f.q}</b></button>)}</div>
         <div class="feed">{c.faq.items.map(f => (
           <article>
+            <b class="side" aria-hidden="true">{f.flag}</b>
             <p class="mono">$ alejololer {f.flag}</p>
-            <h3>{f.q}</h3>
+            <h3><span class="plain">{f.q}</span><Cut silent text={f.q} /></h3>
             <p>{f.a}</p>
+            <b class="stamp" aria-hidden="true">{u.stamps[4]}</b>
           </article>
         ))}</div>
       </Cam>
@@ -339,7 +352,20 @@ const mid = (i: number) => [rooms[i][0] + rooms[i][2] / 2, rooms[i][1] + rooms[i
     dispatchEvent(new Event('tv:on'));          // the 3D scene runs its refresh beam behind the wall
   }
   // back on the wall, keyboard focus returns to the row that opened the camera
-  const restore = () => { const cur = maxed(); if (cur) morph(cur, () => { cur.classList.remove('max', 'on'); for (const p of panes) p.inert = false; hole(); }, () => { pinHero(); opener?.focus({ preventScroll: true }); }); };
+  const restore = () => {
+    const cur = maxed();
+    if (!cur || cur.classList.contains('off')) return;
+    const back = () => morph(cur, () => { cur.classList.remove('max', 'on', 'off'); for (const p of panes) p.inert = false; hole(); }, () => { pinHero(); opener?.focus({ preventScroll: true }); });
+    // phones: the item's page powers off like an old TV (.off, tablero.css) before the wall comes back. Not after an edge swipe:
+    // iOS already slid the page away, and a second animation on top of that one is one too many
+    if (desk.matches || still || performance.now() - edged < 1000) return back();
+    cur.classList.remove('on');
+    cur.classList.add('off');
+    setTimeout(back, 420);
+  };
+  // a touch that starts at the left edge is the system's back swipe
+  let edged = -1e4;
+  addEventListener('touchstart', e => { if (e.touches[0].clientX < 24) edged = performance.now(); }, { passive: true });
   const close = () => { if (!maxed()) return; if (pushed) history.back(); else restore(); };
   addEventListener('popstate', () => { pushed = false; restore(); });
 

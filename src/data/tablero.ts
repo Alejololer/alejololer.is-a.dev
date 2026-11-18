@@ -7,6 +7,8 @@ export const ui: Record<Lang, {
   tip: string; grow: string; esc: string; close: string; see: string; prev: string; next: string;
   keys: string; cView: string; cGrow: string;
   ariaNav: string; ariaMap: string; ariaToggle: string; role: string; egg: string[];
+  // phones: the stamp at the foot of an item's page, per camera (about, experience, shipped, lab, faq)
+  stamps: string[];
 }> = {
   es: {
     // plain names, in camera order: the top bar and the phone's camera list say these; the terminal commands stay as decoration on each camera's bar
@@ -24,6 +26,7 @@ export const ui: Record<Lang, {
     grow: '[ ampliar ]', esc: '[x] esc', close: '[x] cerrar', see: 'ver →', prev: '← ant', next: 'sig →',
     keys: '0-8 cámara · esc muro', cView: '[ ver ]', cGrow: '[ ampliar ]',
     ariaNav: 'Cámaras', ariaMap: 'Mapa de cámaras', ariaToggle: 'Ampliar o cerrar', role: 'ingeniero de software',
+    stamps: ['FICHADO', 'EN REGISTRO', 'ENTREGADO', 'EN EL LAB', 'RESPONDIDO'],
     egg: ['ES UN FEATURE', 'EN MI MÁQUINA FUNCIONA', 'NO ERA UN BUG', 'DEPLOY EN VIERNES'],
   },
   en: {
@@ -40,6 +43,7 @@ export const ui: Record<Lang, {
     grow: '[ expand ]', esc: '[x] esc', close: '[x] close', see: 'view →', prev: '← prev', next: 'next →',
     keys: '0-8 camera · esc wall', cView: '[ view ]', cGrow: '[ expand ]',
     ariaNav: 'Cameras', ariaMap: 'Camera map', ariaToggle: 'Expand or close', role: 'software engineer',
+    stamps: ['ON FILE', 'ON RECORD', 'SHIPPED', 'IN THE LAB', 'ANSWERED'],
     egg: ["IT'S A FEATURE", 'WORKS ON MY MACHINE', "IT WASN'T A BUG", 'FRIDAY DEPLOY'],
   },
 };
