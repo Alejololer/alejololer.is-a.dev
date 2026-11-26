@@ -87,16 +87,32 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': grap
     // the 3D scene is decoration: load it after the page is interactive so it never blocks the first paint.
     // ponytail: on phones, parsing three.js costs ~400ms of main thread, so wait for the first touch/scroll (8s fallback)
     let started = false;
-    const go = () => {
+    const go = (frozen = false) => {
       if (started) return;
       started = true;
-      import('../scripts/scene').then(m => { m.start(canvas); canvas.classList.add('on'); });
+      import('../scripts/scene').then(m => { m.start(canvas, frozen); canvas.classList.add('on'); });
     };
-    if (matchMedia('(pointer: coarse)').matches) {
-      for (const ev of ['scroll', 'touchstart', 'pointerdown']) addEventListener(ev, go, { once: true, passive: true });
-      setTimeout(go, 8000);
-    } else if ('requestIdleCallback' in window) requestIdleCallback(go, { timeout: 1500 });
-    else setTimeout(go, 300);
+    // no GPU (software WebGL: virtual machines, blocked drivers, headless browsers): every frame would hold the main
+    // thread for hundreds of ms. Those open on one frame of the scene as an image (global.css, #scene.still) and only load
+    // three.js once someone moves, touches or types, frozen: it redraws only when the figure moves or is clicked.
+    // The renderer's name is checked too: some software renderers pass failIfMajorPerformanceCaveat.
+    const hasGpu = () => {
+      const gl = document.createElement('canvas').getContext('webgl2', { failIfMajorPerformanceCaveat: true });
+      if (!gl) return false;
+      const info = gl.getExtension('WEBGL_debug_renderer_info');
+      const name = String(gl.getParameter(info ? info.UNMASKED_RENDERER_WEBGL : gl.RENDERER));
+      gl.getExtension('WEBGL_lose_context')?.loseContext();
+      return !/swiftshader|llvmpipe|softpipe|software|basic render/i.test(name);
+    };
+    const boot = () => {
+      const gpu = hasGpu(), coarse = matchMedia('(pointer: coarse)').matches;
+      if (!gpu) canvas.classList.add('still', 'on');
+      else if (!coarse) return go();
+      for (const ev of ['scroll', 'touchstart', 'pointerdown', 'pointermove', 'keydown']) addEventListener(ev, () => go(!gpu), { once: true, passive: true });
+      if (gpu) setTimeout(go, 8000);
+    };
+    if ('requestIdleCallback' in window) requestIdleCallback(boot, { timeout: 1500 });
+    else setTimeout(boot, 300);
   </script>
 </body>
 </html>

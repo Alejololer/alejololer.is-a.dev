@@ -22,6 +22,11 @@ img { max-width: 100%; height: auto; display: block }
 /* --- scene + CRT overlay --- */
 #scene { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; opacity: 0; transition: filter 1s, opacity 1.2s }
 #scene.on { opacity: 1 }
+/* no GPU (Base.astro): a frame captured from the scene itself. If the scene's look changes, recapture both files: on a machine
+   with a GPU, emulate reduced motion (one deterministic frame), send 'hero:pin' with null, hide everything but #scene,
+   screenshot at 1920×1080 (wide) and at 412×915 as a touch phone (tall), save as WebP */
+#scene.still { transition: filter 1s; background: url(../assets/scene-wide.webp) center / cover }
+@media (orientation: portrait) { #scene.still { background-image: url(../assets/scene-tall.webp) } }
 .crt { position: fixed; inset: 0; z-index: 4; pointer-events: none;
   background: repeating-linear-gradient(#0000 0 2px, #0000004d 2px 3px), radial-gradient(ellipse at center, #0000 55%, #000c 100%);
   animation: flick 4s infinite }

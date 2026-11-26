@@ -50,10 +50,12 @@
 .scan { display: none }
 .pane { --wait: .28s }
 .pane.on::before, .pane.on::after { content: ""; position: absolute; left: 0; right: 0; height: 50%; z-index: 2; pointer-events: none; background: #000 var(--noise); animation: cam-open .34s var(--wait) cubic-bezier(.7, 0, .3, 1) both, snow1 .18s steps(3) infinite }
-.pane.on::before { top: 0 } .pane.on::after { bottom: 0 }
+.pane.on::before { top: 0 } .pane.on::after { bottom: 0; animation-name: cam-open-down, snow1 }
 .pane.on.live::before, .pane.on.live::after { background-color: #000c }
 .pane.on .scan { display: block; position: absolute; z-index: 3; left: 0; right: 0; top: 50%; height: 3px; margin-top: -1px; pointer-events: none; background: #fff; box-shadow: 0 0 16px 4px #fff; animation: scan-x .2s ease-out both, scan-out .25s calc(var(--wait) + .1s) ease-in forwards }
-@keyframes cam-open { to { height: 0 } }
+/* the sheets are clipped away, not resized: an animated height counts as a layout shift (CLS) */
+@keyframes cam-open { from { clip-path: inset(0) } to { clip-path: inset(0 0 100% 0) } }
+@keyframes cam-open-down { from { clip-path: inset(0) } to { clip-path: inset(100% 0 0 0) } }
 @keyframes scan-x { from { transform: scaleX(0) } }
 @keyframes scan-out { to { opacity: 0 } }
 .board h1 { font-size: clamp(2.3rem, 4.3vw, 6rem); letter-spacing: 0; width: fit-content }

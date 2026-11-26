@@ -3,8 +3,9 @@ import { TessellateModifier } from 'three/addons/modifiers/TessellateModifier.js
 import { addFx } from './fx';
 
 // Port of prototypes/3-terminal-dream.html. Rule: everything slow, nothing dizzying.
-export function start(canvas: HTMLCanvasElement) {
-  let still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// frozen: no GPU (Base.astro) — draw single frames only, never animate
+export function start(canvas: HTMLCanvasElement, frozen = false) {
+  let still = frozen || matchMedia('(prefers-reduced-motion: reduce)').matches;
   const coarse = matchMedia('(pointer: coarse)').matches;
   // cheap up-front guess (phones, <=4 cores, <=4GB): no MSAA, 1x pixels, half the geometry. The frame loop below
   // measures the real thing and steps quality down further if the machine still can't keep up.
@@ -93,7 +94,13 @@ export function start(canvas: HTMLCanvasElement) {
   // or null to let it roam again. data-hero-pin on <html> covers a pin set before this module loaded.
   const pin0 = document.documentElement.dataset.heroPin?.split(',').map(Number);
   let pin: number[] | null = pin0 && pin0.length >= 2 ? pin0 : null;
-  addEventListener('hero:pin', e => { pin = (e as CustomEvent<number[] | null>).detail; if (still) render(); else vel = Math.max(vel, .45); });   // it shudders while it is chased (a frozen scene just redraws it there)
+  let redraw = 0;
+  // it shudders while it is chased. A frozen scene just redraws it there, once the dragging pauses if a frame is expensive (frozen)
+  addEventListener('hero:pin', e => {
+    pin = (e as CustomEvent<number[] | null>).detail;
+    if (!still) { vel = Math.max(vel, .45); return; }
+    clearTimeout(redraw); redraw = window.setTimeout(render, frozen ? 150 : 0);
+  });
   function knotTarget(p: number, t: number) {
     if (pin) return aim.set(pin[0] / innerWidth * 2 - 1, 1 - pin[1] / innerHeight * 2, .5).unproject(cam).sub(cam.position).normalize().multiplyScalar(30).add(cam.position);
     const nx = narrow ? .45 * Math.sin(p * Math.PI * 3) : .62 + .16 * Math.sin(p * Math.PI * 3 + .6);
@@ -206,8 +213,9 @@ export function start(canvas: HTMLCanvasElement) {
     requestAnimationFrame(frame);
     const gap = now - last;
     if (gap < 750 / cap) return;
-    // ~1.5s of frames arriving 60% late (after a 2s warm-up: shader compiles, page load) = this machine needs less work
-    if (now - born > 2000) slow = Math.max(0, slow + (gap > 1600 / Math.min(cap, 60) ? 1 : -1));
+    // ~1.5s of frames arriving 60% late (after a 2s warm-up: shader compiles, page load) = this machine needs less work.
+    // A very late frame counts for more (up to 6), or a machine at 10fps would take far longer than 1.5s to be noticed
+    if (now - born > 2000) slow = Math.max(0, slow + (gap > 1600 / Math.min(cap, 60) ? Math.min(6, Math.max(1, gap / 33)) : -1));
     if (slow > 45) { slow = 0; degrade(); }
     const dt = Math.min(.1, gap / 1000), k = dt * HZ;
     last = now;
